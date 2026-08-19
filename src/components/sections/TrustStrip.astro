@@ -1,0 +1,108 @@
+---
+import { getEntry } from 'astro:content'
+import logo1 from '../../assets/logo-images/logo-1.webp'
+import logo2 from '../../assets/logo-images/logo-2.webp'
+import logo3 from '../../assets/logo-images/logo-3.webp'
+import logo4 from '../../assets/logo-images/logo-4.webp'
+import logo5 from '../../assets/logo-images/logo-5.webp'
+import logo6 from '../../assets/logo-images/logo-6.webp'
+import logo7 from '../../assets/logo-images/logo-7.webp'
+import logo8 from '../../assets/logo-images/logo-8.webp'
+
+const { data } = await getEntry('pages', 'home')
+const trust = data.trustStrip
+
+// Per-logo optical scale. A single `h-7` matches bounding-box height, not
+// perceived size: at 28px tall these eight rendered anywhere from 555 to 3068
+// px² of actual ink, because a plain wordmark fills its box while a lockup
+// with a tagline wastes most of its height on 5px type.
+//
+// Baseline here is ink-area normalisation (measured per file), then nudged by
+// eye for the three that still read wrong. Tweak a number, nothing else moves.
+// Names verified against the actual artwork — the previous list had logo-3
+// through logo-5 labelled Lamah / Ai2 / Make Waves when the files are in fact
+// Make Waves / Lamah / Ai2, so every alt text in this strip was wrong.
+const clientLogos = [
+  { img: logo1, name: 'Alia', scale: 0.95 },
+  { img: logo2, name: 'Upnova', scale: 0.9 },
+  { img: logo3, name: 'Make Waves', scale: 0.8 },
+  { img: logo4, name: 'Lamah Technologies', scale: 1.0 },
+  { img: logo5, name: 'Ai2', scale: 0.95 },
+  { img: logo6, name: 'PostCredit', scale: 1.2 },
+  { img: logo7, name: 'MVP Multivision Plus', scale: 1.4 },
+  { img: logo8, name: 'UI Core', scale: 1.2 },
+]
+
+// Link + star metadata is presentation; the rating labels themselves live in
+// content (trustStrip.ratings) and feed JSON-LD / llms.txt.
+const ratings = [
+  { stars: true, score: '5.0', platform: 'CLUTCH', href: 'https://clutch.co/profile/elux-space' },
+  { stars: true, score: '5.0', platform: 'CONTRA', href: 'https://contra.com/eluxspace/work' },
+  { stars: false, score: 'DRIBBBLE', platform: '2.9K FOLLOWERS', href: 'https://dribbble.com/eluxspace' },
+  { stars: false, score: 'DESIGNRUSH', platform: 'VERIFIED AGENCY', href: 'https://www.designrush.com/agency/profile/elux-space' },
+]
+---
+
+<section class="bg-cream">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-10 lg:py-12">
+    <div data-reveal class="eyebrow text-ink-3 mb-6">[{trust.eyebrow}]</div>
+
+    <div data-reveal class="flex flex-wrap gap-2 mb-14 md:mb-16" style="transition-delay: 0.07s">
+      {
+        ratings.map((r) => (
+          <a
+            href={r.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group inline-flex items-center gap-2 px-4 py-2 rounded-chip border-2 border-ink bg-cream hover:bg-ink hover:text-cream transition-all duration-200"
+          >
+            {r.stars && (
+              <span class="text-primary group-hover:text-cream transition-colors tracking-[-1px] text-[12px] leading-none">
+                ★★★★★
+              </span>
+            )}
+            <span class="font-body font-semibold text-[12px] uppercase tracking-[0.1em] leading-none">{r.score}</span>
+            {!r.stars && <span class="w-px h-3 bg-ink/20 group-hover:bg-cream/30" />}
+            <span class="font-body font-semibold text-[12px] uppercase tracking-[0.1em] leading-none text-ink-3 group-hover:text-cream/70 transition-colors">
+              {r.platform}
+            </span>
+            <span class="text-[11px] text-ink-3 group-hover:text-cream/60 transition-colors">↗</span>
+          </a>
+        ))
+      }
+    </div>
+
+    <div data-reveal class="border-t-2 border-ink/15 pt-12 md:pt-14" style="transition-delay: 0.13s">
+      <!-- Fixed 4 columns at every breakpoint, so 8 logos always land as 2 rows
+           of 4 rather than reflowing to one long row on desktop. -->
+      <div class="grid grid-cols-4 gap-x-6 gap-y-10 md:gap-y-12 items-center">
+        {
+          clientLogos.map((logo) => (
+            <img
+              src={logo.img.src}
+              width={logo.img.width}
+              height={logo.img.height}
+              alt={logo.name}
+              title={logo.name}
+              loading="lazy"
+              style={`--logo-scale:${logo.scale}`}
+              class="client-logo w-auto max-w-full object-contain mx-auto"
+            />
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* One base height, multiplied per logo by its optical scale. */
+  .client-logo {
+    height: calc(20px * var(--logo-scale, 1));
+  }
+  @media (min-width: 768px) {
+    .client-logo {
+      height: calc(26px * var(--logo-scale, 1));
+    }
+  }
+</style>

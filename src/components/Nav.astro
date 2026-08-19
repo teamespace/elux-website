@@ -1,0 +1,141 @@
+---
+// Absolute paths so links resolve from every page (/, /work, /about), not just
+// the homepage. Section anchors live on the homepage; /about is a real route.
+const links = [
+  { label: 'Work', href: '/#work' },
+  { label: 'Services', href: '/#services' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/#contact' },
+]
+---
+
+<header class="sticky top-0 z-50 bg-cream/90 backdrop-blur">
+  <div class="mx-auto max-w-page px-6 lg:px-10 h-16 flex items-center justify-between">
+    <a href="/" class="display text-2xl tracking-tighter normal-case">
+      elux<span class="text-primary">.</span>space
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-7">
+      {
+        links.map((l) => (
+          <a
+            href={l.href}
+            class="font-body text-[13px] font-semibold text-ink hover:text-primary transition-colors"
+          >
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <a href="/#contact" class="hidden md:inline-flex btn-primary">
+      Let's talk
+      <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+    </a>
+
+    <!-- Mobile menu: pure CSS via a checkbox. The checkbox IS the announced,
+         keyboard-operable control (sr-only but focusable, with an aria-label);
+         the label is a decorative visual click target. -->
+    <input
+      type="checkbox"
+      id="nav-toggle"
+      class="nav-toggle peer sr-only"
+      aria-label="Toggle navigation menu"
+    />
+    <label
+      for="nav-toggle"
+      class="md:hidden inline-flex items-center justify-center w-10 h-10 -mr-2 cursor-pointer text-ink"
+      aria-hidden="true"
+    >
+      <span class="nav-burger relative block w-6 h-[2px] bg-ink"></span>
+    </label>
+
+    <div
+      class="nav-panel md:hidden fixed inset-x-0 top-16 bg-cream border-t-2 border-ink origin-top"
+    >
+      <nav class="flex flex-col px-6 py-4">
+        {
+          links.map((l) => (
+            <a
+              href={l.href}
+              class="font-body font-semibold text-lg tracking-tight text-ink py-3 border-b border-line last:border-0 hover:text-primary transition-colors"
+            >
+              {l.label}
+            </a>
+          ))
+        }
+        <a href="/#contact" class="btn-primary mt-4 self-start">
+          Let's talk
+          <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav-panel {
+    transform: scaleY(0);
+    opacity: 0;
+    /* visibility: hidden removes the collapsed panel's links from the tab order
+       and the a11y tree; delayed so it flips only after the close animation. */
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0s linear 0.2s;
+  }
+  .nav-toggle:checked ~ .nav-panel {
+    transform: scaleY(1);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0s;
+  }
+  /* burger → X */
+  .nav-burger::before,
+  .nav-burger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 24px;
+    height: 2px;
+    background: #3E2002;
+    transition: transform 0.2s ease, top 0.2s ease, bottom 0.2s ease;
+  }
+  .nav-burger::before {
+    top: -7px;
+  }
+  .nav-burger::after {
+    bottom: -7px;
+  }
+  .nav-toggle:checked ~ label .nav-burger {
+    background: transparent;
+  }
+  .nav-toggle:checked ~ label .nav-burger::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
+  .nav-toggle:checked ~ label .nav-burger::after {
+    bottom: 0;
+    transform: rotate(-45deg);
+  }
+  .nav-toggle:focus-visible ~ label {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+</style>
+
+<script is:inline>
+  // Close the mobile panel after a link is tapped (progressive enhancement) so a
+  // same-page anchor jump doesn't leave the menu covering the target.
+  ;(function () {
+    var toggle = document.getElementById('nav-toggle')
+    if (!toggle) return
+    document.querySelectorAll('.nav-panel a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        toggle.checked = false
+      })
+    })
+  })()
+</script>

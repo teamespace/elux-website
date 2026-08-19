@@ -1,0 +1,97 @@
+---
+import { Image } from 'astro:assets'
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Nav from '../../components/Nav.astro'
+import Footer from '../../components/Footer.astro'
+
+// All case studies, featured first, then by order. Drafts still show locally with
+// a DRAFT chip so Arya can review; they carry a placeholder image block.
+const entries = (await getCollection('work')).sort((a, b) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1
+  return a.data.order - b.data.order
+})
+---
+
+<BaseLayout
+  title="Work — Shipped, not shelved | Elux Space"
+  description="Case studies from Elux Space: AI-native product design and build work across venture, SaaS, AI, and ecommerce teams."
+>
+  <div class="bg-cream text-ink min-h-screen">
+    <Nav />
+
+    <main id="main">
+      <section class="bg-cream border-b-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          <div class="eyebrow text-ink-3 mb-3">THE WORK THAT PROVES IT</div>
+          <h1 class="display-xl text-ink mb-5">SHIPPED.<br />NOT SHELVED.</h1>
+          <p class="body-lg text-ink-2 max-w-xl">
+            Good output is the result of a better process. Here is what that looks like in practice.
+          </p>
+        </div>
+      </section>
+
+      <section class="bg-cream">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {
+              entries.map((e) => (
+                <a
+                  href={`/work/${e.id}`}
+                  data-reveal
+                  class:list={[
+                    'group block rounded-chip border-2 border-ink overflow-hidden bg-cream-3 hover:bg-ink-bg transition-colors duration-300',
+                    e.data.featured && 'md:col-span-2',
+                  ]}
+                >
+                  <div class:list={['relative', e.data.featured ? 'aspect-[16/8]' : 'aspect-[16/9]']}>
+                    {e.data.heroImage ? (
+                      <Image src={e.data.heroImage} alt={`${e.data.client} case study`} class="absolute inset-0 w-full h-full object-cover" />
+                    ) : (
+                      <div class="img-placeholder absolute inset-0">IMAGE: {e.data.client} cover</div>
+                    )}
+                    <span class="absolute top-4 left-4 font-display font-bold text-[10px] uppercase tracking-[0.1em] text-cream bg-primary px-2 py-1 rounded-chip">
+                      {e.data.tagline}
+                    </span>
+                    {e.data.draft && (
+                      <span class="absolute top-4 right-4 font-display font-bold text-[10px] uppercase tracking-[0.1em] text-cream bg-danger px-2 py-1 rounded-chip">
+                        Draft
+                      </span>
+                    )}
+                  </div>
+                  <div class="p-6">
+                    <div class="font-display font-bold text-xl uppercase text-ink group-hover:text-cream transition-colors">
+                      {e.data.client}
+                    </div>
+                    <p class="body-md text-ink-2 group-hover:text-on-ink-2 transition-colors mt-2 max-w-xl">
+                      {e.data.summary}
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-4">
+                      {e.data.services.map((s) => (
+                        <span class="font-display font-bold text-[10px] uppercase tracking-[0.1em] text-primary bg-primary/10 px-2.5 py-1 rounded-chip">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-cream border-t-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-20 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+          <h2 class="display-lg text-ink">SEE SOMETHING<br />THAT FITS?</h2>
+          <a href="/#contact" class="btn-primary">
+            START A PROJECT
+            <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>

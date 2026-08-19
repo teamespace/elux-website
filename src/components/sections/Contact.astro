@@ -1,0 +1,120 @@
+---
+import { getEntry } from 'astro:content'
+
+const { data } = await getEntry('pages', 'home')
+const c = data.contact
+
+// Two paths, form primary. The form is a native HTML POST (works with no JS once
+// Arya wires a form service into formEndpoint). The booking link is secondary.
+// A tiny progressive-enhancement script copies any ?situation= query param (set
+// by the "Pick your situation" CTAs) into the hidden field so context carries
+// through. Placeholder URLs (#PLACEHOLDER-*) are intentional and greppable.
+const isPlaceholderForm = c.formEndpoint.startsWith('#')
+const isPlaceholderBooking = c.bookingUrl.startsWith('#')
+---
+
+<section id="contact" class="bg-ink-bg text-on-ink">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-32">
+    <div class="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-20 items-start">
+      <!-- Left: pitch -->
+      <div data-reveal>
+        <div class="eyebrow text-butter mb-3">{c.eyebrow}</div>
+        <h2 class="display-lg text-on-ink whitespace-pre-line mb-6">{c.headline}</h2>
+        <p class="body-lg text-on-ink-2 max-w-md">{c.supportingCopy}</p>
+
+        <div class="mt-10 flex flex-col gap-3 font-body text-[15px]">
+          <a href="mailto:project@elux.space" class="text-on-ink hover:text-primary transition-colors">project@elux.space</a>
+          <a href="tel:+6285156989279" class="text-on-ink hover:text-primary transition-colors">+62 851-5698-9279</a>
+          <span class="text-on-ink-3 text-[13px]">Jakarta · Bali · Remote</span>
+        </div>
+      </div>
+
+      <!-- Right: form + booking -->
+      <div data-reveal style="transition-delay: 0.1s">
+        {
+          isPlaceholderForm && (
+            <p class="placeholder-copy inline-block mb-5 text-[12px] font-body text-on-ink-2 px-3 py-2">
+              [PLACEHOLDER: set a real form action in home.yaml → contact.formEndpoint (Formspree / Web3Forms / Tally)]
+            </p>
+          )
+        }
+        <form
+          action={c.formEndpoint}
+          method="POST"
+          class="flex flex-col gap-5"
+        >
+          <input type="hidden" name="situation" id="contact-situation" value="" />
+
+          <label class="flex flex-col gap-2">
+            <span class="font-body font-semibold text-[11px] uppercase tracking-[0.14em] text-on-ink-3">Your name</span>
+            <input
+              type="text"
+              name="name"
+              required
+              autocomplete="name"
+              placeholder="Jane Founder"
+              class="bg-transparent border-2 border-line-ink rounded-chip px-4 py-3 text-on-ink placeholder:text-on-ink-3 focus:border-primary focus:outline-none transition-colors"
+            />
+          </label>
+
+          <label class="flex flex-col gap-2">
+            <span class="font-body font-semibold text-[11px] uppercase tracking-[0.14em] text-on-ink-3">
+              Link to your product or deck <span class="normal-case tracking-normal text-on-ink-3">(optional)</span>
+            </span>
+            <input
+              type="url"
+              name="link"
+              placeholder="https://"
+              class="bg-transparent border-2 border-line-ink rounded-chip px-4 py-3 text-on-ink placeholder:text-on-ink-3 focus:border-primary focus:outline-none transition-colors"
+            />
+          </label>
+
+          <label class="flex flex-col gap-2">
+            <span class="font-body font-semibold text-[11px] uppercase tracking-[0.14em] text-on-ink-3">What are you building — or what's broken?</span>
+            <textarea
+              name="message"
+              required
+              rows="4"
+              placeholder="A messy note is fine."
+              class="bg-transparent border-2 border-line-ink rounded-chip px-4 py-3 text-on-ink placeholder:text-on-ink-3 focus:border-primary focus:outline-none transition-colors resize-y"
+            ></textarea>
+          </label>
+
+          <button type="submit" class="btn-primary self-start">
+            {c.submitLabel}
+            <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+          </button>
+        </form>
+
+        <div class="mt-8 pt-8 border-t border-line-ink">
+          <a
+            href={c.bookingUrl}
+            class="inline-flex items-center gap-2 font-body text-[15px] text-on-ink hover:text-primary transition-colors"
+          >
+            {c.bookingLabel}
+            <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+          </a>
+          {
+            isPlaceholderBooking && (
+              <p class="placeholder-copy inline-block mt-4 text-[12px] font-body text-on-ink-2 px-3 py-2">
+                [PLACEHOLDER: set a real booking link in home.yaml → contact.bookingUrl (Cal.com)]
+              </p>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  // Carry the "Pick your situation" context into the form (progressive enhancement).
+  ;(function () {
+    var params = new URLSearchParams(window.location.search)
+    var s = params.get('situation')
+    if (s) {
+      var field = document.getElementById('contact-situation')
+      if (field) field.value = s
+    }
+  })()
+</script>

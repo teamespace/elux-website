@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+import ProblemSolution from '../components/sections/ProblemSolution.astro'
+import Contact from '../components/sections/Contact.astro'
+import { getEntry } from 'astro:content'
+
+// The "pick your situation" storytelling moved here from the homepage: the home
+// now answers it once (stages), this page answers it in depth (situations) —
+// and doubles as a focused landing page for service-intent searches.
+const { data } = await getEntry('pages', 'home')
+const services = data.services
+---
+
+<BaseLayout
+  title="Services — AI-native product design and build | Elux Space"
+  description="From first MVP to AI features on a live product: pick your situation and see how Elux Space designs and builds it in one AI-native sprint."
+>
+  <div class="bg-cream text-ink min-h-screen">
+    <Nav />
+
+    <main id="main">
+      <section class="bg-cream border-b-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-20 md:py-28">
+          <div data-reveal class="eyebrow text-ink-3 mb-6">{services.eyebrow}</div>
+          <h1 class="display-xl text-ink" data-reveal>
+            <span class="block">ONE TEAM. ONE SPRINT.</span>
+            <span class="block">WHATEVER STAGE YOU'RE AT.</span>
+          </h1>
+          <p data-reveal class="body-md text-ink-2 max-w-2xl mt-8" style="transition-delay: 0.08s">
+            {services.supportingCopy}
+          </p>
+          <a data-reveal href="/#services" class="inline-block mt-6 font-display font-bold text-[12px] uppercase tracking-[0.14em] text-primary" style="transition-delay: 0.12s">
+            See the stage-by-stage breakdown on the homepage ↗
+          </a>
+        </div>
+      </section>
+
+      <ProblemSolution />
+      <Contact />
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>

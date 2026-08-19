@@ -1,0 +1,121 @@
+---
+import { getEntry } from 'astro:content'
+
+const { data } = await getEntry('pages', 'home')
+const how = data.process
+
+// Three steps plus the loop. The loop is not a fourth step — it has no duration
+// and no deliverables — but in this layout every column is a plain text block,
+// so it sits in the row without needing a different card shape.
+//
+// Cards read `short`, not `description`. The long version stays in the content
+// file because llms.txt still emits it; a column this narrow only has room for
+// one line, and truncating in place would strip the detail from the machine
+// copy too.
+const cards = [
+  ...how.steps.map((s, i) => ({
+    n: i + 1,
+    meta: `${s.time} — ${s.timeLabel}`,
+    title: s.title,
+    body: s.short ?? s.description,
+    sprite: ['notebook', 'bolt', 'computer'][i] ?? 'notebook',
+    w: [18, 14, 16][i] ?? 18,
+    h: [15, 19, 14][i] ?? 15,
+    idle: ['1.8s', '1.5s', '1.2s'][i] ?? '1.6s',
+    alt: [
+      'A notebook being written in',
+      'A lightning bolt',
+      'A computer with something live on screen',
+    ][i],
+  })),
+  {
+    n: how.steps.length + 1,
+    meta: 'Ongoing',
+    title: 'And loop',
+    body: how.loopShort ?? how.loopCopy,
+    sprite: 'loop',
+    w: 16,
+    h: 14,
+    idle: '1.6s',
+    alt: 'A marker travelling round a ring',
+  },
+]
+const pad = (n: number) => String(n).padStart(3, '0')
+---
+
+<section id="process" class="bg-cream">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-32">
+    <div class="max-w-3xl mb-16" data-reveal>
+      <div class="eyebrow text-ink-3 mb-3">{how.eyebrow}</div>
+      <h2 class="display-lg text-ink whitespace-pre-line mb-6">{how.headline}</h2>
+      <p class="body-lg text-ink-2">{how.supportingCopy}</p>
+    </div>
+
+    <!-- Columns divided by hairlines rather than boxed in cards: four filled
+         cards would compete with the comparison table two sections up, and the
+         rules keep the row reading as one continuous process. -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4">
+      {
+        cards.map((c, i) => (
+          <div
+            data-reveal
+            style={`transition-delay: ${(i % 4) * 0.06}s`}
+            class="pt-7 pb-2 border-t border-ink/15 lg:border-t-0 lg:border-l lg:first:border-l-0 lg:px-8 lg:first:pl-0"
+          >
+            <div class="font-body font-semibold text-[11px] tracking-[0.14em] text-ink-3 tabular-nums mb-6">
+              {pad(c.n)}
+            </div>
+
+            <div class="glyph-slot flex items-end mb-7">
+              <div
+                class="pixel-sprite pixel-sprite--poke"
+                style={`--w:${c.w}; --h:${c.h}; --idle:${c.idle}; background-image:url('/sprites/${c.sprite}.png')`}
+                role="img"
+                aria-label={c.alt}
+              />
+            </div>
+
+            <div class="font-body font-semibold text-[10px] uppercase tracking-[0.12em] text-primary mb-2">
+              {c.meta}
+            </div>
+            <h3 class="font-display font-bold text-[19px] md:text-[22px] tracking-[-0.01em] text-ink mb-2">
+              {c.title}
+            </h3>
+            <p class="font-body text-[14px] leading-relaxed text-ink-2">{c.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  /* The four glyphs run 32px to 68px tall at 4x; a fixed slot with the art
+     bottom-aligned keeps all four titles on the same line. */
+  .glyph-slot {
+    height: 68px;
+  }
+  @media (max-width: 767px) {
+    .glyph-slot {
+      height: 54px;
+    }
+    .pixel-sprite {
+      --px: 3;
+    }
+  }
+</style>
+
+<script>
+  // Hover is pure CSS; this only covers taps, where :hover never fires.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document
+      .querySelectorAll<HTMLElement>('#process .pixel-sprite--poke')
+      .forEach((el) => {
+        el.addEventListener('click', () => {
+          if (el.classList.contains('is-reacting')) return
+          el.classList.add('is-reacting')
+          setTimeout(() => el.classList.remove('is-reacting'), 600)
+        })
+      })
+  }
+</script>

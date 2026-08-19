@@ -1,0 +1,68 @@
+---
+import { getEntry } from 'astro:content'
+
+const { data } = await getEntry('pages', 'home')
+const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://elux.space'
+
+const orgId = `${site}/#organization`
+
+// ── ProfessionalService / Organization ──────────────────────────────────────
+const org = {
+  '@type': ['Organization', 'ProfessionalService'],
+  '@id': orgId,
+  name: 'Elux Space',
+  url: `${site}/`,
+  description:
+    'Pragmatic AI-native product design and build partner for SaaS, AI, and modern product teams. UX, UI, and frontend development in one connected sprint.',
+  email: 'hello@elux.space',
+  telephone: '+62-851-5698-9279',
+  areaServed: 'Worldwide',
+  knowsAbout: [
+    'Product Design',
+    'UX Design',
+    'UI Design',
+    'SaaS',
+    'MVP Development',
+    'AI Product Design',
+    'Frontend Development',
+    'Design Systems',
+  ],
+  sameAs: [
+    'https://clutch.co/profile/elux-space',
+    'https://contra.com/eluxspace/work',
+    'https://dribbble.com/eluxspace',
+    'https://www.designrush.com/agency/profile/elux-space',
+  ],
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '5.0',
+    bestRating: '5',
+    reviewCount: data.testimonials.quotes.length,
+  },
+}
+
+// ── Reviews (grounded in the displayed testimonials) ─────────────────────────
+const reviews = data.testimonials.quotes.map((q) => ({
+  '@type': 'Review',
+  itemReviewed: { '@id': orgId },
+  reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+  author: { '@type': 'Person', name: q.name },
+  publisher: q.role ? { '@type': 'Organization', name: q.role } : undefined,
+  reviewBody: q.quote,
+}))
+
+// ── FAQPage (the situation/answer rows read as genuine FAQs) ──────────────────
+const faq = {
+  '@type': 'FAQPage',
+  '@id': `${site}/#faq`,
+  mainEntity: data.problemSolution.rows.map((r) => ({
+    '@type': 'Question',
+    name: `${r.kicker} ${r.headline}`.trim(),
+    acceptedAnswer: { '@type': 'Answer', text: r.copy },
+  })),
+}
+
+const graph = { '@context': 'https://schema.org', '@graph': [org, faq, ...reviews] }
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />

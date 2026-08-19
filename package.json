@@ -1,0 +1,29 @@
+{
+  "name": "webeluxv2astro",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy": "astro build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4",
+    "@astrojs/react": "^4",
+    "@astrojs/sitemap": "^3",
+    "astro": "^5",
+    "react": "^18",
+    "react-dom": "^18",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^6",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "tailwindcss": "^3.4.7"
+  }
+}

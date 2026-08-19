@@ -1,0 +1,160 @@
+---
+import { getEntry } from 'astro:content'
+
+const { data } = await getEntry('pages', 'home')
+const t = data.transformation
+
+// The missing narrative beat: a three-step visual timeline (Then → Shift → Now).
+// Deliberately compact — it states the fact of the transformation in three lines
+// so the long-form "The Shift" section can carry the argument.
+//
+// Each beat gets an 8-bit glyph from the same generator as the CTA scene, chosen
+// for what the beat actually says: a floppy disk for the handoff era, a bolt for
+// the speed that broke it, a rocket already off the pad for shipping now.
+const beats = [
+  {
+    sprite: 'floppy',
+    w: 16,
+    h: 17,
+    idle: '2.4s',
+    label: 'text-ink-2',
+    dot: 'bg-ink-2',
+    text: 'text-ink-2',
+    glyphAlt: 'Floppy disk',
+    chip: false,
+  },
+  {
+    sprite: 'bolt',
+    w: 14,
+    h: 19,
+    idle: '1.6s',
+    label: 'text-ink bg-butter border-2 border-ink',
+    dot: 'bg-ink',
+    text: 'text-ink-2',
+    glyphAlt: 'Lightning bolt',
+    chip: true,
+  },
+  {
+    sprite: 'liftoff',
+    w: 14,
+    h: 24,
+    idle: '0.7s',
+    label: 'text-primary',
+    dot: 'bg-primary',
+    text: 'text-ink',
+    glyphAlt: 'Rocket lifting off',
+    chip: false,
+  },
+]
+const lastIndex = t.beats.length - 1
+---
+
+<section class="bg-cream">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-14 md:py-20">
+    <div data-reveal class="eyebrow text-ink-2 mb-12 text-center">{t.eyebrow}</div>
+
+    <!--
+      Everything in a beat is centred in its own column, so the connector has to
+      run centre-to-centre rather than from a left-aligned dot. That is what the
+      `.beat-line` offsets do: left:50% starts it at this column's centre, and
+      right:calc(-50% - gap) carries it exactly one column plus one gap further,
+      which lands on the next dot. No magic pixel values, and it stays correct
+      when the column count or container width changes.
+    -->
+    <ol class="grid md:grid-cols-3 gap-14 md:gap-6">
+      {
+        t.beats.map((b, i) => {
+          const s = beats[i] ?? beats[0]
+          return (
+            <li
+              data-reveal
+              style={`transition-delay: ${i * 0.12}s`}
+              class="beat relative flex flex-col items-center text-center"
+            >
+              {/* vertical segment on mobile — anchored to the <li> so it can
+                  reach past the bottom of this beat into the grid gap */}
+              {i < lastIndex && (
+                <span class="beat-line-v md:hidden" aria-hidden="true" />
+              )}
+
+              {/* fixed-height slot, bottom aligned: the three glyphs are
+                  different heights and the dots below them have to line up */}
+              <div class="glyph-slot flex items-end justify-center mb-6">
+                <div
+                  class="pixel-sprite pixel-sprite--poke"
+                  style={`--w:${s.w}; --h:${s.h}; --idle:${s.idle}; background-image:url('/sprites/${s.sprite}.png')`}
+                  role="img"
+                  aria-label={s.glyphAlt}
+                />
+              </div>
+
+              <div class="relative flex items-center justify-center w-full h-3.5 mb-4">
+                <span class={`w-3.5 h-3.5 rounded-full shrink-0 relative z-[1] ${s.dot}`} />
+                {i < lastIndex && <span class="beat-line hidden md:block" aria-hidden="true" />}
+              </div>
+
+              <span
+                class:list={[
+                  'font-body font-semibold text-[11px] uppercase tracking-[0.16em] mb-3',
+                  s.chip && 'px-2 py-0.5 rounded-chip',
+                  s.label,
+                ]}
+              >
+                {b.label}
+              </span>
+
+              <p class={`body-md max-w-xs ${s.text}`}>{b.text}</p>
+            </li>
+          )
+        })
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .glyph-slot {
+    height: 96px;
+  }
+  @media (max-width: 767px) {
+    .glyph-slot {
+      height: 72px;
+    }
+    .pixel-sprite {
+      --px: 3;
+    }
+  }
+
+  /* centre of this column → centre of the next (one column + one 1.5rem gap) */
+  .beat-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: calc(-50% - 1.5rem);
+    height: 1px;
+    background: rgb(62 32 2 / 0.25);
+  }
+
+  .beat-line-v {
+    position: absolute;
+    top: 116px;
+    bottom: -3.5rem;
+    left: 50%;
+    width: 1px;
+    background: rgb(62 32 2 / 0.25);
+  }
+</style>
+
+<script>
+  // Hover covers the desktop case in CSS alone; this only exists so a tap on a
+  // touch device, where :hover never fires, still plays the reaction once.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<HTMLElement>('.beat .pixel-sprite--poke').forEach((el) => {
+      el.addEventListener('click', () => {
+        if (el.classList.contains('is-reacting')) return
+        el.classList.add('is-reacting')
+        setTimeout(() => el.classList.remove('is-reacting'), 600)
+      })
+    })
+  }
+</script>

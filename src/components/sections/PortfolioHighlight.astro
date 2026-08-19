@@ -1,0 +1,143 @@
+---
+import { getEntry } from 'astro:content'
+import globalMinangImg from '../../assets/work-images/global-minang.webp'
+import upnovaImg from '../../assets/work-images/upnova.webp'
+import mvpImg from '../../assets/work-images/mvp.webp'
+import allenImg from '../../assets/work-images/allen.webp'
+import saifaImg from '../../assets/work-images/saifa.webp'
+import aliaImg from '../../assets/work-images/alia.webp'
+import uiCoreImg from '../../assets/work-images/ui-core.webp'
+
+const { data } = await getEntry('pages', 'home')
+const portfolio = data.portfolio
+
+// Every card now has its own named screenshot — no guesswork, no image
+// placeholders. Frame is 16:10 with a `cover` fill, so anything off that ratio
+// is cropped from the centre; Global Minang is the only one that is.
+const imageByIndex: (typeof globalMinangImg | null)[] = [
+  globalMinangImg, // 0 Global Minang Ventura — 1536x1024 (3:2), ~6% of the width cropped
+  upnovaImg, // 1 Upnova
+  mvpImg, // 2 MVPWorld
+  allenImg, // 3 Allen Institute for AI
+  saifaImg, // 4 Saifa AI
+  aliaImg, // 5 Aliapopups
+  uiCoreImg, // 6 UI Core
+]
+
+// Every card is the same size. The live v3 layout gives Global Minang Ventura a
+// full-width featured treatment with its own four-step breakdown; that is a
+// second layout to maintain and it buries the other six, so the grid runs flat.
+const cards = portfolio.cards.map((card, i) => ({ ...card, img: imageByIndex[i] ?? null }))
+
+// Two columns, so an odd count leaves a hole in the last row. Rather than let
+// the grid go ragged, the gap is filled with an explicit dummy tile — clearly
+// labelled, not a silently duplicated case study.
+const needsFiller = cards.length % 2 === 1
+const pad = (n: number) => String(n).padStart(2, '0')
+---
+
+<section id="work" class="bg-clay">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-32">
+    <div data-reveal class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-8">
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <span class="eyebrow text-ink-2">{portfolio.eyebrow}</span>
+          <span class="font-body font-semibold text-[11px] tracking-[0.14em] text-ink-3 tabular-nums">
+            {pad(cards.length)} SELECTED
+          </span>
+        </div>
+        <h2 class="display-lg text-ink mb-4 whitespace-pre-line">{portfolio.headline}</h2>
+        {portfolio.body && <p class="font-body text-lg text-ink-2 max-w-xl">{portfolio.body}</p>}
+      </div>
+      <a href="/work" class="btn-cream hidden md:inline-flex shrink-0">{portfolio.cta} ↗</a>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-x-6 gap-y-12">
+      {
+        cards.map((c, i) => (
+          <a
+            href={c.href}
+            data-reveal
+            style={`transition-delay: ${(i % 2) * 0.06}s`}
+            class="group block"
+          >
+            <div class="relative w-full aspect-[16/10] rounded-media overflow-hidden">
+              {c.img ? (
+                <div
+                  class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
+                  style={`background-image: url(${c.img.src});`}
+                  aria-hidden="true"
+                />
+              ) : (
+                <div class="img-placeholder absolute inset-0 rounded-media">
+                  IMAGE: {c.title} — replace with real work shot (16:10)
+                </div>
+              )}
+              <div class="absolute inset-0 rounded-media ring-1 ring-inset ring-ink/10" />
+            </div>
+
+            <div class="pt-5">
+              <div class="flex items-center gap-3 mb-3">
+                <span class="font-body font-semibold text-[11px] tracking-[0.14em] text-ink-3 tabular-nums">
+                  {pad(i + 1)}
+                </span>
+                <span class="font-body font-semibold text-[10px] uppercase tracking-[0.12em] text-primary">
+                  {c.category ?? c.tag}
+                </span>
+              </div>
+
+              <h3 class="font-display font-bold text-[19px] md:text-[22px] tracking-[-0.01em] text-ink mb-3 group-hover:text-primary transition-colors">
+                {c.title}
+              </h3>
+
+              {c.tags && (
+                <ul class="flex flex-wrap gap-2 mb-3">
+                  {c.tags.map((t) => (
+                    <li class="font-body font-semibold text-[10px] uppercase tracking-[0.1em] text-ink-2 border border-ink/20 px-2.5 py-1 rounded-chip">
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <p class="font-body text-[14px] text-ink-2 leading-relaxed max-w-prose">
+                {c.description}
+              </p>
+            </div>
+          </a>
+        ))
+      }
+
+      {
+        needsFiller && (
+          <div data-reveal class="hidden md:block" data-placeholder-tile>
+            <div class="img-placeholder w-full aspect-[16/10] rounded-media">
+              PLACEHOLDER TILE — add an eighth case study, or drop this block
+            </div>
+            <div class="pt-5">
+              <div class="flex items-center gap-3 mb-3">
+                <span class="font-body font-semibold text-[11px] tracking-[0.14em] text-ink-3 tabular-nums">
+                  {pad(cards.length + 1)}
+                </span>
+                <span class="font-body font-semibold text-[10px] uppercase tracking-[0.12em] text-ink-3">
+                  NEXT CASE STUDY
+                </span>
+              </div>
+              <h3 class="font-display font-bold text-[19px] md:text-[22px] tracking-[-0.01em] text-ink-3 mb-3">
+                Your project here
+              </h3>
+              <p class="font-body text-[14px] text-ink-3 leading-relaxed max-w-prose">
+                This tile only exists to square off the grid. Replace it with real work or remove
+                it once there is an even number of case studies.
+              </p>
+            </div>
+          </div>
+        )
+      }
+    </div>
+
+    <div class="mt-14 flex md:hidden justify-center">
+      <a href="/work" class="btn-cream">{portfolio.cta} ↗</a>
+    </div>
+  </div>
+</section>

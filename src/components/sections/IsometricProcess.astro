@@ -1,0 +1,144 @@
+---
+import { getEntry } from 'astro:content'
+
+// The process timeline, retold as a scroll-scrubbed camera flight.
+// Copy comes from the same `process` dataset HowWeWork used — the chapter
+// replaces that section, it doesn't fork the copywriting.
+const { data } = await getEntry('pages', 'home')
+const how = data.process
+
+// Scene → step mapping (assets in /public/isometric):
+//   mission   → 01 48H intake & direction
+//   hangar    → 02 Day 1–6 expert-led design + build
+//   launchpad → 03 Day 7 launch
+//   orbit     → the ongoing loop (chapter CTA)
+const chapterConfig = {
+  hint: 'scroll — plan. design. build.',
+  diveScroll: 1.3,
+  crossfade: 0.12,
+  sections: [
+    {
+      id: 'intake',
+      label: 'Scope',
+      still: '/isometric/mission.webp',
+      poster: '/isometric/mission-poster.webp',
+      posterMobile: '/isometric/mission-poster-m.webp',
+      clip: '/isometric/vid/mission.mp4',
+      clipMobile: '/isometric/vid/mission-m.mp4',
+      accent: '#2853FF',
+      scroll: 1.4,
+      linger: 0.35,
+      eyebrow: `${how.steps[0].time} — ${how.steps[0].timeLabel}`,
+      title: how.steps[0].title,
+      body: how.steps[0].description,
+      tags: how.steps[0].deliverables,
+    },
+    {
+      id: 'sprint',
+      label: 'Build',
+      still: '/isometric/hangar.webp',
+      poster: '/isometric/hangar-poster.webp',
+      posterMobile: '/isometric/hangar-poster-m.webp',
+      clip: '/isometric/vid/hangar.mp4',
+      clipMobile: '/isometric/vid/hangar-m.mp4',
+      accent: '#2853FF',
+      scroll: 1.3,
+      linger: 0.3,
+      eyebrow: `${how.steps[1].time} — ${how.steps[1].timeLabel}`,
+      title: how.steps[1].title,
+      body: how.steps[1].description,
+      tags: how.steps[1].deliverables,
+    },
+    {
+      id: 'launch',
+      label: 'Launch',
+      still: '/isometric/launchpad.webp',
+      poster: '/isometric/launchpad-poster.webp',
+      posterMobile: '/isometric/launchpad-poster-m.webp',
+      clip: '/isometric/vid/launchpad.mp4',
+      clipMobile: '/isometric/vid/launchpad-m.mp4',
+      accent: '#2853FF',
+      scroll: 1.3,
+      linger: 0.35,
+      eyebrow: `${how.steps[2].time} — ${how.steps[2].timeLabel}`,
+      title: how.steps[2].title,
+      body: how.steps[2].description,
+      tags: how.steps[2].deliverables,
+    },
+    {
+      id: 'loop',
+      label: 'Loop',
+      still: '/isometric/orbit.webp',
+      poster: '/isometric/orbit-poster.webp',
+      posterMobile: '/isometric/orbit-poster-m.webp',
+      clip: '/isometric/vid/orbit.mp4',
+      clipMobile: '/isometric/vid/orbit-m.mp4',
+      accent: '#2853FF',
+      scroll: 1.5,
+      linger: 0.45,
+      eyebrow: 'AND LOOP',
+      title: 'SHIP. LEARN. LOOP.',
+      body: how.loopCopy,
+      tags: ['Weekly cycles', 'Less friction', 'Closer to PMF'],
+      cta: {
+        primary: { label: 'START A PROJECT', href: '#contact' },
+        secondary: { label: 'SEE THE WORK', href: '#work' },
+      },
+    },
+  ],
+  connectors: [],
+  connectorsMobile: [],
+}
+---
+
+<section id="process" class="bg-ink-bg border-y-2 border-ink">
+  <!-- Server-rendered chapter intro: keeps the section H2 + supporting copy in
+       real HTML (SEO), and warms the visitor up before the pinned flight. -->
+  <div class="mx-auto max-w-page px-6 lg:px-10 pt-24 md:pt-32 pb-14">
+    <div data-reveal class="grid lg:grid-cols-[1.2fr_0.8fr] gap-8 items-end">
+      <div>
+        <div class="eyebrow text-on-ink-3 mb-3">{how.eyebrow}</div>
+        <h2 class="display-lg text-on-ink whitespace-pre-line">{how.headline}</h2>
+      </div>
+      <p class="body-md text-on-ink-2">{how.supportingCopy}</p>
+    </div>
+  </div>
+
+  <!-- The scroll chapter. JS sets the height and pins the viewport; the
+       data-sw-seo block below is the crawlable / no-JS version of the copy. -->
+  <div
+    id="process-chapter"
+    style="--sw-bg:#0A0A0A; --sw-ink:#FFFBEA; --sw-ink-soft:#FFFBEA99; --sw-accent:#2853FF; --sw-font-display:'Bricolage Grotesque',system-ui,sans-serif; --sw-font-body:Inter,system-ui,sans-serif;"
+  >
+    <div data-sw-seo class="mx-auto max-w-page px-6 lg:px-10 py-16 text-on-ink">
+      {
+        how.steps.map((s, i) => (
+          <div class="mb-10">
+            <h3 class="display-md text-on-ink mb-3">
+              {String(i + 1).padStart(2, '0')} — {s.time} · {s.title}
+            </h3>
+            <p class="body-md text-on-ink-2 max-w-2xl">{s.description}</p>
+          </div>
+        ))
+      }
+      <p class="body-md text-on-ink-2 max-w-2xl">{how.loopCopy}</p>
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ chapterConfig }}>
+  // Mount the embedded scroll-world once its script is loaded. The engine is a
+  // plain global (no module) so we lazy-inject it to keep it off the critical path.
+  ;(function () {
+    const target = document.getElementById('process-chapter')
+    if (!target) return
+    function mount() {
+      if (window.mountScrollChapter) window.mountScrollChapter(target, chapterConfig)
+    }
+    if (window.mountScrollChapter) { mount(); return }
+    const s = document.createElement('script')
+    s.src = '/isometric/scrub-chapter.js'
+    s.onload = mount
+    document.head.appendChild(s)
+  })()
+</script>

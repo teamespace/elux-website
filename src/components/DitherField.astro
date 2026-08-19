@@ -1,0 +1,203 @@
+---
+/*
+  Bayer-dithered fBm noise field — ported from the agentic-deck design system.
+  Canvas 2D, no WebGL, no dependencies. Renders an animated halftone texture
+  that brightens under the cursor.
+
+  Changes from the original:
+  - colours are passed in rather than read from a lavender-on-near-black theme,
+    so the field sits in this site's warm palette;
+  - reveal() and scramble() are dropped. BaseLayout already runs one
+    IntersectionObserver over [data-reveal], and nothing uses the text glitch.
+    Only the dither travels across.
+
+  It's a rAF loop per instance, so budget 2-3 per document. This one runs at
+  20fps, pauses when scrolled out of view, and holds still under
+  prefers-reduced-motion.
+*/
+interface Props {
+  /** must match the surface behind it — the canvas is opaque */
+  bg: string
+  /** dot colour */
+  color: string
+  /** dot size in px. 2 = fine grain, 5 = chunky */
+  pixel?: number
+  /** blob size. higher = smaller, busier blobs */
+  scale?: number
+  /** black threshold. raise for more empty space */
+  cut?: number
+  /** 'edge' fades harder (use behind body copy), 'even' removes the fade */
+  fade?: 'default' | 'edge' | 'even'
+  /** inset 0 instead of 16px — a true full-bleed field */
+  full?: boolean
+  /** canvas opacity. lower it when the field is full-bleed behind copy */
+  opacity?: number
+  /**
+   * Dots bunch up under the cursor. Only safe when the field is faint — at
+   * high opacity with dark dots it reads as a black smudge chasing the
+   * pointer rather than a glow, so it's off by default.
+   */
+  mouse?: boolean
+}
+const {
+  bg,
+  color,
+  pixel = 3,
+  scale = 2.2,
+  cut = 0.51,
+  fade = 'default',
+  full = false,
+  opacity = 0.85,
+  mouse = false,
+} = Astro.props
+---
+
+<div
+  class:list={['texture', fade !== 'default' && `texture--${fade}`, full && 'texture--full']}
+  style={`--texture-opacity:${opacity}`}
+  data-dither
+  data-dither-bg={bg}
+  data-dither-color={color}
+  data-dither-pixel={String(pixel)}
+  data-dither-scale={String(scale)}
+  data-dither-cut={String(cut)}
+  data-dither-mouse={String(mouse)}
+  aria-hidden="true"
+>
+</div>
+
+<script>
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16)
+  const hex2rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16))
+
+  const hash = (x: number, y: number) => {
+    const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453
+    return n - Math.floor(n)
+  }
+  const smooth = (t: number) => t * t * (3 - 2 * t)
+
+  function vnoise(x: number, y: number) {
+    const xi = Math.floor(x)
+    const yi = Math.floor(y)
+    const u = smooth(x - xi)
+    const v = smooth(y - yi)
+    const a = hash(xi, yi)
+    const b = hash(xi + 1, yi)
+    const c = hash(xi, yi + 1)
+    const d = hash(xi + 1, yi + 1)
+    return a + (b - a) * u + (c - a) * v + (d - b - c + a) * u * v
+  }
+
+  function fbm(x: number, y: number, t: number, oct: number) {
+    let s = 0
+    let amp = 0.5
+    let f = 1
+    let norm = 0
+    for (let i = 0; i < oct; i++) {
+      s += amp * vnoise(x * f + t * 0.35, y * f - t * 0.22)
+      norm += amp
+      f *= 2.03
+      amp *= 0.5
+    }
+    return s / norm
+  }
+
+  function dither(host: HTMLElement) {
+    const d = host.dataset
+    const o = {
+      color: d.ditherColor || '#3E2002',
+      bg: d.ditherBg || '#FCF8F0',
+      scale: +(d.ditherScale || 2.2),
+      speed: 0.02,
+      px: +(d.ditherPixel || 3),
+      oct: 3,
+      cut: +(d.ditherCut || 0.51),
+      contrast: 1.55,
+      radius: 0.14,
+      fps: 20,
+      mouse: d.ditherMouse === 'true',
+    }
+    const cv = document.createElement('canvas')
+    host.appendChild(cv)
+    const ctx = cv.getContext('2d', { alpha: false })
+    if (!ctx) return
+    ctx.imageSmoothingEnabled = false
+
+    const [br, bg_, bb] = hex2rgb(o.bg)
+    const [fr, fg_, fb] = hex2rgb(o.color)
+
+    let cols = 0
+    let rows = 0
+    let img: ImageData | null = null
+    let buf: Uint8ClampedArray | null = null
+    let t = 0
+    let last = 0
+    let live = true
+    const mouse = { x: -9, y: -9, on: false }
+
+    function resize() {
+      const r = host.getBoundingClientRect()
+      if (!r.width || !r.height) return false
+      cols = Math.max(2, Math.ceil(r.width / o.px))
+      rows = Math.max(2, Math.ceil(r.height / o.px))
+      cv.width = cols
+      cv.height = rows
+      cv.style.width = '100%'
+      cv.style.height = '100%'
+      cv.style.imageRendering = 'pixelated'
+      img = ctx!.createImageData(cols, rows)
+      buf = img.data
+      return true
+    }
+
+    function frame(now: number) {
+      requestAnimationFrame(frame)
+      if (!live || !buf) return
+      if (now - last < 1000 / o.fps) return
+      last = now
+      if (!RM) t += o.speed
+
+      const inv = 1 / cols
+      const k = o.scale * 2.2
+      for (let y = 0, i = 0; y < rows; y++) {
+        const ny = y * inv * k
+        const my = y / rows
+        for (let x = 0; x < cols; x++, i += 4) {
+          let v = (fbm(x * inv * k, ny, t, o.oct) - o.cut) * o.contrast
+          if (mouse.on) {
+            const dx = x / cols - mouse.x
+            const dy = my - mouse.y
+            const dd = (dx * dx + dy * dy) / (o.radius * o.radius)
+            if (dd < 6) v += 0.45 * Math.exp(-dd)
+          }
+          const q = Math.max(0, Math.min(1, Math.floor(v + BAYER[(y & 3) * 4 + (x & 3)])))
+          buf[i] = br + (fr - br) * q
+          buf[i + 1] = bg_ + (fg_ - bg_) * q
+          buf[i + 2] = bb + (fb - bb) * q
+          buf[i + 3] = 255
+        }
+      }
+      ctx!.putImageData(img!, 0, 0)
+    }
+
+    if (!resize()) return
+    new ResizeObserver(resize).observe(host)
+    new IntersectionObserver((e) => { live = e[0].isIntersecting }, { rootMargin: '120px' }).observe(host)
+
+    if (o.mouse && !RM) {
+      const target = host.parentElement || host
+      target.addEventListener('pointermove', (e) => {
+        const r = host.getBoundingClientRect()
+        mouse.x = ((e as PointerEvent).clientX - r.left) / r.width
+        mouse.y = ((e as PointerEvent).clientY - r.top) / r.height
+        mouse.on = true
+      })
+      target.addEventListener('pointerleave', () => { mouse.on = false })
+    }
+    requestAnimationFrame(frame)
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-dither]').forEach(dither)
+</script>

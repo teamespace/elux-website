@@ -1,0 +1,63 @@
+---
+import { getEntry } from 'astro:content'
+import ParticleSphere from '../ParticleSphere.jsx'
+import RotatingVerb from '../RotatingVerb.jsx'
+
+const { data } = await getEntry('pages', 'home')
+const hero = data.hero
+
+// The confession hero. Line 1 is the past (muted); line 2 + the first rotating
+// word is the present (full contrast). Both lines are authored (not word-split),
+// so the complete static H1 — "WE USED TO HAND OFF FIGMA FILES. NOW WE SHIP
+// PRODUCTS." — is in the raw HTML before hydration for crawlers.
+const primaryCtaText = hero.primaryCta.replace(/\s*→$/, '').trim()
+---
+
+<section class="relative isolate overflow-hidden bg-cream">
+  <div
+    class="mx-auto max-w-page px-6 lg:px-10 grid"
+    style="min-height: calc(100vh - 64px - 32px); grid-template-rows: auto 1fr auto; row-gap: clamp(20px, 3vh, 36px); padding-top: clamp(48px, 9vh, 104px); padding-bottom: clamp(32px, 5vh, 56px);"
+  >
+    <!-- ROW 1 — eyebrow chip -->
+    <div class="overflow-hidden">
+      <span data-reveal class="btn-cream inline-flex">
+        <span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+        {hero.eyebrow}
+      </span>
+    </div>
+
+    <!-- ROW 2 — headline + sphere -->
+    <div class="grid md:grid-cols-[1.3fr_0.7fr] gap-8 lg:gap-12 self-center items-center">
+      <h1 class="display-xl text-ink max-w-[15ch]">
+        <span class="block text-ink-3 line-through decoration-primary/50 decoration-2" data-reveal>{hero.headlineLine1}</span>
+        <span class="block" data-reveal style="transition-delay: 0.08s">{hero.headlineLine2}</span>
+        <span class="block" data-reveal style="transition-delay: 0.16s">
+          <RotatingVerb words={hero.rotatingWords} client:visible />
+        </span>
+      </h1>
+
+      <div
+        class="hidden md:block w-full max-w-[560px] aspect-square mx-auto"
+        data-reveal
+        style="transition-delay: 0.2s"
+      >
+        <ParticleSphere client:visible />
+      </div>
+    </div>
+
+    <!-- ROW 3 — lede + CTAs -->
+    <div class="grid md:grid-cols-[1.3fr_0.7fr] gap-6 lg:gap-8 items-end">
+      <p data-reveal class="body-lg max-w-xl text-ink-2">{hero.subheadline}</p>
+
+      <div class="flex flex-wrap items-center gap-3 lg:justify-end">
+        <a data-reveal href="#contact" class="btn-primary">
+          {primaryCtaText}
+          <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+        </a>
+        <a data-reveal href="#work" class="btn-cream" style="transition-delay: 0.08s">
+          {hero.secondaryCta}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

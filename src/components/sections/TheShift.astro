@@ -1,0 +1,52 @@
+---
+import { getEntry } from 'astro:content'
+
+const { data } = await getEntry('pages', 'home')
+const shift = data.theShift
+const headlineLines = shift.headline.split('\n')
+const bodyParas = shift.body.split('\n\n')
+---
+
+<section class="bg-ink-bg text-cream border-t-2 border-ink-bg">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-32">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-24 items-start mb-16 lg:mb-24">
+      <div data-reveal>
+        <div class="eyebrow text-cream/50 mb-6">{shift.eyebrow}</div>
+        <h2 class="display-lg text-cream">
+          {headlineLines.map((line) => (<span>{line}<br /></span>))}
+        </h2>
+      </div>
+
+      <div
+        data-reveal
+        style="transition-delay: 0.1s"
+        class="lg:pt-12 font-body text-lg text-cream/70 flex flex-col gap-6 max-w-xl"
+      >
+        {bodyParas.map((p, i) => <p class={i === 1 ? 'text-cream' : ''}>{p}</p>)}
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      {
+        shift.items.map((item, index) => (
+          <div
+            data-reveal
+            style={`transition-delay: ${index * 0.08}s`}
+            class="group relative bg-[#4E2C06] border border-line-ink rounded-chip p-8 md:p-10 hover:border-primary/50 transition-colors duration-300 overflow-hidden"
+          >
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div class="relative z-10">
+              <div class="display-md text-primary leading-none mb-6">
+                {String(index + 1).padStart(2, '0')}
+              </div>
+              <h3 class="font-display font-bold text-lg md:text-xl tracking-[-0.01em] text-cream mb-4">
+                {item.title.replace(/^\d+\s*—\s*/, '')}
+              </h3>
+              <p class="font-body text-base text-cream/70 leading-relaxed max-w-lg">{item.text}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,38 @@
+---
+// BORING-style scrolling proof strip above the nav. Pure CSS animation
+// (.marquee-track in global.css); content row rendered twice for a seamless loop.
+const ITEMS = [
+  '◆ SHIPPING SINCE 2021',
+  '◆ NOW BOOKING Q3 · 2 SLOTS OPEN',
+  '◆ JAKARTA · BALI · REMOTE',
+  "◆ WE DON'T DO BORING",
+  '◆ PRODUCT, NOT POSTERS',
+  '◆ FOUNDERS-ONLY',
+  '◆ NO DECKS · NO HANDOFFS · NO DRAMA',
+  '◆ SAY HELLO@ELUX.SPACE',
+  '◆ NOT TAKING ON 6-MONTH SPEC DOCS',
+  '◆ BUILT WITH FOUNDERS WHO SHIP',
+]
+---
+
+<div
+  class="bg-ink-bg text-cream overflow-hidden border-b border-line-ink"
+  style="height: 32px"
+  aria-label="Studio status"
+>
+  <div class="relative h-full flex items-center">
+    <div class="flex items-center marquee-track">
+      {
+        [0, 1].map(() => (
+          <div class="flex items-center gap-10 shrink-0 px-5">
+            {ITEMS.map((it) => (
+              <span class="font-body font-semibold text-[11px] uppercase tracking-[0.16em] text-cream whitespace-nowrap">
+                {it}
+              </span>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

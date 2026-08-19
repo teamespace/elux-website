@@ -1,0 +1,84 @@
+# About page — skeleton copy is LOCKED (headers, principle titles, structure).
+# Bodies are lorem with [PLACEHOLDER] prompts for Arya. The whole prose renders
+# with the FILL-ME treatment so nothing lorem ships by accident.
+
+hero:
+  eyebrow: "ABOUT ELUX SPACE"
+  headlineLine1: "WE USED TO HAND OFF FIGMA FILES."
+  headlineLine2: "NOW WE SHIP PRODUCTS."
+
+story:
+  eyebrow: "SAME STUDIO. NEW OPERATING SYSTEM."
+  chapters:
+    - label: "THEN"
+      title: "A UI/UX STUDIO THAT EARNED THE CRAFT."
+      # [PLACEHOLDER: founding year, first clients, what the studio was known for,
+      #  the 95+ products shipped the traditional way. ~150 words.]
+      body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+    - label: "THE SHIFT"
+      title: "THE HANDOFF MODEL STOPPED MAKING SENSE."
+      # [PLACEHOLDER: the moment the handoff model broke, what was tried, what
+      #  failed, why AI changed the economics of shipping. ~150 words.]
+      body: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+    - label: "NOW"
+      title: "ONE SPRINT, DESIGN TO BUILD."
+      # [PLACEHOLDER: how a sprint actually runs today, the tools, what changed for
+      #  clients, the AI-accelerates / humans-decide principle. ~150 words.]
+      body: "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt."
+
+timeline:
+  eyebrow: "THE ROAD SO FAR"
+  headline: "HOW WE GOT HERE."
+  milestones:
+    - year: "[PLACEHOLDER]"
+      title: "STUDIO FOUNDED"
+      text: "[PLACEHOLDER: how Elux started and what it set out to do.]"
+    - year: "[PLACEHOLDER]"
+      title: "95+ PRODUCTS SHIPPED"
+      text: "[PLACEHOLDER: the traditional-studio era — clients, range, reputation.]"
+    - year: "[PLACEHOLDER]"
+      title: "REBUILT AI-NATIVE"
+      text: "[PLACEHOLDER: the shift to one AI-native design-to-build sprint.]"
+    - year: "[PLACEHOLDER]"
+      title: "OUR OWN PRODUCTS"
+      text: "[PLACEHOLDER: launching PromptStash, ESFlows, ViMemory on the same workflow.]"
+
+team:
+  eyebrow: "THE PEOPLE"
+  headline: "SMALL TEAM. SHIPPED A LOT."
+  # [PLACEHOLDER: Arya decides who is public. Replace names, roles, bios, and add
+  #  photo paths in about.astro. Bios are lorem for now.]
+  members:
+    - name: "[PLACEHOLDER: name]"
+      role: "[PLACEHOLDER: role]"
+      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - name: "[PLACEHOLDER: name]"
+      role: "[PLACEHOLDER: role]"
+      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - name: "[PLACEHOLDER: name]"
+      role: "[PLACEHOLDER: role]"
+      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - name: "[PLACEHOLDER: name]"
+      role: "[PLACEHOLDER: role]"
+      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+
+principles:
+  eyebrow: "HOW WE DECIDE"
+  headline: "FOUR THINGS WE DON'T BEND ON."
+  items:
+    - title: "AI ACCELERATES, DESIGNERS DECIDE"
+      # [PLACEHOLDER: expand — AI speeds the work, experienced people make the calls.]
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    - title: "RECEIPTS OVER CLAIMS"
+      # [PLACEHOLDER: expand — every claim on the site has a checkable receipt.]
+      text: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    - title: "SHIP, THEN LOOP"
+      # [PLACEHOLDER: expand — launch first, then weekly cycles toward fit.]
+      text: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+    - title: "NOT FOR EVERYONE"
+      # [PLACEHOLDER: expand — we do our best work with a specific kind of team.]
+      text: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+closing:
+  headline: "WANT TO BUILD\nWITH US?"
+  cta: "START A PROJECT"

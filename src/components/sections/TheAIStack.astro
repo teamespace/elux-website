@@ -1,0 +1,81 @@
+---
+import { getEntry } from 'astro:content'
+import DitherField from '../DitherField.astro'
+
+const { data } = await getEntry('pages', 'home')
+const stack = data.aiStack
+
+// Dark proof section. Each tool names the job it does. Verified tools are traceable
+// to real project history; unverified ones render with the FILL-ME placeholder
+// treatment so an invented stack can never masquerade as fact. No external logo
+// CDN — self-contained and crawler-readable by design.
+//
+// Six entries fills the 3-column grid exactly twice over, so there is no ragged
+// last row to design around. Adding a seventh reintroduces one.
+---
+
+<section class="relative bg-olive text-on-ink overflow-hidden">
+  <!-- Same field as the closing CTA, tinted to this surface. On a dark
+       background the dots lift away from the cream copy rather than toward it,
+       so it can carry real weight without touching contrast. -->
+  <DitherField
+    bg="#333A1B"
+    color="#5E6B2E"
+    pixel={3}
+    scale={2.0}
+    cut={0.545}
+    fade="even"
+    full
+    opacity={0.5}
+    mouse
+  />
+
+  <div class="relative z-[1] mx-auto max-w-page px-6 lg:px-10 py-24 md:py-32">
+    <!-- max-w-5xl, not 3xl: at display-lg the first line is ~30 characters and
+         a narrower box forced it to break inside "AI-native", splitting the
+         word across two lines at the hyphen. -->
+    <div class="mb-14 max-w-5xl mx-auto text-center" data-reveal>
+      <div class="eyebrow text-butter mb-3">{stack.eyebrow}</div>
+      <h2 class="display-lg text-on-ink whitespace-pre-line">
+        {stack.headline}
+      </h2>
+      {stack.note && <p class="body-md text-on-ink-2 mt-5 max-w-2xl mx-auto">{stack.note}</p>}
+    </div>
+
+    <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {
+        stack.tools.map((tool, i) => {
+          const isPlaceholder = !tool.verified
+          return (
+            <li
+              data-reveal
+              style={`transition-delay: ${(i % 3) * 0.06}s`}
+              class:list={[
+                'border rounded-chip p-6 transition-colors duration-300',
+                tool.verified
+                  ? 'border-line-ink bg-on-ink/5 hover:border-primary/60'
+                  : 'border-danger/50 bg-on-ink/[0.02]',
+              ]}
+            >
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-display font-bold text-lg tracking-[-0.01em] text-on-ink">
+                  {tool.name}
+                </span>
+                {tool.verified ? (
+                  <span class="font-body font-semibold text-[9px] uppercase tracking-[0.14em] text-ink bg-butter px-2 py-0.5 rounded-chip">
+                    Verified
+                  </span>
+                ) : (
+                  <span class="font-body font-semibold text-[9px] uppercase tracking-[0.14em] text-cream bg-danger px-2 py-0.5 rounded-chip">
+                    Fill me
+                  </span>
+                )}
+              </div>
+              <p class:list={['body-md text-on-ink-2', isPlaceholder && 'placeholder-copy']}>{tool.job}</p>
+            </li>
+          )
+        })
+      }
+    </ul>
+  </div>
+</section>

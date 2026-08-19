@@ -1,0 +1,272 @@
+---
+// Resolving links only — no dead anchors. Insights/Blog return in Phase E.
+const menu = [
+  ['Work', '/#work'],
+  ['Services', '/#services'],
+  ['About', '/about'],
+  ['Contact', '/#contact'],
+]
+const servicesLinks = [
+  'MVP UX & UI Design',
+  'Clickable Prototype',
+  'Launch-Ready Landing',
+  'No-Code MVP Build',
+  'UX Audit & Review',
+  'Activation Flow Redesign',
+  'Design System Setup',
+]
+const industriesLinks = ['AI', 'SaaS', 'Fintech', 'Health & Wellness', 'Travel', 'Ecommerce']
+const wordmark = [...'elux.space']
+const connectLinks = [
+  ['Dribbble', 'https://dribbble.com'],
+  ['Contra', 'https://contra.com'],
+  ['Behance', 'https://behance.net'],
+  ['Instagram', 'https://instagram.com'],
+  ['Twitter', 'https://twitter.com'],
+  ['Thread', 'https://threads.net'],
+]
+---
+
+<footer class="bg-ink-bg text-on-ink">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-16 lg:py-24">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-y-12 gap-x-8">
+      <!-- Brand Col -->
+      <div class="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-10">
+        <div class="text-3xl font-display font-bold tracking-tight mb-6">
+          elux<span class="text-primary">.</span>space
+        </div>
+        <p class="body-md text-on-ink-2 max-w-sm mb-10">Skip the bloat. Build with Elux.</p>
+        <div class="flex flex-col gap-3 font-body text-[15px] text-on-ink mb-6">
+          <a href="mailto:hello@elux.space" class="hover:text-primary transition-colors">hello@elux.space</a>
+          <a href="tel:+6285156989279" class="hover:text-primary transition-colors">+62 851-5698-9279</a>
+        </div>
+        <div class="text-[13px] font-body text-on-ink-3 mb-10">Jakarta · Bali · Remote</div>
+        <div
+          class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-line-ink bg-on-ink/5"
+        >
+          <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
+          <span class="text-[11px] font-body text-on-ink-2">Booking Q3 — 2 slots open</span>
+        </div>
+      </div>
+
+      <!-- Menu -->
+      <div>
+        <h4 class="font-body font-semibold text-[10px] uppercase tracking-[0.14em] text-on-ink-3 mb-6">Menu</h4>
+        <ul class="flex flex-col gap-5 text-[14px] font-body text-on-ink-2">
+          {
+            menu.map(([label, href]) => (
+              <li>
+                <a href={href} class="hover:text-on-ink transition-colors">
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Services -->
+      <div>
+        <h4 class="font-body font-semibold text-[10px] uppercase tracking-[0.14em] text-on-ink-3 mb-6">
+          Services
+        </h4>
+        <ul class="flex flex-col gap-5 text-[14px] font-body text-on-ink-2">
+          {
+            servicesLinks.map((s) => (
+              <li>
+                <a href="/#services" class="hover:text-on-ink transition-colors">
+                  {s}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Industries -->
+      <div>
+        <h4 class="font-body font-semibold text-[10px] uppercase tracking-[0.14em] text-on-ink-3 mb-6">
+          Industries
+        </h4>
+        <ul class="flex flex-col gap-5 text-[14px] font-body text-on-ink-2">
+          {
+            industriesLinks.map((s) => (
+              <li>
+                <a href="/#services" class="hover:text-on-ink transition-colors">
+                  {s}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Connect -->
+      <div>
+        <h4 class="font-body font-semibold text-[10px] uppercase tracking-[0.14em] text-on-ink-3 mb-6">
+          Connect
+        </h4>
+        <ul class="flex flex-col gap-5 text-[14px] font-body text-on-ink-2">
+          {
+            connectLinks.map(([label, href]) => (
+              <li>
+                <a href={href} target="_blank" rel="noreferrer" class="hover:text-on-ink transition-colors">
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Finale wordmark. Decorative: the brand name is already read above.
+       Sized by measurement rather than a clamp() — a clamp can only ever
+       approximate "full width", and this has to be exact across two different
+       display fonts (Iowan on Apple, Vollkorn everywhere else) whose natural
+       widths differ. Letters animate in on a stagger, driven by the reveal
+       observer BaseLayout already runs. -->
+  <div class="mx-auto max-w-page px-6 lg:px-10 pb-8 lg:pb-12 overflow-hidden" aria-hidden="true">
+    <div data-wordmark-fit>
+      <div class="wordmark display text-on-ink select-none" data-reveal>
+        {
+          wordmark.map((ch, i) => (
+            <span
+              class:list={['wm-l', ch === '.' && 'text-primary wm-dot']}
+              style={`--i:${i}`}
+            >
+              {ch}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t border-line-ink" aria-hidden="true"></div>
+
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div class="font-body text-[13px] text-on-ink-3">© 2026 Elux Space. All rights reserved.</div>
+      <div class="flex gap-8 text-[13px] font-body text-on-ink-2">
+        <!-- [PLACEHOLDER: legal pages return in Phase E; links point home until then] -->
+        <a href="/#PLACEHOLDER-privacy" class="hover:text-on-ink transition-colors">Privacy</a>
+        <a href="/#PLACEHOLDER-terms" class="hover:text-on-ink transition-colors">Terms</a>
+        <a href="/#PLACEHOLDER-cookies" class="hover:text-on-ink transition-colors">Cookies</a>
+        <a href="/sitemap-index.xml" class="hover:text-on-ink transition-colors">Sitemap</a>
+      </div>
+      <div class="font-body text-[13px] text-on-ink-3">Built by Elux · v2026.1</div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .wordmark {
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 0.82;
+    /* placeholder until the fit script measures — never rendered at this size */
+    font-size: 100px;
+  }
+  .wm-l {
+    display: inline-block;
+  }
+
+  /* The container is the reveal trigger only; the letters carry the motion, so
+     its own fade is neutralised to avoid animating the same thing twice. */
+  :global(.js-reveal) .wordmark[data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  :global(.js-reveal) .wordmark .wm-l {
+    opacity: 0;
+    transform: translateY(0.18em);
+  }
+
+  /* The settled state is declared, not left to the animation's `forwards` fill.
+     Hover swaps the animation out, and a fill-held state would vanish the
+     moment that happened — the letters would blink out on hover. */
+  :global(.js-reveal) .wordmark.is-visible .wm-l {
+    opacity: 1;
+    transform: none;
+    animation: wm-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    animation-delay: calc(var(--i) * 45ms);
+  }
+  @keyframes wm-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.18em);
+    }
+  }
+
+  /* the dot keeps a slow beat once it has landed */
+  :global(.js-reveal) .wordmark.is-visible .wm-dot {
+    animation:
+      wm-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      wm-beat 3.4s ease-in-out 1.2s infinite;
+  }
+  @keyframes wm-beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(0.82); }
+  }
+
+  /* Hover: a wave runs left to right, both the lift and the colour staggered
+     off the same --i the entrance uses. Colour rides a transition rather than
+     the keyframes so it eases back out on its own when the pointer leaves. */
+  .wm-l {
+    transition: color 0.25s ease;
+    transition-delay: calc(var(--i) * 45ms);
+  }
+  .wordmark:hover .wm-l {
+    color: rgb(var(--accent));
+    animation: wm-wave 0.8s ease-in-out;
+    animation-delay: calc(var(--i) * 45ms);
+  }
+  @keyframes wm-wave {
+    35% {
+      transform: translateY(-0.09em);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js-reveal) .wordmark .wm-l,
+    :global(.js-reveal) .wordmark.is-visible .wm-l,
+    :global(.js-reveal) .wordmark.is-visible .wm-dot,
+    .wordmark:hover .wm-l {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // Scale the wordmark so it fills its container exactly. Measured, not
+  // guessed: the two display fonts have different natural widths, so any
+  // hard-coded clamp() would be right on one platform and wrong on the other.
+  const box = document.querySelector<HTMLElement>('[data-wordmark-fit]')
+  const mark = box?.querySelector<HTMLElement>('.wordmark')
+
+  if (box && mark) {
+    const REF = 100
+    let lastWidth = -1
+
+    const fit = (force = false) => {
+      const target = box.clientWidth
+      // Guard the ResizeObserver: resizing the text changes the box height,
+      // which would re-fire the observer and loop forever.
+      if (!target || (target === lastWidth && !force)) return
+      lastWidth = target
+      mark.style.fontSize = `${REF}px`
+      const natural = mark.getBoundingClientRect().width
+      if (natural > 0) mark.style.fontSize = `${(REF * target) / natural}px`
+    }
+
+    fit()
+    new ResizeObserver(() => fit()).observe(box)
+    // Re-measure once the webfont lands — the fallback metrics are different.
+    document.fonts?.ready.then(() => fit(true))
+  }
+</script>

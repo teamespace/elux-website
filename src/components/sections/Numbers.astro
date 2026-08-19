@@ -1,0 +1,75 @@
+---
+import { getEntry } from 'astro:content'
+
+const { data } = await getEntry('pages', 'home')
+const numbers = data.numbers
+const stats = numbers.stats
+---
+
+<section class="bg-cream">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-32">
+    <div data-reveal class="mb-10">
+      <div class="eyebrow text-ink-3">[{numbers.eyebrow}]</div>
+      {numbers.headline && <h2 class="display-lg text-ink mt-4 max-w-3xl">{numbers.headline}</h2>}
+    </div>
+
+    <!-- Equal tiles, no featured variant. The old layout had two spans and two
+         type sizes, which made the numbers hard to compare at a glance —
+         a metrics row only works if every figure is weighted the same. -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {
+        stats.map((s, i) => (
+          <div
+            data-reveal
+            style={`transition-delay: ${i * 0.06}s`}
+            class="bg-cream-3 rounded-card p-7 md:p-8 min-h-[260px] md:min-h-[300px] flex flex-col justify-between gap-10"
+          >
+            <div
+              class="display text-ink flex items-start"
+              style="font-size: clamp(52px, 5.6vw, 88px)"
+            >
+              <span class="tabular-nums leading-[0.9]" data-countup={s.value}>
+                {s.value}
+              </span>
+              {s.suffix && (
+                <span class="text-[0.3em] leading-none mt-[0.2em] ml-[0.04em]">{s.suffix}</span>
+              )}
+            </div>
+
+            <div class="font-body text-[14px] text-ink-2 leading-snug">{s.label}</div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  // Count-up enhancement. The final value is already in the HTML (crawlers and
+  // no-JS users see real numbers); this animates 0 → value on first view.
+  const tiles = document.querySelectorAll<HTMLElement>('[data-countup]')
+  if ('IntersectionObserver' in window && tiles.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue
+          const el = e.target as HTMLElement
+          const target = Number(el.dataset.countup || '0')
+          const startVal = performance.now()
+          const dur = 1600
+          const tick = (now: number) => {
+            const t = Math.min((now - startVal) / dur, 1)
+            const eased = 1 - Math.pow(1 - t, 2)
+            el.textContent = String(Math.round(eased * target))
+            if (t < 1) requestAnimationFrame(tick)
+            else el.textContent = String(target)
+          }
+          requestAnimationFrame(tick)
+          io.unobserve(el)
+        }
+      },
+      { threshold: 0.4 },
+    )
+    tiles.forEach((t) => io.observe(t))
+  }
+</script>

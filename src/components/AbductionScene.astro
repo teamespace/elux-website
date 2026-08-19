@@ -1,0 +1,480 @@
+---
+/*
+  A small 8-bit scene for the empty right-hand column of a section. Two modes:
+
+  - `ufo`  — a saucer drifts over a crawler. Click it and the beam hauls the
+             crawler up.
+  - `flag` — an astronaut walks in carrying a flag, crouches to plant it, steps
+             clear of it, a cargo ship flies in from the right and collects him,
+             then carries on out to the left. Loops.
+
+  Both live inside a fixed-size stage rather than being positioned against the
+  section. The pickups have to travel a known distance to land on target, and
+  section heights vary — percentages would reach in one section and miss in
+  another.
+
+  `flag` runs on a JS phase clock rather than one long keyframe list. Seven
+  phases, each with its own frame range and its own movement: expressing that as
+  a single CSS timeline needs a keyframe pair per walk cycle plus manual
+  percentage arithmetic on every edit. The clock is a list of durations.
+
+  Decorative, so the whole thing is aria-hidden and out of the tab order.
+*/
+interface Props {
+  mode?: 'ufo' | 'flag'
+  /** append `-dark` to sprite names — required on the olive surface */
+  dark?: boolean
+}
+const { mode = 'ufo', dark = false } = Astro.props
+const s = (name: string) => `/sprites/${name}${dark ? '-dark' : ''}.png`
+---
+
+<div class="ab-scene hidden lg:block" data-ab-scene data-mode={mode} aria-hidden="true">
+  <div class="ab-stage">
+    {
+      mode === 'ufo' && (
+        <>
+          {/* The saucer tracks the crawler on the exact same X keyframes, so the
+              two stay vertically aligned and the beam always lands. Tracking and
+              bobbing are split across two elements because both write
+              `transform` and the second declaration would win. */}
+          <div class="ab-ufo">
+            <div class="ab-ufo-bob">
+              <div
+                class="pixel-sprite pixel-sprite--poke ab-ufo-sprite"
+                style={`--w:22; --h:14; --idle:0.45s; background-image:url('${s('ufo')}')`}
+              />
+            </div>
+          </div>
+
+          <div class="ab-crawler">
+            <div
+              class="pixel-sprite ab-crawler-sprite"
+              style="--w:16; --h:14; --idle:0.5s; background-image:url('/sprites/crawler.png')"
+            />
+          </div>
+        </>
+      )
+    }
+
+    {
+      mode === 'flag' && (
+        <>
+          {/* Frames 0-3 carry the flag, 4-5 crouch, 6-7 are the empty-handed
+              walk that doubles as standing. The carried flag leaves the sprite
+              on the same beat the standalone flag rises, which is what reads as
+              planting it. */}
+          <div class="ab-walker">
+            <div
+              class="pixel-sprite ab-walk-sprite"
+              style={`--w:24; --h:30; background-image:url('${s('walker')}')`}
+            />
+          </div>
+
+          <div class="ab-flag">
+            <div
+              class="pixel-sprite ab-flag-sprite"
+              style={`--w:16; --h:26; --idle:1.1s; background-image:url('${s('flag')}')`}
+            />
+          </div>
+
+          <div class="ab-ship">
+            <div
+              class="pixel-sprite ab-ship-sprite"
+              style={`--w:32; --h:11; --idle:0.3s; background-image:url('${s('cargo')}')`}
+            />
+          </div>
+        </>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .ab-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    --px: 4;
+  }
+
+  .ab-stage {
+    position: absolute;
+    top: 18%;
+    right: 8%;
+    width: 240px;
+    height: 260px;
+  }
+
+  /* ── ufo mode ─────────────────────────────────────────────────────────── */
+  .ab-ufo,
+  .ab-crawler {
+    position: absolute;
+    left: 0;
+    animation: ab-patrol 13s ease-in-out infinite alternate;
+  }
+  .ab-ufo {
+    top: 0;
+  }
+  .ab-crawler {
+    bottom: 0;
+    margin-left: 12px;
+  }
+  @keyframes ab-patrol {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(130px);
+    }
+  }
+
+  .ab-ufo-bob {
+    animation: ab-bob 4.2s ease-in-out infinite;
+  }
+  @keyframes ab-bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-16px);
+    }
+  }
+
+  .ab-ufo-sprite {
+    pointer-events: auto;
+  }
+
+  /* Abduction. The patrol is paused rather than cleared — clearing it would
+     snap both sprites back to their start position mid-beam. */
+  .ab-scene.is-abducting .ab-ufo,
+  .ab-scene.is-abducting .ab-crawler,
+  .ab-scene.is-abducting .ab-ufo-bob {
+    animation-play-state: paused;
+  }
+  .ab-scene.is-abducting .ab-ufo-sprite {
+    animation: px-react 0.8s steps(4) 2;
+  }
+  .ab-scene.is-abducting .ab-crawler-sprite {
+    animation:
+      px-react 0.5s steps(4) infinite,
+      ab-lift 1.6s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  }
+  @keyframes ab-lift {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    18% {
+      transform: translateY(8px) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-200px) scale(0.35);
+      opacity: 0;
+    }
+  }
+  .ab-scene.is-returning .ab-crawler-sprite {
+    animation: ab-return 0.7s ease-out;
+  }
+  @keyframes ab-return {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
+
+  /* ── flag mode ────────────────────────────────────────────────────────── */
+  /* Resting state for every phase-driven element. Each phase adds its own
+     animation with `forwards`, so the end of one phase is the start of the
+     next and nothing snaps back between them. */
+  .ab-walker {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translateX(160px);
+    opacity: 0;
+  }
+
+  /* 60px is not a guess. The carried pole sits at column 18 of the 24-wide
+     walker sheet, so at 4x it lands 72px from the walker's left edge. The
+     standalone flag's pole is at column 3, i.e. 12px from its own left edge.
+     72 - 12 = 60, which puts the two poles on exactly the same pixel — the
+     handover is invisible and the flag never appears to pop into being. */
+  .ab-flag {
+    position: absolute;
+    bottom: 0;
+    left: 60px;
+    opacity: 0;
+  }
+
+  .ab-ship {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translate(360px, -130px);
+    opacity: 0;
+  }
+
+  /* frame ranges */
+  @keyframes ab-frames-walk {
+    from {
+      background-position-x: 0;
+    }
+    to {
+      background-position-x: calc(var(--w) * var(--px) * -4px);
+    }
+  }
+  @keyframes ab-frames-plant {
+    from {
+      background-position-x: calc(var(--w) * var(--px) * -4px);
+    }
+    to {
+      background-position-x: calc(var(--w) * var(--px) * -6px);
+    }
+  }
+  /* frames 6-7: the empty-handed walk cycle. Frame 7 is legs-together
+     arms-down, so parking on it is also the standing pose — one frame pair
+     covers both and nothing after the plant has a pole in it. */
+  @keyframes ab-frames-empty {
+    from {
+      background-position-x: calc(var(--w) * var(--px) * -6px);
+    }
+    to {
+      background-position-x: calc(var(--w) * var(--px) * -8px);
+    }
+  }
+
+  /* 1 — walks in from the right, carrying the flag */
+  .ab-scene[data-phase='walk'] .ab-walker {
+    opacity: 1;
+    animation: ab-march 3.4s linear forwards;
+  }
+  .ab-scene[data-phase='walk'] .ab-walk-sprite {
+    animation: ab-frames-walk 0.6s steps(4) infinite;
+  }
+  @keyframes ab-march {
+    from {
+      transform: translateX(160px);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  /* 2 — crouches. The carried flag leaves the sprite and the standalone one
+         takes over the same pixels, with no transition on either. */
+  .ab-scene[data-phase='plant'] .ab-walker {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .ab-scene[data-phase='plant'] .ab-walk-sprite {
+    animation: ab-frames-plant 0.4s steps(2) infinite;
+  }
+
+  /* 3 — steps clear, so the flag is left standing on its own */
+  .ab-scene[data-phase='step'] .ab-walker {
+    opacity: 1;
+    animation: ab-step 1.3s linear forwards;
+  }
+  .ab-scene[data-phase='step'] .ab-walk-sprite {
+    animation: ab-frames-empty 0.4s steps(2) infinite;
+  }
+  @keyframes ab-step {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-72px);
+    }
+  }
+
+  /* 4 — stands clear of it while the ship comes in */
+  .ab-scene[data-phase='stand'] .ab-walker,
+  .ab-scene[data-phase='arrive'] .ab-walker {
+    opacity: 1;
+    transform: translateX(-72px);
+  }
+  .ab-scene[data-phase='stand'] .ab-walk-sprite,
+  .ab-scene[data-phase='arrive'] .ab-walk-sprite {
+    animation: none;
+    background-position-x: calc(var(--w) * var(--px) * -7px);
+  }
+
+  /* the flag stays up from the plant until the reset */
+  .ab-scene[data-phase='plant'] .ab-flag,
+  .ab-scene[data-phase='step'] .ab-flag,
+  .ab-scene[data-phase='stand'] .ab-flag,
+  .ab-scene[data-phase='arrive'] .ab-flag,
+  .ab-scene[data-phase='board'] .ab-flag {
+    opacity: 1;
+  }
+
+  /* 5 — the ship flies in from the right and holds over him */
+  .ab-scene[data-phase='arrive'] .ab-ship {
+    animation: ab-arrive 2.2s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+  }
+  @keyframes ab-arrive {
+    from {
+      transform: translate(360px, -130px);
+      opacity: 1;
+    }
+    to {
+      transform: translate(-88px, -130px);
+      opacity: 1;
+    }
+  }
+
+  /* 6 — he is drawn up into the hold */
+  .ab-scene[data-phase='board'] .ab-ship {
+    transform: translate(-88px, -130px);
+    opacity: 1;
+  }
+  .ab-scene[data-phase='board'] .ab-walker {
+    opacity: 1;
+    animation: ab-board 1.2s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  }
+  @keyframes ab-board {
+    from {
+      transform: translateX(-72px) translateY(0) scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(-72px) translateY(-62px) scale(0.4);
+      opacity: 0;
+    }
+  }
+  .ab-scene[data-phase='board'] .ab-walk-sprite {
+    animation: none;
+    background-position-x: calc(var(--w) * var(--px) * -7px);
+  }
+
+  /* 7 — it climbs away to the upper left. A flat exit ran it straight through
+         the headline block, which reads as the ship being swallowed by the
+         copy; pitching up gets it clear of the text and out over the top of the
+         section instead. The fade only starts once it is above the text, so it
+         leaves under its own power rather than blinking out. */
+  .ab-scene[data-phase='leave'] .ab-ship {
+    animation: ab-leave 2s cubic-bezier(0.4, 0, 0.7, 0.2) forwards;
+  }
+  @keyframes ab-leave {
+    0% {
+      transform: translate(-88px, -130px);
+      opacity: 1;
+    }
+    50% {
+      transform: translate(-200px, -250px);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-330px, -430px);
+      opacity: 0;
+    }
+  }
+  .ab-scene[data-phase='leave'] .ab-flag {
+    animation: ab-unplant 0.5s ease-in 1.1s forwards;
+  }
+  @keyframes ab-unplant {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  .ab-ship-sprite {
+    animation: px-idle 0.3s steps(4) infinite;
+  }
+  .ab-flag-sprite {
+    animation: px-idle 1.1s steps(4) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ab-scene *,
+    .ab-scene *::before {
+      animation: none !important;
+    }
+    /* park the scene on the planted beat rather than an empty stage */
+    .ab-walker {
+      transform: translateX(-72px) !important;
+      opacity: 1 !important;
+    }
+    .ab-walk-sprite {
+      background-position-x: calc(var(--w) * var(--px) * -7px) !important;
+    }
+    .ab-flag {
+      opacity: 1 !important;
+    }
+    .ab-ufo-sprite {
+      cursor: default;
+    }
+  }
+</style>
+
+<script>
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  document.querySelectorAll<HTMLElement>('[data-ab-scene]').forEach((scene) => {
+    // ── ufo mode: click to abduct ──────────────────────────────────────────
+    const ufo = scene.querySelector<HTMLElement>('.ab-ufo-sprite')
+    if (ufo && !RM) {
+      ufo.addEventListener('click', () => {
+        if (scene.classList.contains('is-abducting') || scene.classList.contains('is-returning')) {
+          return
+        }
+        scene.classList.add('is-abducting')
+        setTimeout(() => {
+          scene.classList.replace('is-abducting', 'is-returning')
+          setTimeout(() => scene.classList.remove('is-returning'), 700)
+        }, 1600)
+      })
+    }
+
+    // ── flag mode: the phase clock ─────────────────────────────────────────
+    if (scene.dataset.mode !== 'flag' || RM) return
+
+    const phases: [string, number][] = [
+      ['walk', 3400],
+      ['plant', 800],
+      ['step', 1300],
+      ['stand', 1600],
+      ['arrive', 2200],
+      ['board', 1200],
+      ['leave', 2000],
+      ['reset', 700],
+    ]
+
+    let i = 0
+    let timer = 0
+    let running = false
+
+    const step = () => {
+      scene.dataset.phase = phases[i][0]
+      timer = window.setTimeout(() => {
+        i = (i + 1) % phases.length
+        step()
+      }, phases[i][1])
+    }
+
+    // Only run while on screen: this is a seven-phase loop that would otherwise
+    // tick forever in a section nobody is looking at.
+    new IntersectionObserver(
+      (entries) => {
+        const visible = entries[0].isIntersecting
+        if (visible && !running) {
+          running = true
+          i = 0
+          step()
+        } else if (!visible && running) {
+          running = false
+          clearTimeout(timer)
+          delete scene.dataset.phase
+        }
+      },
+      { threshold: 0.25 }
+    ).observe(scene)
+  })
+</script>

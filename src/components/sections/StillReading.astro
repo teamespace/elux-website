@@ -1,0 +1,61 @@
+---
+import { getEntry } from 'astro:content'
+import DitherField from '../DitherField.astro'
+import PixelScene from '../PixelScene.astro'
+
+const { data } = await getEntry('pages', 'home')
+const still = data.stillReading
+const headlineLines = still.headline.split('\n')
+---
+
+<!-- Closing CTA. Full viewport height, beige, with the dither running edge to
+     edge behind it. No top border: the section above and the footer below are
+     both dark, so the colour change is the separation. -->
+<section
+  class="relative bg-cream-3 text-ink overflow-hidden min-h-screen flex items-center"
+>
+  <!-- opacity 0.12, not the 0.45 a dark surface would take. Dark dots on a
+       light surface push the background toward the text colour instead of away
+       from it, so anything heavier drops the eyebrow and the CTA below 4.5:1
+       wherever a dot lands under them. -->
+  <DitherField
+    bg="#F1E9DA"
+    color="#3E2002"
+    pixel={3}
+    scale={2.0}
+    cut={0.545}
+    fade="even"
+    full
+    opacity={0.12}
+    mouse
+  />
+
+  <PixelScene />
+
+  <div class="relative z-[1] w-full mx-auto max-w-page px-6 lg:px-10 py-24">
+    <div data-reveal class="flex flex-col items-center text-center gap-8">
+      <div class="eyebrow text-ink-2">{still.eyebrow}</div>
+
+      <h3 class="display-lg max-w-4xl">
+        {headlineLines.map((line) => <span class="block">{line}</span>)}
+      </h3>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 mt-2">
+        <a href="mailto:project@elux.space" class="btn-primary">
+          {still.primaryCta}
+          <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+        </a>
+        {
+          still.secondaryCta && (
+            <a
+              href="#work"
+              class="font-body font-semibold text-[12px] uppercase tracking-[0.12em] text-ink hover:text-primary transition-colors px-4 py-3 border-2 border-ink rounded-full"
+            >
+              {still.secondaryCta}
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

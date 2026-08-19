@@ -1,0 +1,283 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Accent is surface-aware. Orange-on-cream needs to be darkened to stay
+     readable (#FF9D69 on cream is 1.9:1); orange-on-brown needs to stay light.
+     Every surface class re-declares the pair on its own element, so nesting
+     (a cream card inside a dark section) resolves correctly either way —
+     a declaration on the element always beats an inherited one. */
+  :root,
+  .bg-cream {
+    --accent: 169 84 31;      /* #A9541F — 5.0:1 on cream */
+    --accent-2: 138 65 21;    /* #8A4115 — hover/pressed */
+    --accent-fg: 252 248 240; /* cream text on the accent */
+  }
+  /* Clay and beige are darker than cream, so the accent goes darker with them
+     to hold 4.5:1 (#A9541F lands at 4.0 and 4.4 respectively). */
+  .bg-cream-3, .bg-clay {
+    --accent: 138 65 21;      /* #8A4115 — 5.6:1 on clay */
+    --accent-2: 110 51 15;
+    --accent-fg: 252 248 240;
+  }
+  .bg-ink, .bg-ink-bg, .bg-olive, .bg-olive-2, .text-on-ink {
+    --accent: 255 157 105;    /* #FF9D69 — 7.2:1 on brown */
+    --accent-2: 255 184 145;
+    --accent-fg: 62 32 2;     /* ink text on the accent */
+  }
+
+  html, body {
+    background-color: #FCF8F0;
+    color: #3E2002;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: #DFE3BE; color: #3E2002; }
+}
+
+/* Marquee animation defined globally so it survives Tailwind config edits
+   without needing a dev-server restart. */
+@keyframes marquee-scroll {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.marquee-track {
+  animation: marquee-scroll 90s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+/* Honour reduced-motion for the continuously-moving marquee and the blinking
+   hero cursor (the JS typing loop is guarded separately in RotatingVerb.jsx). */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none !important; }
+  .animate-blink { animation: none !important; opacity: 1 !important; }
+}
+
+@layer components {
+  /* Old-style serif, sentence case. Three sizes only — xl for the hero h1, lg
+     for every section h2, md for every h3. Nothing else sets a headline size.
+     line-height 1.02 (not the old 0.92) because sentence case has descenders
+     to clear; letter-spacing stays slightly negative to keep big type tight. */
+  .display {
+    font-family: 'Iowan Old Style', Vollkorn, Georgia, serif;
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    /* balance evens out the line lengths and stops the last line orphaning a
+       single short word. Browsers cap it at a few lines, which is exactly the
+       range headlines live in. */
+    text-wrap: balance;
+  }
+  .display-xl {
+    @apply display;
+    font-size: clamp(36px, 5.2vw, 76px);
+  }
+  .display-lg {
+    @apply display;
+    font-size: clamp(34px, 4.6vw, 64px);
+  }
+  .display-md {
+    @apply display;
+    font-size: clamp(24px, 2.6vw, 36px);
+    line-height: 1.12;
+  }
+
+  /* Eyebrows stay sans — a serif at 12px uppercase turns to mud. */
+  .eyebrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .body-lg {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.55;
+  }
+  .body-md {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* CTAs — tight chip on the surface-aware accent */
+  .btn-primary {
+    @apply inline-flex items-center gap-2.5 bg-primary rounded-chip;
+    color: rgb(var(--accent-fg));
+    padding: 10px 14px 10px 16px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+  }
+  .btn-primary:hover { background-color: rgb(var(--accent-2)); transform: translateY(-1px); }
+
+  .btn-cream {
+    @apply inline-flex items-center gap-2.5 bg-cream text-ink rounded-chip;
+    padding: 10px 14px 10px 16px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid #3E2002;
+    transition: transform 0.15s ease;
+  }
+  .btn-cream:hover { transform: translateY(-1px); }
+
+  .btn-ghost-ink {
+    @apply inline-flex items-center gap-2.5 rounded-chip;
+    padding: 10px 14px 10px 16px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #FCF8F0;
+    border: 1px solid #FCF8F040;
+    transition: border-color 0.15s ease;
+  }
+  .btn-ghost-ink:hover { border-color: #FCF8F0; }
+}
+
+/* ── Dither texture (agentic-deck) ──────────────────────────────────────────
+   The canvas is opaque, so it has to be masked rather than made transparent —
+   the mask fades the field out of the middle so copy stays readable over it. */
+.texture {
+  position: absolute;
+  inset: 16px;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.texture > canvas {
+  width: 100%;
+  height: 100%;
+  opacity: var(--texture-opacity, 0.85);
+  -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, transparent 0%, #000 78%);
+  mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, transparent 0%, #000 78%);
+}
+.texture--full { inset: 0; }
+.texture--even > canvas { -webkit-mask-image: none; mask-image: none; }
+.texture--edge > canvas {
+  -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, transparent 0%, #000 100%);
+  mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, transparent 0%, #000 100%);
+}
+
+/* ── 8-bit sprites ──────────────────────────────────────────────────────────
+   Every sheet from scripts/gen-sprites.py follows one contract: 8 frames in a
+   row, 0-3 idle and 4-7 reaction. Because the contract is fixed, one pair of
+   keyframes drives every character no matter how big its frames are — each
+   element only supplies --w, --h and an idle speed. */
+.pixel-sprite {
+  --px: 4;
+  width: calc(var(--w) * var(--px) * 1px);
+  height: calc(var(--h) * var(--px) * 1px);
+  background-repeat: no-repeat;
+  background-size: calc(var(--w) * var(--px) * 8px) calc(var(--h) * var(--px) * 1px);
+  background-position: 0 0;
+  image-rendering: pixelated;
+  animation: px-idle var(--idle, 0.8s) steps(4) infinite;
+}
+
+@keyframes px-idle {
+  from { background-position-x: 0; }
+  to   { background-position-x: calc(var(--w) * var(--px) * -4px); }
+}
+@keyframes px-react {
+  from { background-position-x: calc(var(--w) * var(--px) * -4px); }
+  to   { background-position-x: calc(var(--w) * var(--px) * -8px); }
+}
+
+/* Poke targets react on hover and hold the reaction for one cycle on tap —
+   touch devices never get a real hover, so the click class covers them. */
+.pixel-sprite--poke { cursor: pointer; }
+.pixel-sprite--poke:hover { animation: px-react 0.6s steps(4) infinite; }
+.pixel-sprite--poke.is-reacting { animation: px-react 0.6s steps(4) 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-sprite,
+  .pixel-sprite--poke:hover,
+  .pixel-sprite--poke.is-reacting {
+    animation: none;
+    background-position-x: 0;
+  }
+  .pixel-sprite--poke { cursor: default; }
+}
+
+/* ── Placeholder conventions (Phase A + D scaffolding) ──────────────────────
+   Everything Arya still has to fill is loud on purpose. Two utilities:
+   .placeholder-copy wraps lorem / draft prose (dashed danger outline + a
+   "FILL ME" corner tag). .img-placeholder is a labelled aspect-ratio block that
+   stands in for a real image — never a stock or generated picture. Both must be
+   impossible to miss in the browser and greppable in source. Launch gate:
+   `grep -ri "placeholder\|lorem\|FILL ME" src/` must return zero before deploy. */
+.placeholder-copy {
+  position: relative;
+  outline: 2px dashed #B3261E;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.placeholder-copy::before {
+  content: "FILL ME";
+  position: absolute;
+  top: -9px;
+  right: 6px;
+  background: #B3261E;
+  color: #FCF8F0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+.img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #F1E9DA;
+  color: #736049;
+  border: 2px dashed #B3261E;
+  border-radius: 4px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  padding: 16px;
+}
+.img-placeholder.on-ink {
+  background: rgba(252, 248, 240, 0.04);
+  color: rgba(252, 248, 240, 0.6);
+}
+
+/* ── Scroll reveal — progressive enhancement ────────────────────────────────
+   Replaces the legacy framer-motion `whileInView` fades with ~zero JS. Content
+   is fully visible by default (so crawlers and no-JS users get everything); the
+   hidden start-state only applies once the inline head script flags JS support
+   by adding `.js-reveal` to <html>. One IntersectionObserver (in BaseLayout)
+   toggles `.is-visible`. Honour reduced-motion. */
+.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.js-reveal [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

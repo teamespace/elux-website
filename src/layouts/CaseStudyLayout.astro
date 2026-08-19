@@ -1,0 +1,264 @@
+---
+import { Image } from 'astro:assets'
+import BaseLayout from './BaseLayout.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+
+interface PrevNext {
+  slug: string
+  title: string
+}
+interface Props {
+  data: any // the work entry's frontmatter (typed by the collection schema)
+  prev?: PrevNext | null
+  next?: PrevNext | null
+}
+
+const { data, prev, next } = Astro.props
+const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://elux.space'
+const pageTitle = `${data.client} — ${data.tagline} | Elux Space`
+const isDraft = data.draft
+
+// BreadcrumbList + CreativeWork so the case study is machine-readable.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Work', item: `${site}/work` },
+        { '@type': 'ListItem', position: 2, name: data.client },
+      ],
+    },
+    {
+      '@type': 'CreativeWork',
+      name: data.title,
+      about: data.summary,
+      creator: { '@type': 'Organization', name: 'Elux Space', url: `${site}/` },
+      // Only emit a real date — never a literal "[PLACEHOLDER]" string.
+      ...(typeof data.year === 'string' && !data.year.startsWith('[')
+        ? { dateCreated: data.year }
+        : {}),
+    },
+  ],
+}
+
+const hasResults = Array.isArray(data.results) && data.results.length > 0
+const gallery = Array.isArray(data.gallery) ? data.gallery : []
+---
+
+<BaseLayout title={pageTitle} description={data.summary} noindex={isDraft}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
+  <div class="bg-cream text-ink min-h-screen">
+    <Nav />
+
+    <main id="main">
+      <!-- 1. Hero -->
+      <section class="bg-cream border-b-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          {
+            isDraft && (
+              <span class="inline-block mb-6 font-body font-semibold text-[10px] uppercase tracking-[0.14em] text-cream bg-danger px-2 py-1 rounded-chip">
+                Draft — placeholder content
+              </span>
+            )
+          }
+          <a href="/work" class="font-body font-semibold text-[11px] uppercase tracking-[0.14em] text-ink-3 hover:text-primary transition-colors"><span aria-hidden="true">←</span> All work</a>
+          <h1 class="display-xl text-ink mt-5 mb-5">{data.client}</h1>
+          <span class="inline-block font-body font-semibold text-[11px] uppercase tracking-[0.1em] text-cream bg-primary px-3 py-1.5 rounded-chip mb-8">
+            {data.tagline}
+          </span>
+          <p class="body-lg text-ink-2 max-w-2xl mb-10">{data.summary}</p>
+
+          <dl class="grid grid-cols-2 md:grid-cols-4 gap-6 border-t-2 border-ink pt-8">
+            <div>
+              <dt class="eyebrow text-ink-3 mb-2">Year</dt>
+              <dd class="font-display font-bold text-lg text-ink">{data.year}</dd>
+            </div>
+            <div>
+              <dt class="eyebrow text-ink-3 mb-2">Timeline</dt>
+              <dd class="font-display font-bold text-lg text-ink">{data.timeline}</dd>
+            </div>
+            <div>
+              <dt class="eyebrow text-ink-3 mb-2">Services</dt>
+              <dd class="font-body text-sm text-ink-2">{data.services.join(', ') || '[PLACEHOLDER]'}</dd>
+            </div>
+            <div>
+              <dt class="eyebrow text-ink-3 mb-2">Live</dt>
+              <dd class="font-body text-sm">
+                <a href={data.liveUrl} class="text-primary hover:underline break-all">{data.liveUrl} <span aria-hidden="true">↗</span></a>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 2. Hero image -->
+      <section class="bg-cream">
+        <div class="mx-auto max-w-page px-6 lg:px-10 pt-12 md:pt-16">
+          {
+            data.heroImage ? (
+              <Image src={data.heroImage} alt={`${data.client} — project hero`} class="w-full rounded-chip border-2 border-ink" />
+            ) : (
+              <div class="img-placeholder w-full aspect-[16/9] rounded-chip">
+                IMAGE: {data.client} — hero shot (16:9). Add heroImage to the MDX frontmatter.
+              </div>
+            )
+          }
+        </div>
+      </section>
+
+      <!-- 3–4–7. The narrative prose (Challenge / Approach / Key Insight) from MDX body -->
+      <section class="bg-cream">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          <div class="prose-case placeholder-copy max-w-3xl">
+            <slot />
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Results -->
+      <section class="bg-clay border-y-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          <div class="eyebrow text-ink-3 mb-8">THE RESULTS</div>
+          {
+            hasResults ? (
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {data.results.map((r: { metric: string; label: string }) => (
+                  <div class="border-t-2 border-ink pt-5">
+                    <div class="display-lg text-primary leading-none">{r.metric}</div>
+                    <div class="body-md text-ink-2 mt-3">{r.label}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p class="placeholder-copy inline-block px-4 py-3 body-md text-ink-2">
+                [PLACEHOLDER: add real before → after metrics to `results` in the MDX frontmatter. No numbers ship until Arya confirms them.]
+              </p>
+            )
+          }
+        </div>
+      </section>
+
+      <!-- 6. Gallery -->
+      <section class="bg-cream">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          <div class="eyebrow text-ink-3 mb-8">SELECTED SCREENS</div>
+          {
+            gallery.length ? (
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {gallery.map((img: any, i: number) => (
+                  <Image src={img} alt={`${data.client} — screen ${i + 1}`} class="w-full rounded-chip border-2 border-ink" />
+                ))}
+              </div>
+            ) : (
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="img-placeholder aspect-[4/3] rounded-chip">IMAGE: {data.client} screen 1</div>
+                <div class="img-placeholder aspect-[4/3] rounded-chip">IMAGE: {data.client} screen 2</div>
+              </div>
+            )
+          }
+        </div>
+      </section>
+
+      <!-- 8. Testimonial (renders only if present) -->
+      {
+        data.testimonial && (
+          <section class="bg-ink-bg text-on-ink">
+            <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+              <blockquote class="max-w-3xl">
+                <p class="display-md text-on-ink leading-tight mb-6">“{data.testimonial.quote}”</p>
+                <footer class="font-body text-on-ink-2">
+                  <span class="text-on-ink font-semibold">{data.testimonial.name}</span> — {data.testimonial.role}
+                </footer>
+              </blockquote>
+            </div>
+          </section>
+        )
+      }
+
+      <!-- 9. Prev / next -->
+      <section class="bg-cream border-t-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-12 grid grid-cols-2 gap-6">
+          <div>
+            {
+              prev && (
+                <a href={`/work/${prev.slug}`} class="group block">
+                  <div class="eyebrow text-ink-3 mb-2"><span aria-hidden="true">←</span> Previous</div>
+                  <div class="font-display font-bold text-lg uppercase text-ink group-hover:text-primary transition-colors">{prev.title}</div>
+                </a>
+              )
+            }
+          </div>
+          <div class="text-right">
+            {
+              next && (
+                <a href={`/work/${next.slug}`} class="group block">
+                  <div class="eyebrow text-ink-3 mb-2">Next <span aria-hidden="true">→</span></div>
+                  <div class="font-display font-bold text-lg uppercase text-ink group-hover:text-primary transition-colors">{next.title}</div>
+                </a>
+              )
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. CTA -->
+      <section class="bg-cream border-t-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-20 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+          <h2 class="display-lg text-ink">HAVE SOMETHING<br />LIKE THIS?</h2>
+          <a href="/#contact" class="btn-primary">
+            START A PROJECT
+            <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>
+
+<style is:global>
+  /* Minimal prose styling for the MDX narrative body of a case study. */
+  .prose-case h2 {
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    font-weight: 700;
+    font-variation-settings: 'wdth' 85;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    font-size: clamp(24px, 3vw, 34px);
+    line-height: 1.05;
+    margin: 2.5rem 0 1rem;
+  }
+  .prose-case h2:first-child {
+    margin-top: 0;
+  }
+  .prose-case h3 {
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 18px;
+    margin: 1.75rem 0 0.5rem;
+  }
+  .prose-case p {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: #6D543C;
+    margin-bottom: 1rem;
+    max-width: 68ch;
+  }
+  .prose-case ul {
+    margin: 0 0 1rem 1.25rem;
+    list-style: disc;
+    color: #6D543C;
+  }
+  .prose-case li {
+    margin-bottom: 0.4rem;
+  }
+  .prose-case strong {
+    color: #3E2002;
+  }
+</style>

@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content'
+import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro'
+
+// One page per case study. Drafts still build locally so Arya can review them;
+// they're only held back from the sitemap + llms.txt (see astro.config + llms.txt.ts).
+export async function getStaticPaths() {
+  const entries = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order)
+
+  return entries.map((entry, i) => {
+    const prev = entries[i - 1]
+    const next = entries[i + 1]
+    return {
+      params: { slug: entry.id },
+      props: {
+        entry,
+        prev: prev ? { slug: prev.id, title: prev.data.client } : null,
+        next: next ? { slug: next.id, title: next.data.client } : null,
+      },
+    }
+  })
+}
+
+const { entry, prev, next } = Astro.props
+const { Content } = await render(entry)
+---
+
+<CaseStudyLayout data={entry.data} prev={prev} next={next}>
+  <Content />
+</CaseStudyLayout>

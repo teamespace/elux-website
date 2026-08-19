@@ -1,0 +1,223 @@
+---
+import { getEntry } from 'astro:content'
+import logoAlia from '../../assets/logo-images/logo-1.webp'
+import logoMakeWaves from '../../assets/logo-images/logo-3.webp'
+import logoLamah from '../../assets/logo-images/logo-4.webp'
+import logoAi2 from '../../assets/logo-images/logo-5.webp'
+import logoUiCore from '../../assets/logo-images/logo-8.webp'
+
+const { data } = await getEntry('pages', 'home')
+const t = data.testimonials
+
+// Only five of the fourteen companies have artwork in the repo. The rest fall
+// back to a wordmark set in the display serif rather than a grey box — an
+// honest stand-in reads better than a fake logo, and `data-placeholder-logo`
+// keeps them greppable for the launch gate.
+const logoFiles: Record<string, ImageMetadata> = {
+  Alia: logoAlia,
+  'Make Waves': logoMakeWaves,
+  Lamah: logoLamah,
+  Ai2: logoAi2,
+  'UI Core': logoUiCore,
+}
+
+const avatars = [
+  'https://media.contra.com/image/upload/w_1200,h_1200,c_fill,q_auto:best/wsg6odrnfiw5e3csu4ld',
+  'https://media.contra.com/image/upload/w_1200,h_1200,c_fill,q_auto:best/ihajtqbtnpwtv2cnmttc',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69afc6d1d6eb8c75836d2abf_Card%20Image-1.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69afc6d1c051d194e2c9a9f8_Card%20Image-2.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69afc6d10e0bf76a1afb783e_Card%20Image-3.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69afc6d12e69851c78b49005_Card%20Image-4.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69afc6d17d12de6f1b0aa60c_Card%20Image-5.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69afc6cd7fcfb5f4218c1c1a_Card%20Image-10.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69afc6d113732437f678ddab_Card%20Image-6.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69afc6d000e8a28a7db8dea2_Card%20Image.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69afc6d1e173b028620c752d_Card%20Image-11.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69b24a83ba7729cc7f10b133_Card%20Image.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69b24a82c7fe0d9cbdb2bb36_Card%20Image-1.png',
+  'https://cdn.prod.website-files.com/6989896e1913ef45a770138a/69b24a839ba094dd2c2ef383_Card%20Image-2.png',
+]
+
+type Card =
+  | {
+      kind: 'quote'
+      name: string
+      role: string
+      logo: string
+      quote: string
+      avatar?: string
+      logoFile?: ImageMetadata
+    }
+  | { kind: 'video'; id: string }
+
+// Videos are dealt into the run rather than grouped, so the strip alternates
+// reading and watching instead of front-loading both clips.
+const cards: Card[] = []
+t.quotes.forEach((q, i) => {
+  cards.push({ kind: 'quote', ...q, avatar: avatars[i], logoFile: logoFiles[q.logo] })
+  if (i % 4 === 3 && t.videoIds.length) {
+    cards.push({ kind: 'video', id: t.videoIds[Math.floor(i / 4) % t.videoIds.length] })
+  }
+})
+---
+
+<section class="bg-ink-bg overflow-hidden">
+  <div class="mx-auto max-w-page px-6 lg:px-10 pt-24 md:pt-32 pb-12">
+    <div data-reveal class="max-w-2xl">
+      <div class="eyebrow text-on-ink-3 mb-3">{t.eyebrow}</div>
+      <h2 class="display-lg text-on-ink">{t.headline}</h2>
+    </div>
+  </div>
+
+  <!--
+    Full-bleed marquee. The strip deliberately escapes the max-w-page container:
+    boxed, the last card was sliced by the container edge and read as a
+    rendering fault rather than "there is more".
+
+    The run is duplicated and translated by exactly one copy's width so the loop
+    is seamless. -50% alone lands half a gap short — with two children and a
+    20px gap the total is 2W + 20, so the travel has to be W + 20, not W + 10.
+    The second copy is aria-hidden: it is the same fourteen quotes again.
+  -->
+  <div class="t-viewport pb-24 md:pb-32" data-viewport>
+    <div class="t-marquee">
+      {[0, 1].map((copy) => (
+        <div class="t-run" aria-hidden={copy === 1 ? 'true' : undefined}>
+          {cards.map((c) =>
+            c.kind === 'video' ? (
+              <div class="t-card shrink-0 h-[380px] aspect-video rounded-card overflow-hidden relative bg-[#2A1601]">
+                {/* Poster + click-to-play, so the strip doesn't boot six
+                    autoplaying iframes for something most people scroll past. */}
+                <button
+                  type="button"
+                  class="t-play group absolute inset-0 w-full h-full"
+                  data-video={c.id}
+                  aria-label="Play client testimonial video"
+                  tabindex={copy === 1 ? -1 : undefined}
+                >
+                  <img
+                    src={`https://i.ytimg.com/vi/${c.id}/hqdefault.jpg`}
+                    alt=""
+                    loading="lazy"
+                    class="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <span class="absolute inset-0 bg-ink/25 group-hover:bg-ink/10 transition-colors" />
+                  <span class="absolute inset-0 flex items-center justify-center">
+                    <span class="w-14 h-14 rounded-full bg-cream/90 text-ink flex items-center justify-center text-[15px] pl-1 group-hover:scale-105 transition-transform">
+                      ▶
+                    </span>
+                  </span>
+                </button>
+              </div>
+            ) : (
+              <figure class="t-card shrink-0 w-[300px] md:w-[340px] h-[380px] rounded-card bg-cream text-ink border border-ink/10 p-7 flex flex-col">
+                <div class="h-6 mb-7 flex items-center">
+                  {c.logoFile ? (
+                    <img
+                      src={c.logoFile.src}
+                      alt={c.logo}
+                      loading="lazy"
+                      class="max-h-full w-auto max-w-[132px] object-contain object-left"
+                    />
+                  ) : (
+                    <span
+                      data-placeholder-logo
+                      class="font-display font-bold text-[15px] tracking-[-0.01em] text-ink-3"
+                    >
+                      {c.logo}
+                    </span>
+                  )}
+                </div>
+
+                <blockquote class="font-body text-[14px] leading-relaxed text-ink-2 overflow-hidden">
+                  "{c.quote}"
+                </blockquote>
+
+                <figcaption class="mt-auto pt-6 flex items-center gap-3">
+                  <img
+                    src={c.avatar}
+                    alt=""
+                    loading="lazy"
+                    class="w-11 h-11 rounded-full object-cover object-top border border-ink/10 shrink-0"
+                  />
+                  <div class="min-w-0">
+                    <div class="font-display font-bold text-[16px] text-ink truncate">{c.name}</div>
+                    <div class="font-body text-[12px] text-ink-3 mt-0.5 truncate">{c.role}</div>
+                  </div>
+                </figcaption>
+              </figure>
+            )
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .t-viewport {
+    overflow: hidden;
+  }
+  .t-marquee {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    padding-inline: 24px;
+    animation: t-scroll 90s linear infinite;
+    will-change: transform;
+  }
+  .t-run {
+    display: flex;
+    gap: 20px;
+  }
+  .t-marquee:hover {
+    animation-play-state: paused;
+  }
+  /* a video that has been started keeps the strip still */
+  .t-viewport.is-held .t-marquee {
+    animation-play-state: paused;
+  }
+
+  @keyframes t-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-50% - 10px));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .t-marquee {
+      padding-inline: 40px;
+    }
+  }
+
+  /* No auto-motion: hand the strip back as something you scroll yourself. */
+  @media (prefers-reduced-motion: reduce) {
+    .t-viewport {
+      overflow-x: auto;
+    }
+    .t-marquee {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const viewport = document.querySelector<HTMLElement>('[data-viewport]')
+
+  viewport?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>('.t-play')
+    if (!btn?.dataset.video) return
+    const frame = document.createElement('iframe')
+    frame.src = `https://www.youtube.com/embed/${btn.dataset.video}?autoplay=1&rel=0&modestbranding=1`
+    frame.title = 'Elux Space client testimonial'
+    frame.allow =
+      'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+    frame.allowFullscreen = true
+    frame.className = 'absolute inset-0 w-full h-full border-0'
+    btn.replaceWith(frame)
+    viewport.classList.add('is-held')
+  })
+</script>

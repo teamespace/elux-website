@@ -1,0 +1,169 @@
+---
+import { getEntry } from 'astro:content'
+
+const { data } = await getEntry('pages', 'home')
+const ai = data.aiNative
+const headlineParts = ai.headline.split('\n').map((s) => s.trim()).filter(Boolean)
+
+// Rows are index-paired: withoutItems[i] is the old way, withItems[i] is ours.
+// One grid holds both columns interleaved so each pair shares a grid row and
+// auto-sizes to the taller of the two — separate columns would drift apart as
+// soon as one side's copy wrapped to an extra line.
+//
+// Only the titles render. The `text` field on each item is still in the content
+// file and still feeds llms.txt; it just isn't shown here, because a comparison
+// table is scanned, not read, and four paragraphs a side turned it into prose.
+const rows = ai.withoutItems.map((without, i) => ({ without, with: ai.withItems[i] }))
+---
+
+<section class="bg-clay">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-32">
+    <div class="max-w-6xl mb-16" data-reveal>
+      <div class="eyebrow text-ink-3 mb-3">{ai.eyebrow}</div>
+      <h2 class="display-lg text-ink">
+        {headlineParts[0]}<br />
+        <span class="bg-primary text-cream px-3 inline-block">{headlineParts.slice(1).join(' ')}</span>
+      </h2>
+    </div>
+
+    <div class="relative" data-reveal>
+      <!-- The highlighted column is a backdrop layer, not a wrapper: the cells
+           themselves live in the shared grid above it, so both columns stay
+           row-aligned. It over-hangs the table top and bottom the way a raised
+           card does. -->
+      <div
+        class="hidden md:block absolute z-0 -top-10 -bottom-10 right-0 w-[calc(50%-0.75rem)] rounded-card comparison-card"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="relative z-[1] grid md:grid-cols-2 gap-x-6">
+        <!-- Column headers. Each carries an 8-bit glyph picked for what the
+             headline actually claims: a bar that fills to the brim and snaps
+             back for "keeps almost launching", a sealed crate with a stamped
+             check for "something real". Both are fixed-height slots with the
+             art bottom-aligned, so the two headlines still sit on one line. -->
+        <div class="pb-6 pr-2">
+          <div class="glyph-slot flex items-end mb-5">
+            <div
+              class="pixel-sprite pixel-sprite--poke"
+              style="--w:20; --h:7; --idle:1.1s; background-image:url('/sprites/progress.png')"
+              role="img"
+              aria-label="A progress bar that fills up and resets"
+            />
+          </div>
+          <div class="eyebrow text-ink-3 mb-3">{ai.withoutLabel}</div>
+          <h3 class="font-display font-bold text-[22px] md:text-[26px] tracking-[-0.01em] text-ink">
+            {ai.withoutHeadline}
+          </h3>
+        </div>
+        <div class="comparison-with pb-6 pt-10 md:pt-0 px-5 md:px-8">
+          <div class="glyph-slot flex items-end mb-5">
+            <div
+              class="pixel-sprite pixel-sprite--poke"
+              style="--w:18; --h:14; --idle:2.2s; background-image:url('/sprites/parcel.png')"
+              role="img"
+              aria-label="A sealed crate stamped with a check"
+            />
+          </div>
+          <div class="eyebrow text-ink-3 mb-3">{ai.withLabel}</div>
+          <h3 class="font-display font-bold text-[22px] md:text-[26px] tracking-[-0.01em] text-ink">
+            {ai.withHeadline}
+          </h3>
+        </div>
+
+        {
+          rows.map((row) => (
+            <>
+              <div class="flex gap-4 items-center py-5 pr-2 border-t border-ink/15">
+                <span
+                  class="shrink-0 w-7 h-7 rounded-full bg-cream flex items-center justify-center text-danger text-[13px] leading-none"
+                  aria-hidden="true"
+                >
+                  ✕
+                </span>
+                <div class="font-body font-semibold text-[15px] text-ink">{row.without.title}</div>
+              </div>
+
+              <div class="comparison-with flex gap-4 items-center py-5 px-5 md:px-8 border-t border-ink/10">
+                <span
+                  class="shrink-0 w-7 h-7 rounded-full bg-success/10 flex items-center justify-center text-success text-[13px] leading-none"
+                  aria-hidden="true"
+                >
+                  ✓
+                </span>
+                <div class="font-body font-semibold text-[15px] text-ink">{row.with.title}</div>
+              </div>
+            </>
+          ))
+        }
+
+        <!-- result lines -->
+        <div class="pt-6 pr-2 border-t border-ink/15">
+          <div class="font-body font-semibold text-xs uppercase tracking-[0.12em] text-ink-2">
+            {ai.withoutResult}
+          </div>
+        </div>
+        <div class="comparison-with pt-6 pb-2 px-5 md:px-8 border-t border-ink/10">
+          <div class="font-body font-semibold text-xs uppercase tracking-[0.12em] text-ink">
+            {ai.withResult}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* The two glyphs are different heights (28px vs 56px at 4x); a fixed slot
+     with the art bottom-aligned keeps both headlines on the same baseline. */
+  .glyph-slot {
+    height: 56px;
+  }
+  @media (max-width: 767px) {
+    .glyph-slot {
+      height: 42px;
+    }
+    .pixel-sprite {
+      --px: 3;
+    }
+  }
+
+  /* Flat cream, not a gradient. The gradient's lower stops forced every piece of
+     copy in this column up to full-strength ink to stay above 4.5:1, which flattened
+     its own hierarchy. A white card lifts off the clay on its own. */
+  .comparison-card {
+    background: #fcf8f0;
+    box-shadow: 0 20px 50px -24px rgba(62, 32, 2, 0.45);
+  }
+
+  /* Mobile: the columns stack, so the backdrop can't span them. The "with"
+     cells carry the fill themselves and the stack reads as alternating
+     old-way / our-way pairs. */
+  @media (max-width: 767px) {
+    .comparison-card {
+      display: none;
+    }
+    .comparison-with {
+      background: #fcf8f0;
+    }
+    .comparison-with:first-of-type {
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+    }
+  }
+</style>
+
+<script>
+  // Hover is handled in CSS; this only covers taps on touch devices, where
+  // :hover never fires.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<HTMLElement>('.glyph-slot .pixel-sprite--poke').forEach((el) => {
+      el.addEventListener('click', () => {
+        if (el.classList.contains('is-reacting')) return
+        el.classList.add('is-reacting')
+        setTimeout(() => el.classList.remove('is-reacting'), 600)
+      })
+    })
+  }
+</script>

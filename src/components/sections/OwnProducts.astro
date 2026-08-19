@@ -1,0 +1,73 @@
+---
+import { getEntry } from 'astro:content'
+import saasImg from '../../assets/work-images/saas.webp'
+
+const { data } = await getEntry('pages', 'home')
+const own = data.ownProducts
+const products = own.products.map((p) => ({
+  ...p,
+  tags: p.tag.split('·').map((t) => t.trim()),
+  img: saasImg,
+}))
+---
+
+<section id="own-products" class="bg-cream border-t-2 border-ink">
+  <div class="mx-auto max-w-page px-6 lg:px-10 pt-24 md:pt-32 pb-16 md:pb-24">
+    <div data-reveal class="flex flex-col md:flex-row md:items-end justify-between mb-16 md:mb-24 gap-8">
+      <div>
+        <div class="eyebrow text-ink-3 mb-3">[{own.eyebrow}]</div>
+        <h2 class="display-lg text-ink mb-4">{own.headline}</h2>
+        <p class="font-body text-lg text-ink-2 max-w-xl">{own.body}</p>
+      </div>
+      <a href="#own-products" class="btn-primary hidden md:inline-flex shrink-0">{own.cta} ↗</a>
+    </div>
+
+    <div class="flex flex-col gap-24 md:gap-32">
+      {
+        products.map((product) => (
+          <div data-reveal class="w-full flex flex-col group">
+            <div class="w-full aspect-[4/3] md:aspect-[21/9] rounded-chip relative overflow-hidden mb-8 md:mb-10 cursor-pointer border-2 border-ink/5 bg-ink">
+              <img
+                src={product.img.src}
+                alt={product.title}
+                loading="lazy"
+                class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+              />
+              <div class="absolute inset-0 bg-ink/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
+                <div class="w-16 h-16 rounded-full bg-cream text-ink flex items-center justify-center shadow-2xl scale-50 group-hover:scale-100 transition-transform duration-500 ease-out">
+                  <span class="text-2xl leading-none">↗</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-[1fr_1.5fr] gap-6 md:gap-12 px-2 md:px-4">
+              <div>
+                <h3 class="display-md text-ink mb-4">{product.title}</h3>
+                <div class="flex flex-wrap gap-2">
+                  {product.tags.map((tag) => (
+                    <span class="font-body font-semibold text-[10px] uppercase tracking-[0.14em] text-primary bg-primary/10 px-3 py-1.5 rounded-chip">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div class="flex flex-col justify-between md:pt-2">
+                <p class="font-body text-lg md:text-xl text-ink-2 max-w-xl mb-6 md:mb-8 leading-relaxed">
+                  {product.description}
+                </p>
+                <div class="font-body font-semibold text-[11px] md:text-xs uppercase tracking-widest text-ink-3 flex items-center gap-3 border-t border-ink/10 pt-4 md:pt-6">
+                  {product.status.includes('Live') && <span class="w-2 h-2 rounded-full bg-success animate-pulse" />}
+                  {product.status} <span class="text-ink/20 mx-2">|</span> {product.link}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-20 flex justify-center md:hidden">
+      <a href="#own-products" class="btn-primary inline-flex">SEE ALL PRODUCTS ↗</a>
+    </div>
+  </div>
+</section>

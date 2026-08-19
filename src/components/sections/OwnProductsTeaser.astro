@@ -1,0 +1,49 @@
+---
+import { getEntry } from 'astro:content'
+
+// Slim teaser strip — the full Own Products showcase lives on /about#products.
+// Keeps the "we ship our own products" proof point on the homepage at a
+// fraction of the scroll cost of the full section.
+//
+// The list reads `short`, not `description`. The long copy stays in the content
+// file for /about and llms.txt; a two-column row only has space for one line.
+const { data } = await getEntry('pages', 'home')
+const own = data.ownProducts
+---
+
+<section class="bg-clay">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-20 md:py-24">
+    <div data-reveal class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+      <div>
+        <div class="eyebrow text-ink-3 mb-3">{own.eyebrow}</div>
+        <h2 class="display-lg text-ink mb-8">{own.headline}</h2>
+        <a href="/about#products" class="btn-cream">
+          {own.cta}
+          <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+        </a>
+      </div>
+
+      <div>
+        <!-- Name left, one-liner right, hairline between. The rows are a
+             definition list because that is what they are — a term and its
+             description, not a bulleted list. -->
+        <dl class="border-t border-ink/15">
+          {
+            own.products.map((p) => (
+              <div class="flex items-baseline justify-between gap-6 py-5 border-b border-ink/15">
+                <dt class="font-body font-semibold text-[13px] uppercase tracking-[0.12em] text-ink shrink-0">
+                  {p.title}
+                </dt>
+                <dd class="font-body text-[14px] text-ink-2 text-right">
+                  {p.short ?? p.description}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        {own.closing && <p class="font-display text-[19px] md:text-[21px] text-ink mt-8">{own.closing}</p>}
+      </div>
+    </div>
+  </div>
+</section>

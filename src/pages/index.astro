@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import JsonLd from '../components/JsonLd.astro'
+import Marquee from '../components/Marquee.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+
+import Hero from '../components/sections/Hero.astro'
+import TrustStrip from '../components/sections/TrustStrip.astro'
+import TransformationStrip from '../components/sections/TransformationStrip.astro'
+import Numbers from '../components/sections/Numbers.astro'
+import HowAINativeSolvesIt from '../components/sections/HowAINativeSolvesIt.astro'
+import HowWeWork from '../components/sections/HowWeWork.astro'
+import TheAIStack from '../components/sections/TheAIStack.astro'
+import PortfolioHighlight from '../components/sections/PortfolioHighlight.astro'
+import OwnProductsTeaser from '../components/sections/OwnProductsTeaser.astro'
+import ServicesByStage from '../components/sections/ServicesByStage.astro'
+import TestimonialsV2 from '../components/sections/TestimonialsV2.astro'
+import WhoWereNotFor from '../components/sections/WhoWereNotFor.astro'
+import Contact from '../components/sections/Contact.astro'
+import StillReading from '../components/sections/StillReading.astro'
+---
+
+<BaseLayout>
+  <JsonLd slot="head" />
+
+  <!-- overflow-x-clip (not -hidden): hidden would turn this wrapper into a
+       scroll container and break position:sticky inside it. -->
+  <div class="min-h-screen text-ink overflow-x-clip">
+    <!-- Footer in normal document flow (the old fixed "curtain reveal" was cut:
+         it duplicated the footer in the DOM, put footer links first in tab order,
+         and clipped the tall footer on short/mobile viewports). -->
+    <div class="w-full min-w-0">
+      <div class="bg-cream">
+        <Marquee />
+        <Nav />
+        <main id="main">
+          <Hero />
+          <TrustStrip />
+          <TransformationStrip />
+          <Numbers />
+          <HowAINativeSolvesIt />
+          <HowWeWork />
+          <TheAIStack />
+          <PortfolioHighlight />
+          <OwnProductsTeaser />
+          <ServicesByStage />
+          <TestimonialsV2 />
+          <WhoWereNotFor />
+          <Contact />
+          <StillReading />
+        </main>
+      </div>
+
+      <Footer />
+    </div>
+  </div>
+</BaseLayout>

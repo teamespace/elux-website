@@ -1,0 +1,144 @@
+---
+import { getEntry } from 'astro:content'
+import AbductionScene from '../AbductionScene.astro'
+
+const { data } = await getEntry('pages', 'home')
+const services = data.services
+const stages = services.stages // [{ key, headline, sprint, copy, cta, services[] }]
+const slug = (k: string) => k.toLowerCase()
+---
+
+<section id="services" class="relative bg-clay overflow-hidden">
+  <AbductionScene mode="ufo" />
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-32">
+    <div data-reveal class="mb-12">
+      <div class="eyebrow text-ink-3 mb-3">{services.eyebrow}</div>
+      <h2 class="display-lg text-ink max-w-4xl mb-6 whitespace-pre-line">{services.headline}</h2>
+      <p class="font-body text-xl text-ink-2 max-w-3xl leading-relaxed">{services.supportingCopy}</p>
+    </div>
+
+    <!-- CSS-only tabs: every stage's copy is in the DOM; no JS needed to switch. -->
+    <div class="svc-tabs">
+      {
+        stages.map((s, i) => (
+          <input
+            type="radio"
+            name="svc-stage"
+            id={`svc-${slug(s.key)}`}
+            class="svc-radio"
+            checked={i === 0}
+          />
+        ))
+      }
+
+      <div role="tablist" class="flex flex-wrap gap-2 mb-12">
+        {
+          stages.map((s, i) => (
+            <label
+              for={`svc-${slug(s.key)}`}
+              data-stage={slug(s.key)}
+              class="svc-tab flex items-center gap-3 px-5 py-3 border-2 border-ink rounded-chip font-body font-semibold uppercase text-[13px] tracking-[0.08em] cursor-pointer transition-colors"
+            >
+              <span class="svc-tab-num text-xs">0{i + 1}</span>
+              {s.key}
+            </label>
+          ))
+        }
+      </div>
+
+      <div class="svc-panels">
+        {
+          stages.map((s) => (
+            <div class="svc-panel" data-stage={slug(s.key)}>
+              <div class="mb-8 grid lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-16 items-start">
+                <h3 class="display-md text-ink whitespace-pre-line">{s.headline}</h3>
+                <div class="lg:pt-2">
+                  {s.sprint && <div class="font-body italic text-ink-3 mb-4">{s.sprint}</div>}
+                  <p class="font-body text-lg text-ink-2 leading-relaxed mb-6">{s.copy}</p>
+                  <a href="#contact" class="btn-primary inline-flex">{s.cta} ↗</a>
+                </div>
+              </div>
+
+              <div class="border-t-2 border-ink grid md:grid-cols-2 gap-0 md:gap-x-8 lg:gap-x-12">
+                {s.services.map((item, i) => {
+                  const m = item.title.match(/^(\d+)\s+(.*)$/)
+                  const num = m ? m[1] : `0${i + 1}`
+                  const title = m ? m[2] : item.title
+                  return (
+                    <details class="svc-item border-b-2 border-ink group">
+                      <summary class="grid grid-cols-[auto_1fr_auto] gap-4 md:gap-5 py-5 md:py-6 items-center cursor-pointer list-none">
+                        <span class="font-body font-semibold text-[11px] text-ink-3 tabular-nums w-6">{num}</span>
+                        <span class="font-display font-bold text-lg md:text-xl tracking-[-0.01em] group-hover:text-primary transition-colors pr-2 md:pr-4">
+                          {title}
+                        </span>
+                        <span class="svc-plus w-8 h-8 md:w-9 md:h-9 rounded-chip border-2 border-ink flex items-center justify-center transition-all duration-300 group-hover:border-primary group-hover:text-primary">
+                          +
+                        </span>
+                      </summary>
+                      <div class="pb-6 pl-10 md:pl-14 pr-8 md:pr-12 font-body text-base md:text-lg text-ink-2 leading-relaxed">
+                        {item.text}
+                      </div>
+                    </details>
+                  )
+                })}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .svc-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* Default tab look */
+  .svc-tab {
+    background: #FCF8F0; /* cream */
+    color: #3E2002; /* ink */
+  }
+  /* Hover lifts to pure white rather than down to cream-3. On the clay
+     background a darker hover read as the tab being greyed out; going brighter
+     than the resting cream is the only direction that reads as "live". */
+  .svc-tab:hover {
+    background: #FFFFFF;
+  }
+  .svc-tab-num {
+    color: #736049; /* ink-3 */
+  }
+  /* Panels: hidden unless their stage radio is checked */
+  .svc-panel {
+    display: none;
+  }
+  #svc-seed:checked ~ .svc-panels .svc-panel[data-stage='seed'],
+  #svc-growth:checked ~ .svc-panels .svc-panel[data-stage='growth'],
+  #svc-scale:checked ~ .svc-panels .svc-panel[data-stage='scale'] {
+    display: block;
+  }
+  /* Active tab styling per checked radio */
+  #svc-seed:checked ~ [role='tablist'] .svc-tab[data-stage='seed'],
+  #svc-growth:checked ~ [role='tablist'] .svc-tab[data-stage='growth'],
+  #svc-scale:checked ~ [role='tablist'] .svc-tab[data-stage='scale'] {
+    background: #3E2002; /* ink */
+    color: #FCF8F0; /* cream */
+  }
+  #svc-seed:checked ~ [role='tablist'] .svc-tab[data-stage='seed'] .svc-tab-num,
+  #svc-growth:checked ~ [role='tablist'] .svc-tab[data-stage='growth'] .svc-tab-num,
+  #svc-scale:checked ~ [role='tablist'] .svc-tab[data-stage='scale'] .svc-tab-num {
+    color: rgb(var(--accent)); /* primary */
+  }
+  /* Accordion open state: rotate the plus, tint primary */
+  .svc-item[open] .svc-plus {
+    background: rgb(var(--accent));
+    color: #FCF8F0;
+    border-color: rgb(var(--accent));
+    transform: rotate(45deg);
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>

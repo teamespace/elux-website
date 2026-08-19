@@ -1,0 +1,70 @@
+---
+import { getEntry } from 'astro:content'
+
+const { data } = await getEntry('pages', 'home')
+const problem = data.problemSolution
+
+// Each situation carries a key into the contact form's hidden field so we know
+// which door the visitor came through. Keyed by row id (01–04).
+const situationByRow: Record<string, string> = {
+  '01': 'know-what-you-need',
+  '02': 'need-ai-team',
+  '03': 'fix-the-output',
+  '04': 'scale-with-ai',
+}
+---
+
+<section class="bg-cream">
+  <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-32">
+    <div data-reveal class="max-w-6xl mb-14">
+      <div class="eyebrow text-ink-3 mb-3">{problem.eyebrow}</div>
+      <h2 class="display-lg text-ink whitespace-pre-line">{problem.headline}</h2>
+    </div>
+
+    <div class="flex flex-col gap-5">
+      {
+        problem.rows.map((r, i) => (
+          <div
+            data-reveal
+            style={`transition-delay: ${i * 0.08}s`}
+            class="group grid lg:grid-cols-[auto_1fr_auto] gap-8 items-center border-2 border-ink rounded-chip p-8 md:p-10 bg-cream-3 hover:bg-ink-bg transition-colors duration-300 cursor-pointer"
+          >
+            <div class="display-md text-primary leading-none">{r.id}</div>
+            <div class="flex-1">
+              <div class="font-body font-semibold text-[11px] uppercase tracking-[0.14em] mb-2 text-primary">
+                {r.kicker}
+              </div>
+              <h3 class="display-md mb-3 text-ink group-hover:text-cream transition-colors duration-300">
+                {r.headline}
+              </h3>
+              <p class="body-md max-w-xl text-ink-2 group-hover:text-on-ink-2 transition-colors duration-300">
+                {r.copy}
+              </p>
+            </div>
+            <a
+              href="#contact"
+              data-situation={situationByRow[r.id] ?? ''}
+              class="btn-cream group-hover:btn-primary transition-all duration-300"
+            >
+              {r.cta}
+              <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+            </a>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  // On a situation CTA click, stash the key in the contact form's hidden field
+  // before the native #contact jump happens. No reload, no query string.
+  ;(function () {
+    document.querySelectorAll('[data-situation]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var field = document.getElementById('contact-situation')
+        if (field) field.value = el.getAttribute('data-situation') || ''
+      })
+    })
+  })()
+</script>
