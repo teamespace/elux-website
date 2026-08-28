@@ -1,6 +1,6 @@
 ---
 import { getEntry } from 'astro:content'
-import ParticleSphere from '../ParticleSphere.jsx'
+import BitmapRobot from '../BitmapRobot.jsx'
 import RotatingVerb from '../RotatingVerb.jsx'
 
 const { data } = await getEntry('pages', 'home')
@@ -26,7 +26,7 @@ const primaryCtaText = hero.primaryCta.replace(/\s*→$/, '').trim()
       </span>
     </div>
 
-    <!-- ROW 2 — headline + sphere -->
+    <!-- ROW 2 — headline + illustration -->
     <div class="grid md:grid-cols-[1.3fr_0.7fr] gap-8 lg:gap-12 self-center items-center">
       <h1 class="display-xl text-ink max-w-[15ch]">
         <span class="block text-ink-3 line-through decoration-primary/50 decoration-2" data-reveal>{hero.headlineLine1}</span>
@@ -41,7 +41,7 @@ const primaryCtaText = hero.primaryCta.replace(/\s*→$/, '').trim()
         data-reveal
         style="transition-delay: 0.2s"
       >
-        <ParticleSphere client:visible />
+        <BitmapRobot client:visible />
       </div>
     </div>
 
