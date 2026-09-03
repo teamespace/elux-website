@@ -2,7 +2,6 @@
 import { getEntry } from 'astro:content'
 import globalMinangImg from '../../assets/work-images/gmv/mockup-1.png'
 import upnovaImg from '../../assets/work-images/upnova/upnova-cover.png'
-import mvpImg from '../../assets/work-images/mvp.webp'
 import allenImg from '../../assets/work-images/allen.webp'
 import saifaImg from '../../assets/work-images/saifa.webp'
 import aliaImg from '../../assets/work-images/alia.webp'
@@ -16,7 +15,7 @@ const portfolio = data.portfolio
 const imageByIndex: (typeof globalMinangImg | null)[] = [
   globalMinangImg, // 0 Global Minang Ventura — 1536x1024 (3:2), ~6% of the width cropped
   upnovaImg, // 1 Upnova
-  mvpImg, // 2 MVPWorld
+  null, // 2 Travelcircus — no cover shot uploaded yet, renders the placeholder block
   allenImg, // 3 Allen Institute for AI
   saifaImg, // 4 Saifa AI
   aliaImg, // 5 Aliapopups

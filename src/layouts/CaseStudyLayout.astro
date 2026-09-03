@@ -149,7 +149,7 @@ const gallery = Array.isArray(data.gallery) ? data.gallery : []
             gallery.length ? (
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {gallery.map((img: any, i: number) => (
-                  <Image src={img} alt={`${data.client} — screen ${i + 1}`} class="w-full rounded-chip border-2 border-ink" />
+                  <Image src={img} alt={`${data.client} — screen ${i + 1}`} class="w-full aspect-[4/3] object-cover rounded-chip" />
                 ))}
               </div>
             ) : (
