@@ -88,10 +88,14 @@ const hasServices = Array.isArray(data.services) && data.services.length > 0
                 </div>
               )
             }
-            <div>
-              <dt class="eyebrow text-ink-3 mb-2">Timeline</dt>
-              <dd class="font-display font-bold text-lg text-ink">{hasTimeline ? data.timeline : 'Placeholder'}</dd>
-            </div>
+            {
+              hasTimeline && (
+                <div>
+                  <dt class="eyebrow text-ink-3 mb-2">Timeline</dt>
+                  <dd class="font-display font-bold text-lg text-ink">{data.timeline}</dd>
+                </div>
+              )
+            }
             {
               hasServices && (
                 <div>
@@ -147,6 +151,10 @@ const hasServices = Array.isArray(data.services) && data.services.length > 0
                     <div class="body-md text-ink-2 mt-3">{r.label}</div>
                   </div>
                 ))}
+                <div class="placeholder-copy border-t-2 border-ink pt-5">
+                  <div class="display-md text-ink-3">Third result</div>
+                  <div class="body-md text-ink-2 mt-3">Add a third metric once it's confirmed.</div>
+                </div>
               </div>
             ) : (
               <p class="placeholder-copy inline-block px-4 py-3 body-md text-ink-2">
