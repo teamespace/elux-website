@@ -115,7 +115,7 @@ const hasServices = Array.isArray(data.services) && data.services.length > 0
         <div class="mx-auto max-w-page px-6 lg:px-10 pt-12 md:pt-16">
           {
             data.heroImage ? (
-              <Image src={data.heroImage} alt={`${data.client} — project hero`} class="w-full rounded-chip border-2 border-ink" />
+              <Image src={data.heroImage} alt={`${data.client} — project hero`} class="w-full rounded-chip" />
             ) : (
               <div class="img-placeholder w-full aspect-[16/9] rounded-chip">
                 IMAGE: {data.client} — hero shot (16:9). Add heroImage to the MDX frontmatter.
