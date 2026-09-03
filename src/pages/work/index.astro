@@ -5,10 +5,10 @@ import Nav from '../../components/Nav.astro'
 import Footer from '../../components/Footer.astro'
 import gmvVideo from '../../assets/work-images/gmv/cover.mp4'
 
-// All case studies, featured first, then by order. Drafts still show locally
-// (no image required — they render the same placeholder block the homepage
-// grid uses) but stay out of the sitemap + llms.txt (see astro.config).
-const entries = (await getCollection('work')).sort((a, b) => {
+// Published case studies only — drafts (lorem ipsum scaffolds like ui-core)
+// stay off this page the same way they stay out of the sitemap + llms.txt.
+// Featured first, then by order.
+const entries = (await getCollection('work', ({ data }) => !data.draft)).sort((a, b) => {
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1
   return a.data.order - b.data.order
 })
@@ -21,7 +21,7 @@ const cards = entries.map((e) => ({
   title: e.data.client,
   href: `/work/${e.id}`,
   category: e.data.tagline,
-  tags: e.data.draft ? [...e.data.services, 'DRAFT'] : e.data.services,
+  tags: e.data.services,
   description: e.data.summary,
   img: e.data.heroImage ?? null,
   video: e.id === 'global-minang-ventura' ? gmvVideo : null,
