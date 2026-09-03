@@ -45,6 +45,14 @@ const jsonLd = {
 
 const hasResults = Array.isArray(data.results) && data.results.length > 0
 const gallery = Array.isArray(data.gallery) ? data.gallery : []
+
+// Fields still holding a "[PLACEHOLDER: ...]" flag from the draft scaffold render
+// nothing rather than the literal bracket text — same rule the JSON-LD block
+// already applies to `year`.
+const isFilled = (v: unknown) => typeof v === 'string' && v.length > 0 && !v.startsWith('[')
+const hasYear = isFilled(data.year)
+const hasTimeline = isFilled(data.timeline)
+const hasServices = Array.isArray(data.services) && data.services.length > 0
 ---
 
 <BaseLayout title={pageTitle} description={data.summary} noindex={isDraft}>
@@ -72,18 +80,30 @@ const gallery = Array.isArray(data.gallery) ? data.gallery : []
           <p class="body-lg text-ink-2 max-w-2xl mb-10">{data.summary}</p>
 
           <dl class="grid grid-cols-2 md:grid-cols-4 gap-6 border-t-2 border-ink pt-8">
-            <div>
-              <dt class="eyebrow text-ink-3 mb-2">Year</dt>
-              <dd class="font-display font-bold text-lg text-ink">{data.year}</dd>
-            </div>
-            <div>
-              <dt class="eyebrow text-ink-3 mb-2">Timeline</dt>
-              <dd class="font-display font-bold text-lg text-ink">{data.timeline}</dd>
-            </div>
-            <div>
-              <dt class="eyebrow text-ink-3 mb-2">Services</dt>
-              <dd class="font-body text-sm text-ink-2">{data.services.join(', ') || '[PLACEHOLDER]'}</dd>
-            </div>
+            {
+              hasYear && (
+                <div>
+                  <dt class="eyebrow text-ink-3 mb-2">Year</dt>
+                  <dd class="font-display font-bold text-lg text-ink">{data.year}</dd>
+                </div>
+              )
+            }
+            {
+              hasTimeline && (
+                <div>
+                  <dt class="eyebrow text-ink-3 mb-2">Timeline</dt>
+                  <dd class="font-display font-bold text-lg text-ink">{data.timeline}</dd>
+                </div>
+              )
+            }
+            {
+              hasServices && (
+                <div>
+                  <dt class="eyebrow text-ink-3 mb-2">Services</dt>
+                  <dd class="font-body text-sm text-ink-2">{data.services.join(', ')}</dd>
+                </div>
+              )
+            }
             <div>
               <dt class="eyebrow text-ink-3 mb-2">Live</dt>
               <dd class="font-body text-sm">
@@ -127,7 +147,7 @@ const gallery = Array.isArray(data.gallery) ? data.gallery : []
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {data.results.map((r: { metric: string; label: string }) => (
                   <div class="border-t-2 border-ink pt-5">
-                    <div class="display-lg text-primary leading-none">{r.metric}</div>
+                    <div class="display-md text-primary">{r.metric}</div>
                     <div class="body-md text-ink-2 mt-3">{r.label}</div>
                   </div>
                 ))}
