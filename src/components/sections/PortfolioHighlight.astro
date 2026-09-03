@@ -1,10 +1,12 @@
 ---
 import { getEntry } from 'astro:content'
 import globalMinangImg from '../../assets/work-images/gmv/mockup-1.png'
+import gmvVideo from '../../assets/work-images/gmv/cover.mp4'
 import upnovaImg from '../../assets/work-images/upnova/upnova-cover.png'
 import allenImg from '../../assets/work-images/allen.webp'
-import saifaImg from '../../assets/work-images/saifa.webp'
-import aliaImg from '../../assets/work-images/alia.webp'
+import saifaImg from '../../assets/work-images/saifa/cover-image.png'
+import aliaImg from '../../assets/work-images/alia/mockup-1.png'
+import travelcircusImg from '../../assets/work-images/travelcircus/cover.png'
 
 const { data } = await getEntry('pages', 'home')
 const portfolio = data.portfolio
@@ -15,16 +17,28 @@ const portfolio = data.portfolio
 const imageByIndex: (typeof globalMinangImg | null)[] = [
   globalMinangImg, // 0 Global Minang Ventura — 1536x1024 (3:2), ~6% of the width cropped
   upnovaImg, // 1 Upnova
-  null, // 2 Travelcircus — no cover shot uploaded yet, renders the placeholder block
+  travelcircusImg, // 2 Travelcircus
   allenImg, // 3 Allen Institute for AI
   saifaImg, // 4 Saifa AI
   aliaImg, // 5 Aliapopups
 ]
 
+// Global Minang Ventura's card plays its cover video instead of a static shot.
+// Vite serves .mp4 imports as a plain URL (not run through astro:assets, which
+// is image-only), so this is a string, not an image() object like the rest.
+const videoByIndex: (string | null)[] = [
+  gmvVideo, // 0 Global Minang Ventura
+  null, null, null, null, null,
+]
+
 // Every card is the same size. The live v3 layout gives Global Minang Ventura a
 // full-width featured treatment with its own four-step breakdown; that is a
 // second layout to maintain and it buries the other six, so the grid runs flat.
-const cards = portfolio.cards.map((card, i) => ({ ...card, img: imageByIndex[i] ?? null }))
+const cards = portfolio.cards.map((card, i) => ({
+  ...card,
+  img: imageByIndex[i] ?? null,
+  video: videoByIndex[i] ?? null,
+}))
 
 // Two columns, so an odd count leaves a hole in the last row. Rather than let
 // the grid go ragged, the gap is filled with an explicit dummy tile — clearly
@@ -59,7 +73,18 @@ const pad = (n: number) => String(n).padStart(2, '0')
             class="group block"
           >
             <div class="relative w-full aspect-[16/10] rounded-media overflow-hidden">
-              {c.img ? (
+              {c.video ? (
+                <video
+                  src={c.video}
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  preload="metadata"
+                  aria-hidden="true"
+                />
+              ) : c.img ? (
                 <div
                   class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
                   style={`background-image: url(${c.img.src});`}
