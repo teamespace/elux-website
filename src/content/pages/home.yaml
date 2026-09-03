@@ -178,14 +178,6 @@ portfolio:
         - "WEBFLOW BUILD"
       description: "Ecommerce SaaS website design and Webflow build with clearer messaging, a tighter product flow and stronger conversion paths."
       href: "/work/aliapopups"
-    - title: "UI Core"
-      tag: "UI KIT · WEBSITE"
-      category: "UI KIT"
-      tags:
-        - "WEBSITE"
-        - "BUILD"
-      description: "UI kit website design and build, with clearer product value, component storytelling and launch-ready pages."
-      href: "/work/ui-core"
 
 ownProducts:
   eyebrow: "WE DON'T JUST BUILD FOR CLIENTS"
