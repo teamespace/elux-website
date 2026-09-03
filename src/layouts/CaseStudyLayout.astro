@@ -88,14 +88,10 @@ const hasServices = Array.isArray(data.services) && data.services.length > 0
                 </div>
               )
             }
-            {
-              hasTimeline && (
-                <div>
-                  <dt class="eyebrow text-ink-3 mb-2">Timeline</dt>
-                  <dd class="font-display font-bold text-lg text-ink">{data.timeline}</dd>
-                </div>
-              )
-            }
+            <div>
+              <dt class="eyebrow text-ink-3 mb-2">Timeline</dt>
+              <dd class="font-display font-bold text-lg text-ink">{hasTimeline ? data.timeline : 'Placeholder'}</dd>
+            </div>
             {
               hasServices && (
                 <div>
