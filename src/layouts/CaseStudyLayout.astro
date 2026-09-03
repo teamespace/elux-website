@@ -132,7 +132,7 @@ const hasServices = Array.isArray(data.services) && data.services.length > 0
       <!-- 3–4–7. The narrative prose (Challenge / Approach / Key Insight) from MDX body -->
       <section class="bg-cream">
         <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
-          <div class="prose-case placeholder-copy max-w-3xl">
+          <div class:list={['prose-case max-w-3xl', isDraft && 'placeholder-copy']}>
             <slot />
           </div>
         </div>
