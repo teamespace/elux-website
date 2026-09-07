@@ -241,17 +241,23 @@ const jsonLd = {
               </div>
               <div class="prototype-sticky">
                 <div class="prototype-sticky__media">
-                  <video class="prototype-media" autoplay loop muted playsinline controls preload="auto" poster={cover.src} aria-label="Travelcircus interactive prototype">
-                    <source src={prototypeVideo} type="video/mp4" />
-                    Your browser does not support embedded videos.
-                  </video>
+                  <div class="prototype-media-frame" data-video-toggle-wrap>
+                    <video class="prototype-media" autoplay loop muted playsinline preload="auto" poster={cover.src} aria-label="Travelcircus interactive prototype" data-prototype-video>
+                      <source src={prototypeVideo} type="video/mp4" />
+                      Your browser does not support embedded videos.
+                    </video>
+                    <button type="button" class="prototype-media-toggle" data-video-toggle aria-label="Pause video">
+                      <svg class="icon-pause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>
+                      <svg class="icon-play" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5-13-7.5Z" /></svg>
+                    </button>
+                  </div>
                 </div>
                 <div class="prototype-sticky__list">
                   <h3>Why prototype early?</h3>
                   {prototypeReasons.map((reason) => (
-                    <article class="prototype-reason">
-                      <span>{reason.number}</span>
-                      <div><strong>{reason.title}</strong><p>{reason.detail}</p></div>
+                    <article class="prototype-reason" data-prototype-reason>
+                      <strong>{reason.title}</strong>
+                      <p>{reason.detail}</p>
                     </article>
                   ))}
                 </div>
@@ -460,7 +466,7 @@ const jsonLd = {
   .concept-switcher__links a[aria-current='page'] { color: #FCF8F0; background: #3E2002; }
 
   .concept-hero { padding: 58px 0 72px; border-bottom: 2px solid #3E2002; }
-  .concept-hero__visual { position: relative; margin-top: 48px; overflow: hidden; border-radius: 4px; background: #3E2002; }
+  .concept-hero__visual { position: relative; margin-top: 48px; overflow: hidden; border-radius: 16px; background: #3E2002; }
   .concept-hero__visual img { width: 100%; height: auto; display: block; }
 
   .chapter { padding: 110px 0; }
@@ -496,7 +502,7 @@ const jsonLd = {
   .asset-placeholder strong { max-width: 25ch; font: 700 20px/1.2 Iowan Old Style, Georgia, serif; }
   .asset-placeholder.on-ink { background: rgba(252,248,240,.04); color: #FCF8F0; border-color: #FF9D69; }
 
-  .compare-slider { position: relative; overflow: hidden; aspect-ratio: 16 / 9; border: 2px solid #3E2002; border-radius: 4px; background: #3E2002; cursor: ew-resize; touch-action: pan-y; }
+  .compare-slider { position: relative; overflow: hidden; aspect-ratio: 16 / 9; border: 2px solid #3E2002; border-radius: 16px; background: #3E2002; cursor: ew-resize; touch-action: pan-y; }
   .compare-slider__layer { position: absolute; inset: 0; }
   .compare-slider__layer img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .compare-slider__layer--before { clip-path: inset(0 50% 0 0); background: #F1E9DA; }
@@ -528,15 +534,22 @@ const jsonLd = {
   .prototype-sticky { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: start; }
   .prototype-sticky__media { position: sticky; top: 48px; padding: 40px; border-radius: 8px; background: rgba(0,0,0,.15); }
   .prototype-sticky__media .prototype-media { max-width: 240px; min-height: 0; margin: 0 auto; border-radius: 16px; box-shadow: 0 30px 70px rgba(0,0,0,.45); }
-  .prototype-sticky__list { display: flex; flex-direction: column; gap: 20px; padding-top: 4px; }
-  .prototype-sticky__list h3 { margin: 0 0 4px; font: 700 24px/1.1 Iowan Old Style, Georgia, serif; }
-  .prototype-reason { display: grid; grid-template-columns: 32px 1fr; gap: 14px; padding: 28px; border-radius: 8px; border: 1px solid rgba(252,248,240,.16); background: rgba(252,248,240,.05); }
-  .prototype-reason span { color: #FF9D69; font: 700 11px/1.4 Inter, system-ui, sans-serif; }
-  .prototype-reason strong { display: block; margin-bottom: 6px; font: 700 15px/1.3 Inter, system-ui, sans-serif; }
-  .prototype-reason p { margin: 0; color: rgba(252,248,240,.72); font: 400 14px/1.6 Inter, system-ui, sans-serif; }
+  .prototype-media-frame { position: relative; }
+  .prototype-media-toggle { position: absolute; top: 50%; left: 50%; z-index: 2; display: grid; place-items: center; width: 52px; height: 52px; border: 0; border-radius: 50%; background: rgba(18,10,3,.6); color: #FCF8F0; opacity: 0; transform: translate(-50%, -50%); transition: opacity .18s ease; cursor: pointer; }
+  .prototype-media-frame:hover .prototype-media-toggle, .prototype-media-toggle:focus-visible { opacity: 1; }
+  .prototype-media-toggle .icon-play { display: none; }
+  .prototype-media-toggle.is-paused .icon-pause { display: none; }
+  .prototype-media-toggle.is-paused .icon-play { display: block; }
+  .prototype-sticky__list { display: flex; flex-direction: column; padding-top: 4px; }
+  .prototype-sticky__list h3 { margin: 0 0 12vh; font: 700 24px/1.1 Iowan Old Style, Georgia, serif; color: #FCF8F0; }
+  .prototype-reason { padding: 8vh 0; }
+  .prototype-reason strong { display: block; margin-bottom: 14px; font: 700 26px/1.2 Iowan Old Style, Georgia, serif; color: rgba(252,248,240,.35); transition: color .3s ease; }
+  .prototype-reason p { margin: 0; max-width: 44ch; color: rgba(252,248,240,.22); font: 400 17px/1.65 Inter, system-ui, sans-serif; transition: color .3s ease; }
+  .prototype-reason.is-active strong { color: #FCF8F0; }
+  .prototype-reason.is-active p { color: rgba(252,248,240,.75); }
 
   .feature-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
-  .feature-card { position: relative; margin: 0; min-height: 420px; overflow: hidden; border: 2px solid #3E2002; background: #3E2002; }
+  .feature-card { position: relative; margin: 0; min-height: 420px; overflow: hidden; border: 2px solid #3E2002; border-radius: 16px; background: #3E2002; }
   .feature-card--1, .feature-card--4, .feature-card--5 { grid-column: span 7; }
   .feature-card--2, .feature-card--3, .feature-card--6 { grid-column: span 5; }
   .feature-card img { width: 100%; height: 100%; min-height: 420px; display: block; object-fit: cover; }
@@ -645,7 +658,10 @@ const jsonLd = {
     .compare-slider { aspect-ratio: auto; min-height: 320px; }
     .video-placeholder { min-height: 360px; }
     .prototype-sticky__media .prototype-media { max-width: 220px; }
-    .prototype-reason { padding: 20px; }
+    .prototype-reason { padding: 32px 0; }
+    .prototype-reason strong, .prototype-reason p { color: inherit; opacity: 1; }
+    .prototype-reason strong { color: #FCF8F0; }
+    .prototype-reason p { color: rgba(252,248,240,.72); }
     .feature-card--1, .feature-card--2, .feature-card--3, .feature-card--4, .feature-card--5, .feature-card--6 { grid-column: 1 / -1; }
     .feature-card, .feature-card img, .feature-card .asset-placeholder { min-height: 320px; }
     .scrolly-chapter { padding: 72px 0; }
@@ -712,5 +728,44 @@ const jsonLd = {
     })
   }
 
+  function initPrototypeVideos() {
+    document.querySelectorAll<HTMLElement>('[data-video-toggle-wrap]').forEach((wrap) => {
+      const video = wrap.querySelector<HTMLVideoElement>('[data-prototype-video]')
+      const toggle = wrap.querySelector<HTMLButtonElement>('[data-video-toggle]')
+      if (!video || !toggle) return
+
+      video.playbackRate = 1.5
+
+      toggle.addEventListener('click', () => {
+        if (video.paused) {
+          video.play()
+          toggle.classList.remove('is-paused')
+          toggle.setAttribute('aria-label', 'Pause video')
+        } else {
+          video.pause()
+          toggle.classList.add('is-paused')
+          toggle.setAttribute('aria-label', 'Play video')
+        }
+      })
+    })
+  }
+
+  function initPrototypeReasons() {
+    const items = document.querySelectorAll<HTMLElement>('[data-prototype-reason]')
+    if (!items.length) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => entry.target.classList.toggle('is-active', entry.isIntersecting))
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    )
+
+    items[0].classList.add('is-active')
+    items.forEach((item) => observer.observe(item))
+  }
+
   initCompareSliders()
+  initPrototypeVideos()
+  initPrototypeReasons()
 </script>
