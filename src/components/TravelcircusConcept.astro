@@ -521,7 +521,7 @@ const jsonLd = {
   .concept-page { --concept-max: 1240px; overflow: clip; }
   .concept-shell { width: min(calc(100% - 48px), var(--concept-max)); margin-inline: auto; }
   .concept-eyebrow { margin: 0 0 18px; color: #736049; font: 600 11px/1.25 Inter, system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
-  .concept-back { display: inline-block; margin-bottom: 48px; color: #736049; font: 600 11px/1 Inter, system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; }
+  .concept-back { display: block; margin-bottom: 24px; color: #736049; font: 600 11px/1 Inter, system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; }
   .concept-switcher { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid #3E2002; background: rgba(252,248,240,.94); backdrop-filter: blur(14px); }
   .concept-switcher__inner { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
   .concept-switcher__back, .concept-switcher__links a { color: #6D543C; font: 600 10px/1 Inter, system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
@@ -535,8 +535,8 @@ const jsonLd = {
 
   .chapter { padding: 110px 0; }
   .chapter + .chapter { border-top: 2px solid #3E2002; }
-  .chapter-copy { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr); gap: 88px; align-items: start; margin-bottom: 44px; }
-  .chapter-copy h2 { margin: 0; max-width: 16ch; }
+  .chapter-copy { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); gap: 88px; align-items: start; margin-bottom: 44px; }
+  .chapter-copy h2 { margin: 0; }
   .chapter-body { max-width: 600px; padding-top: 36px; }
   .chapter-body p, .concept-closing__body p, .scrolly-copy > p:not(.concept-eyebrow), .dossier-card p { margin: 0 0 16px; color: #6D543C; font: 400 17px/1.65 Inter, system-ui, sans-serif; }
   .relationship-board { display: grid; grid-template-columns: 1.08fr .92fr; border: 2px solid #3E2002; border-radius: 4px; overflow: hidden; }
