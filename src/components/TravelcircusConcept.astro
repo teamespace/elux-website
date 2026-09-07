@@ -21,6 +21,7 @@ interface PrevNext {
   tags?: string[]
   description?: string
   img?: any
+  video?: any
 }
 
 interface Props {
@@ -443,7 +444,18 @@ const jsonLd = {
               {moreWork.map((c, i) => (
                 <a href={`/work/${c.slug}`} class="group block">
                   <div class="relative w-full aspect-[16/10] rounded-media overflow-hidden">
-                    {c.img ? (
+                    {c.video ? (
+                      <video
+                        src={c.video}
+                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        preload="metadata"
+                        aria-hidden="true"
+                      />
+                    ) : c.img ? (
                       <div
                         class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
                         style={`background-image: url(${c.img.src});`}

@@ -2,6 +2,8 @@
 import { getCollection, render } from 'astro:content'
 import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro'
 import TravelcircusConcept from '../../components/TravelcircusConcept.astro'
+import gmvVideo from '../../assets/work-images/gmv/cover.mp4'
+import allenOlmoMockup from '../../assets/work-images/allen ai/mockup-1.png'
 
 // One page per case study. Drafts still build locally so Arya can review them;
 // they're only held back from the sitemap + llms.txt (see astro.config + llms.txt.ts).
@@ -16,7 +18,8 @@ export async function getStaticPaths() {
     category: e.data.tagline,
     tags: e.data.services,
     description: e.data.summary,
-    img: e.data.heroImage ?? null,
+    img: e.id === 'allen-institute-for-ai' ? allenOlmoMockup : (e.data.heroImage ?? null),
+    video: e.id === 'global-minang-ventura' ? gmvVideo : null,
   })
 
   const published = entries.filter((e) => !e.data.draft)
