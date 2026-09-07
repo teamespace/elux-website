@@ -7,6 +7,7 @@ import cover from '../assets/work-images/travelcircus/cover.png'
 import offerDetail from '../assets/work-images/travelcircus/mockup-1.png'
 import bookingSuccess from '../assets/work-images/travelcircus/mockup-2.png'
 import bookingManagement from '../assets/work-images/travelcircus/mockup-3.png'
+import finalMockup from '../assets/work-images/travelcircus/final-mockup-1.png'
 import prototypeVideo from '../assets/work-images/travelcircus/prototype.mp4?url'
 
 type Variant = 'editorial' | 'scrollytelling' | 'dossier'
@@ -171,10 +172,29 @@ const jsonLd = {
                   <p>Bringing that depth to mobile wasn’t about shrinking the interface. The same features had to work around different priorities, behaviors, and moments of attention, so we rethought how information was surfaced and how users moved from one decision to the next.</p>
                 </div>
               </div>
-              <div class="comparison-board">
-                <div class="asset-placeholder asset-placeholder--web"><span>Asset placeholder</span><strong>Existing web experience<br />or early user flow map</strong></div>
-                <div class="comparison-arrow" aria-hidden="true">→</div>
-                <figure><Image src={offerDetail} alt="Travelcircus final mobile offer detail screen" /><figcaption>Final mobile screen</figcaption></figure>
+              <div
+                class="compare-slider"
+                data-compare-slider
+                role="slider"
+                aria-label="Drag to compare the existing web experience against the final mobile screen"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="50"
+                tabindex="0"
+              >
+                <div class="compare-slider__layer compare-slider__layer--after">
+                  <Image src={finalMockup} alt="Travelcircus final mobile screen" />
+                  <span class="compare-slider__tag compare-slider__tag--after">After</span>
+                </div>
+                <div class="compare-slider__layer compare-slider__layer--before" data-compare-before>
+                  <div class="asset-placeholder asset-placeholder--web"><span>Asset placeholder</span><strong>Existing web experience<br />or early user flow map</strong></div>
+                  <span class="compare-slider__tag compare-slider__tag--before">Before</span>
+                </div>
+                <div class="compare-slider__handle" data-compare-handle>
+                  <span class="compare-slider__grip" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M8 7L3 12L8 17M16 7L21 12L16 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  </span>
+                </div>
               </div>
             </div>
           </section>
@@ -452,6 +472,17 @@ const jsonLd = {
   .asset-placeholder span { color: #A9541F; font: 700 10px/1 Inter, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
   .asset-placeholder strong { max-width: 25ch; font: 700 20px/1.2 Iowan Old Style, Georgia, serif; }
   .asset-placeholder.on-ink { background: rgba(252,248,240,.04); color: #FCF8F0; border-color: #FF9D69; }
+
+  .compare-slider { position: relative; overflow: hidden; min-height: 440px; border: 2px solid #3E2002; border-radius: 4px; background: #3E2002; cursor: ew-resize; touch-action: pan-y; }
+  .compare-slider__layer { position: absolute; inset: 0; }
+  .compare-slider__layer img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .compare-slider__layer--before { clip-path: inset(0 50% 0 0); background: #F1E9DA; }
+  .compare-slider__layer--before .asset-placeholder { position: absolute; inset: 0; width: auto; max-width: none; height: 100%; border: 0; }
+  .compare-slider__tag { position: absolute; top: 14px; z-index: 2; padding: 6px 10px; border-radius: 4px; color: #FCF8F0; background: rgba(62,32,2,.9); font: 700 10px/1 Inter, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+  .compare-slider__tag--before { left: 14px; }
+  .compare-slider__tag--after { right: 14px; }
+  .compare-slider__handle { position: absolute; top: 0; bottom: 0; left: 50%; z-index: 3; display: flex; align-items: center; justify-content: center; width: 2px; background: #FCF8F0; transform: translateX(-50%); pointer-events: none; }
+  .compare-slider__grip { display: grid; place-items: center; width: 40px; height: 40px; border: 2px solid #3E2002; border-radius: 50%; background: #FCF8F0; color: #3E2002; box-shadow: 0 4px 10px rgba(0,0,0,.25); pointer-events: auto; }
   .comparison-board figure, .dossier-card--after { position: relative; margin: 0; overflow: hidden; min-height: 440px; background: #3E2002; }
   .comparison-board figure img, .dossier-card--after img { width: 100%; height: 100%; object-fit: cover; }
   .comparison-board figcaption, .dossier-card--after figcaption, .scrolly-visual figcaption { position: absolute; left: 14px; bottom: 14px; padding: 8px 10px; border-radius: 4px; color: #FCF8F0; background: rgba(62,32,2,.9); font: 600 10px/1 Inter, system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
@@ -604,3 +635,53 @@ const jsonLd = {
     .scrolly-copy, .scrolly-feature-stack article { position: static; }
   }
 </style>
+
+<script>
+  function initCompareSliders() {
+    document.querySelectorAll<HTMLElement>('[data-compare-slider]').forEach((root) => {
+      const before = root.querySelector<HTMLElement>('[data-compare-before]')
+      const handle = root.querySelector<HTMLElement>('[data-compare-handle]')
+      if (!before || !handle) return
+
+      const setPercent = (percent: number) => {
+        const clamped = Math.min(100, Math.max(0, percent))
+        before.style.clipPath = `inset(0 ${100 - clamped}% 0 0)`
+        handle.style.left = `${clamped}%`
+        root.setAttribute('aria-valuenow', String(Math.round(clamped)))
+      }
+
+      const percentFromClientX = (clientX: number) => {
+        const rect = root.getBoundingClientRect()
+        return ((clientX - rect.left) / rect.width) * 100
+      }
+
+      const onPointerMove = (event: PointerEvent) => setPercent(percentFromClientX(event.clientX))
+
+      const stopDragging = () => {
+        window.removeEventListener('pointermove', onPointerMove)
+        window.removeEventListener('pointerup', stopDragging)
+      }
+
+      const startDragging = (clientX: number) => {
+        setPercent(percentFromClientX(clientX))
+        window.addEventListener('pointermove', onPointerMove)
+        window.addEventListener('pointerup', stopDragging)
+      }
+
+      root.addEventListener('pointerdown', (event) => {
+        event.preventDefault()
+        startDragging(event.clientX)
+      })
+
+      root.addEventListener('keydown', (event) => {
+        const current = parseFloat(root.getAttribute('aria-valuenow') || '50')
+        if (event.key === 'ArrowLeft') setPercent(current - 5)
+        if (event.key === 'ArrowRight') setPercent(current + 5)
+      })
+
+      setPercent(50)
+    })
+  }
+
+  initCompareSliders()
+</script>
