@@ -1,0 +1,606 @@
+---
+import { Image } from 'astro:assets'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Nav from './Nav.astro'
+import Footer from './Footer.astro'
+import cover from '../assets/work-images/travelcircus/cover.png'
+import offerDetail from '../assets/work-images/travelcircus/mockup-1.png'
+import bookingSuccess from '../assets/work-images/travelcircus/mockup-2.png'
+import bookingManagement from '../assets/work-images/travelcircus/mockup-3.png'
+import prototypeVideo from '../assets/work-images/travelcircus/prototype.mp4?url'
+
+type Variant = 'editorial' | 'scrollytelling' | 'dossier'
+
+interface PrevNext {
+  slug: string
+  title: string
+}
+
+interface Props {
+  variant: Variant
+  preview?: boolean
+  prev?: PrevNext | null
+  next?: PrevNext | null
+}
+
+const { variant, preview = true, prev = null, next = null } = Astro.props
+
+const concepts = [
+  { id: 'editorial', label: '01 Editorial chapters' },
+  { id: 'scrollytelling', label: '02 Guided scrollytelling' },
+  { id: 'dossier', label: '03 Product dossier' },
+] as const
+
+const activeConcept = concepts.find((concept) => concept.id === variant) ?? concepts[0]
+
+const timeline = [
+  { year: '2024', title: 'First collaborations', detail: 'Website, content, and design support' },
+  { year: '2025', title: 'More projects, more context', detail: 'Repeat work across different needs' },
+  { year: '2026', title: 'Into the mobile product', detail: 'Product design + interactive prototyping' },
+]
+
+const prototypeReasons = [
+  { number: '01', title: 'Experience, not imagine', detail: 'The team reacts to a working journey, not isolated frames.' },
+  { number: '02', title: 'Clearer feedback', detail: 'Problems show up in context, while the flow is still flexible.' },
+  { number: '03', title: 'Faster decisions', detail: 'Less guesswork between what is designed and how it actually feels.' },
+]
+
+const featureCards = [
+  { title: 'Travel Discovery & Top Deals', image: cover, asset: 'Home Screen / Exploration Top Deals' },
+  { title: 'Search & Travel Listings', image: null, asset: 'Search Screen + PLP Screen' },
+  { title: 'Package & Offer Details', image: offerDetail, asset: 'PDP Screen / Voucher PDP Screen' },
+  { title: 'Hotel & Ticket Booking', image: null, asset: 'Booking Ticket + Hotel Screen' },
+  { title: 'Checkout & Booking Confirmation', image: bookingSuccess, asset: 'Checkout Screen' },
+  { title: 'My Bookings & Trip Management', image: bookingManagement, asset: 'My Booking Screen' },
+]
+
+const pageTitle = preview
+  ? `Travelcircus — ${activeConcept.label} | Elux Space`
+  : 'Travelcircus — Mobile Travel Booking App Design | Elux Space'
+
+const pageDescription = 'Travelcircus mobile travel booking app design by Elux Space, shaped through an ongoing partnership, mobile-first product thinking, and interactive prototyping.'
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: 'Travelcircus - Mobile Travel Booking App Design',
+  about: pageDescription,
+  creator: { '@type': 'Organization', name: 'Elux Space', url: 'https://elux.space/' },
+}
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  noindex={preview}
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+  <div class={`concept-page concept-page--${variant} bg-cream text-ink min-h-screen`}>
+    <Nav />
+
+    <main id="main">
+      {preview && (
+        <nav class="concept-switcher" aria-label="Travelcircus concept previews">
+          <div class="concept-shell concept-switcher__inner">
+            <a class="concept-switcher__back" href="/work/travelcircus-concepts">← Concepts</a>
+            <div class="concept-switcher__links">
+              {concepts.map((concept) => (
+                <a
+                  href={`/work/travelcircus-concepts/${concept.id}`}
+                  aria-current={concept.id === variant ? 'page' : undefined}
+                >
+                  {concept.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </nav>
+      )}
+
+      <header class="concept-hero">
+        <div class="concept-shell">
+          <a href="/work" class="concept-back">← All work</a>
+          <div class="concept-hero__grid">
+            <div>
+              <p class="concept-eyebrow">Mobile App Design · Travel Tech · Product Design</p>
+              <h1 class="display-xl">Travelcircus</h1>
+            </div>
+            <dl class="concept-meta">
+              <div>
+                <dt>Project</dt>
+                <dd>Travelcircus - Mobile Travel Booking App Design</dd>
+              </div>
+              <div>
+                <dt>Scope</dt>
+                <dd>Mobile Product Design · Interactive Prototyping</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="concept-hero__visual">
+            <Image src={cover} alt="Travelcircus mobile app home screen" />
+          </div>
+        </div>
+      </header>
+
+      {variant === 'editorial' && (
+        <div class="editorial-story">
+          <section class="chapter chapter--background">
+            <div class="concept-shell">
+              <div class="chapter-copy">
+                <div>
+                  <p class="concept-eyebrow">Project background</p>
+                  <h2 class="display-lg">Six projects in, the work moved deeper into the product.</h2>
+                </div>
+                <div class="chapter-body">
+                  <p>We’ve worked with Travelcircus since 2024 across more than six projects, from website and content support to ongoing design work.</p>
+                  <p>Each project led naturally to the next. What kept the relationship growing was consistency across different needs, building more trust in how we work together and eventually bringing the collaboration deeper into the product with their mobile app.</p>
+                </div>
+              </div>
+
+              <div class="relationship-board">
+                <blockquote>
+                  <span class="quote-mark" aria-hidden="true">“</span>
+                  <p>Elux designed our app from the ground up — and delivered something that genuinely reflects our brand: clean, intuitive, and built with the end user in mind. Every design decision felt intentional.</p>
+                  <footer><strong>Gunnar Asmussen, Travelcircus</strong><span>May 22, 2026</span></footer>
+                </blockquote>
+                <div class="timeline-panel">
+                  <ol>
+                    {timeline.map((item) => (
+                      <li>
+                        <span class="timeline-year">{item.year}</span>
+                        <span class="timeline-dot" aria-hidden="true"></span>
+                        <span><strong>{item.title}</strong><small>{item.detail}</small></span>
+                      </li>
+                    ))}
+                  </ol>
+                  <div class="relationship-stat"><strong>6+</strong><span>projects<br />together we collaborate since 2024</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter chapter--shift">
+            <div class="concept-shell">
+              <div class="chapter-copy">
+                <div>
+                  <p class="concept-eyebrow">Product shift</p>
+                  <h2 class="display-lg">Same product depth. The experience had to change.</h2>
+                </div>
+                <div class="chapter-body">
+                  <p>Travelcircus already brought together a complex multi-layer set of journeys across discovery, package details, pricing, booking, ticketing, and trip management.</p>
+                  <p>Bringing that depth to mobile wasn’t about shrinking the interface. The same features had to work around different priorities, behaviors, and moments of attention, so we rethought how information was surfaced and how users moved from one decision to the next.</p>
+                </div>
+              </div>
+              <div class="comparison-board">
+                <div class="asset-placeholder asset-placeholder--web"><span>Asset placeholder</span><strong>Existing web experience<br />or early user flow map</strong></div>
+                <div class="comparison-arrow" aria-hidden="true">→</div>
+                <figure><Image src={offerDetail} alt="Travelcircus final mobile offer detail screen" /><figcaption>Final mobile screen</figcaption></figure>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter chapter--prototype bg-ink-bg text-on-ink">
+            <div class="concept-shell">
+              <div class="chapter-copy">
+                <div>
+                  <p class="concept-eyebrow">Faster decisions</p>
+                  <h2 class="display-lg">We started using the app before the screens were finished.</h2>
+                </div>
+                <div class="chapter-body">
+                  <p>Interactive prototypes connected the key journeys early, so the team could experience discovery, booking, and ticketing as one product instead of imagining how separate Figma screens would eventually work together.</p>
+                  <p>That made feedback clearer, reduced guesswork, and helped us iterate and make decisions faster, bringing the core mobile flow together within one month.</p>
+                </div>
+              </div>
+              <div class="prototype-board">
+                <video class="prototype-media" controls muted playsinline preload="metadata" poster={cover.src} aria-label="Travelcircus interactive prototype">
+                  <source src={prototypeVideo} type="video/mp4" />
+                  Your browser does not support embedded videos.
+                </video>
+                <aside class="reason-panel">
+                  <h3>Why prototype early?</h3>
+                  <ol>
+                    {prototypeReasons.map((reason) => (
+                      <li><span>{reason.number}</span><div><strong>{reason.title}</strong><p>{reason.detail}</p></div></li>
+                    ))}
+                  </ol>
+                </aside>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter chapter--features">
+            <div class="concept-shell">
+              <p class="concept-eyebrow">Final product</p>
+              <div class="feature-grid">
+                {featureCards.map((feature, index) => (
+                  <article class:list={['feature-card', `feature-card--${index + 1}`]}>
+                    {feature.image ? (
+                      <Image src={feature.image} alt={`Travelcircus ${feature.title}`} />
+                    ) : (
+                      <div class="asset-placeholder"><span>Asset placeholder</span><strong>{feature.asset}</strong></div>
+                    )}
+                    <div class="feature-card__caption"><span>0{index + 1}</span><h3>{feature.title}</h3></div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {variant === 'scrollytelling' && (
+        <div class="scrolly-story">
+          <section class="scrolly-chapter">
+            <div class="scrolly-copy">
+              <p class="concept-eyebrow">01 · Project background</p>
+              <h2 class="display-lg">Six projects in, the work moved deeper into the product.</h2>
+              <p>We’ve worked with Travelcircus since 2024 across more than six projects, from website and content support to ongoing design work.</p>
+              <p>Each project led naturally to the next. What kept the relationship growing was consistency across different needs, building more trust in how we work together and eventually bringing the collaboration deeper into the product with their mobile app.</p>
+            </div>
+            <div class="scrolly-visual scrolly-visual--relationship">
+              <blockquote>
+                <span class="quote-mark" aria-hidden="true">“</span>
+                <p>Elux designed our app from the ground up — and delivered something that genuinely reflects our brand: clean, intuitive, and built with the end user in mind. Every design decision felt intentional.</p>
+                <footer><strong>Gunnar Asmussen, Travelcircus</strong><span>May 22, 2026</span></footer>
+              </blockquote>
+              <ol class="scrolly-timeline">
+                {timeline.map((item) => <li><b>{item.year}</b><span><strong>{item.title}</strong><small>{item.detail}</small></span></li>)}
+              </ol>
+              <div class="relationship-stat"><strong>6+</strong><span>projects<br />together we collaborate since 2024</span></div>
+            </div>
+          </section>
+
+          <section class="scrolly-chapter scrolly-chapter--dark">
+            <div class="scrolly-copy">
+              <p class="concept-eyebrow">02 · Product shift</p>
+              <h2 class="display-lg">Same product depth. The experience had to change.</h2>
+              <p>Travelcircus already brought together a complex multi-layer set of journeys across discovery, package details, pricing, booking, ticketing, and trip management.</p>
+              <p>Bringing that depth to mobile wasn’t about shrinking the interface. The same features had to work around different priorities, behaviors, and moments of attention, so we rethought how information was surfaced and how users moved from one decision to the next.</p>
+            </div>
+            <div class="scrolly-visual scrolly-visual--comparison">
+              <div class="asset-placeholder on-ink"><span>Asset placeholder</span><strong>Existing web experience<br />or early user flow map</strong></div>
+              <span class="scrolly-arrow" aria-hidden="true">↓</span>
+              <figure><Image src={offerDetail} alt="Travelcircus final mobile offer detail screen" /><figcaption>Final mobile screen</figcaption></figure>
+            </div>
+          </section>
+
+          <section class="scrolly-chapter">
+            <div class="scrolly-copy">
+              <p class="concept-eyebrow">03 · Faster decisions</p>
+              <h2 class="display-lg">We started using the app before the screens were finished.</h2>
+              <p>Interactive prototypes connected the key journeys early, so the team could experience discovery, booking, and ticketing as one product instead of imagining how separate Figma screens would eventually work together.</p>
+              <p>That made feedback clearer, reduced guesswork, and helped us iterate and make decisions faster, bringing the core mobile flow together within one month.</p>
+            </div>
+            <div class="scrolly-visual scrolly-visual--prototype">
+              <video class="prototype-media" controls muted playsinline preload="metadata" poster={cover.src} aria-label="Travelcircus interactive prototype">
+                <source src={prototypeVideo} type="video/mp4" />
+                Your browser does not support embedded videos.
+              </video>
+              <div class="scrolly-reasons">
+                <h3>Why prototype early?</h3>
+                {prototypeReasons.map((reason) => <article><span>{reason.number}</span><div><strong>{reason.title}</strong><p>{reason.detail}</p></div></article>)}
+              </div>
+            </div>
+          </section>
+
+          <section class="scrolly-chapter scrolly-chapter--features">
+            <div class="scrolly-copy">
+              <p class="concept-eyebrow">04 · Final product</p>
+            </div>
+            <div class="scrolly-visual scrolly-feature-stack">
+              {featureCards.map((feature, index) => (
+                <article>
+                  {feature.image ? <Image src={feature.image} alt={`Travelcircus ${feature.title}`} /> : <div class="asset-placeholder"><span>Asset placeholder</span><strong>{feature.asset}</strong></div>}
+                  <div><span>0{index + 1}</span><h3>{feature.title}</h3></div>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+
+      {variant === 'dossier' && (
+        <div class="dossier-story">
+          <section class="dossier-grid concept-shell">
+            <article class="dossier-card dossier-card--intro">
+              <p class="concept-eyebrow">Project background</p>
+              <h2 class="display-lg">Six projects in, the work moved deeper into the product.</h2>
+              <div class="dossier-card__columns">
+                <p>We’ve worked with Travelcircus since 2024 across more than six projects, from website and content support to ongoing design work.</p>
+                <p>Each project led naturally to the next. What kept the relationship growing was consistency across different needs, building more trust in how we work together and eventually bringing the collaboration deeper into the product with their mobile app.</p>
+              </div>
+            </article>
+
+            <article class="dossier-card dossier-card--stat"><strong>6+</strong><span>projects<br />together we collaborate since 2024</span></article>
+
+            <blockquote class="dossier-card dossier-card--quote">
+              <span class="quote-mark" aria-hidden="true">“</span>
+              <p>Elux designed our app from the ground up — and delivered something that genuinely reflects our brand: clean, intuitive, and built with the end user in mind. Every design decision felt intentional.</p>
+              <footer><strong>Gunnar Asmussen, Travelcircus</strong><span>May 22, 2026</span></footer>
+            </blockquote>
+
+            <article class="dossier-card dossier-card--timeline">
+              <p class="concept-eyebrow">Collaboration journey</p>
+              <ol>{timeline.map((item) => <li><b>{item.year}</b><span><strong>{item.title}</strong><small>{item.detail}</small></span></li>)}</ol>
+            </article>
+
+            <article class="dossier-card dossier-card--shift-copy">
+              <p class="concept-eyebrow">Product shift</p>
+              <h2 class="display-md">Same product depth. The experience had to change.</h2>
+              <p>Travelcircus already brought together a complex multi-layer set of journeys across discovery, package details, pricing, booking, ticketing, and trip management.</p>
+              <p>Bringing that depth to mobile wasn’t about shrinking the interface. The same features had to work around different priorities, behaviors, and moments of attention, so we rethought how information was surfaced and how users moved from one decision to the next.</p>
+            </article>
+
+            <article class="dossier-card dossier-card--before"><div class="asset-placeholder"><span>Asset placeholder</span><strong>Existing web experience<br />or early user flow map</strong></div></article>
+            <figure class="dossier-card dossier-card--after"><Image src={offerDetail} alt="Travelcircus final mobile offer detail screen" /><figcaption>Final mobile screen</figcaption></figure>
+
+            <article class="dossier-card dossier-card--prototype-copy">
+              <p class="concept-eyebrow">Faster decisions</p>
+              <h2 class="display-md">We started using the app before the screens were finished.</h2>
+              <p>Interactive prototypes connected the key journeys early, so the team could experience discovery, booking, and ticketing as one product instead of imagining how separate Figma screens would eventually work together.</p>
+              <p>That made feedback clearer, reduced guesswork, and helped us iterate and make decisions faster, bringing the core mobile flow together within one month.</p>
+            </article>
+
+            <article class="dossier-card dossier-card--video">
+              <video class="prototype-media" controls muted playsinline preload="metadata" poster={cover.src} aria-label="Travelcircus interactive prototype">
+                <source src={prototypeVideo} type="video/mp4" />
+                Your browser does not support embedded videos.
+              </video>
+            </article>
+
+            <article class="dossier-card dossier-card--reasons">
+              <h3>Why prototype early?</h3>
+              <ol>{prototypeReasons.map((reason) => <li><span>{reason.number}</span><div><strong>{reason.title}</strong><p>{reason.detail}</p></div></li>)}</ol>
+            </article>
+
+            <article class="dossier-card dossier-card--feature-heading"><p class="concept-eyebrow">Final product</p></article>
+            {featureCards.map((feature, index) => (
+              <article class="dossier-card dossier-card--feature">
+                {feature.image ? <Image src={feature.image} alt={`Travelcircus ${feature.title}`} /> : <div class="asset-placeholder"><span>Asset placeholder</span><strong>{feature.asset}</strong></div>}
+                <div><span>0{index + 1}</span><h3>{feature.title}</h3></div>
+              </article>
+            ))}
+          </section>
+        </div>
+      )}
+
+      {!preview && (prev || next) && (
+        <nav class="case-pagination" aria-label="More case studies">
+          <div class="concept-shell case-pagination__grid">
+            <div>
+              {prev && <a href={`/work/${prev.slug}`}><span>← Previous</span><strong>{prev.title}</strong></a>}
+            </div>
+            <div>
+              {next && <a href={`/work/${next.slug}`}><span>Next →</span><strong>{next.title}</strong></a>}
+            </div>
+          </div>
+        </nav>
+      )}
+
+      <section class="concept-closing">
+        <div class="concept-shell concept-closing__grid">
+          <div>
+            <p class="concept-eyebrow">We’re still moving!</p>
+            <h2 class="display-lg">Some projects end at handoff. This one became another chapter.</h2>
+          </div>
+          <div class="concept-closing__body">
+            <p>The mobile app became another step in an ongoing partnership that keeps evolving with what Travelcircus needs next.</p>
+            <p>If your product needs a team that can step in, adapt quickly, and keep moving with you, <strong>let’s talk!</strong></p>
+            <div class="concept-closing__actions"><a class="btn-primary" href="/#contact">Start a project ↗</a><a class="btn-cream" href="/work">See more work</a></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .concept-page { --concept-max: 1240px; overflow: clip; }
+  .concept-shell { width: min(calc(100% - 48px), var(--concept-max)); margin-inline: auto; }
+  .concept-eyebrow { margin: 0 0 18px; color: #736049; font: 600 11px/1.25 Inter, system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+  .concept-back { display: inline-block; margin-bottom: 48px; color: #736049; font: 600 11px/1 Inter, system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; }
+  .concept-switcher { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid #3E2002; background: rgba(252,248,240,.94); backdrop-filter: blur(14px); }
+  .concept-switcher__inner { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .concept-switcher__back, .concept-switcher__links a { color: #6D543C; font: 600 10px/1 Inter, system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
+  .concept-switcher__links { display: flex; align-items: center; gap: 6px; }
+  .concept-switcher__links a { padding: 8px 10px; border: 1px solid transparent; border-radius: 4px; }
+  .concept-switcher__links a[aria-current='page'] { color: #FCF8F0; background: #3E2002; }
+
+  .concept-hero { padding: 58px 0 72px; border-bottom: 2px solid #3E2002; }
+  .concept-hero__grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 72px; align-items: end; }
+  .concept-hero h1 { margin: 0; }
+  .concept-meta { margin: 0; border-block: 2px solid #3E2002; }
+  .concept-meta > div { display: grid; grid-template-columns: 92px 1fr; gap: 18px; padding: 15px 0; }
+  .concept-meta > div + div { border-top: 1px solid #CFC0AD; }
+  .concept-meta dt { color: #736049; font: 600 10px/1.4 Inter, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+  .concept-meta dd { margin: 0; color: #3E2002; font: 500 13px/1.45 Inter, system-ui, sans-serif; }
+  .concept-hero__visual { position: relative; margin-top: 48px; overflow: hidden; border-radius: 4px; background: #3E2002; }
+  .concept-hero__visual img { width: 100%; height: auto; display: block; }
+
+  .chapter { padding: 110px 0; }
+  .chapter + .chapter { border-top: 2px solid #3E2002; }
+  .chapter-copy { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr); gap: 88px; align-items: start; margin-bottom: 44px; }
+  .chapter-copy h2 { margin: 0; max-width: 12ch; }
+  .chapter-body { max-width: 600px; padding-top: 36px; }
+  .chapter-body p, .concept-closing__body p, .scrolly-copy > p:not(.concept-eyebrow), .dossier-card p { margin: 0 0 16px; color: #6D543C; font: 400 17px/1.65 Inter, system-ui, sans-serif; }
+  .relationship-board { display: grid; grid-template-columns: 1.08fr .92fr; border: 2px solid #3E2002; border-radius: 4px; overflow: hidden; }
+  .relationship-board blockquote, .scrolly-visual blockquote, .dossier-card--quote { margin: 0; }
+  .relationship-board blockquote { min-height: 480px; padding: 48px; display: flex; flex-direction: column; justify-content: space-between; background: #F6DCC8; }
+  .quote-mark { display: block; color: #A9541F; font: 700 82px/.65 Iowan Old Style, Georgia, serif; }
+  .relationship-board blockquote > p, .scrolly-visual blockquote > p, .dossier-card--quote > p { margin: 28px 0 40px; color: #3E2002; font: 700 clamp(25px, 2.8vw, 40px)/1.1 Iowan Old Style, Georgia, serif; letter-spacing: -.02em; }
+  blockquote footer { display: flex; flex-direction: column; gap: 4px; font: 500 13px/1.45 Inter, system-ui, sans-serif; }
+  blockquote footer span { color: #736049; }
+  .timeline-panel { padding: 44px; display: flex; flex-direction: column; justify-content: space-between; background: #3E2002; color: #FCF8F0; }
+  .timeline-panel ol, .scrolly-timeline, .dossier-card--timeline ol { margin: 0; padding: 0; list-style: none; }
+  .timeline-panel li { display: grid; grid-template-columns: 52px 18px 1fr; gap: 12px; min-height: 88px; }
+  .timeline-panel li > span:last-child { display: flex; flex-direction: column; gap: 5px; }
+  .timeline-panel small, .scrolly-timeline small, .dossier-card--timeline small { color: rgba(252,248,240,.64); font: 400 12px/1.45 Inter, system-ui, sans-serif; }
+  .timeline-year { font: 600 11px/1.2 Inter, system-ui, sans-serif; letter-spacing: .08em; }
+  .timeline-dot { position: relative; width: 11px; height: 11px; border: 2px solid #3E2002; outline: 1px solid rgba(252,248,240,.5); background: #FCF8F0; }
+  .timeline-dot::after { content: ''; position: absolute; top: 12px; left: 3px; width: 1px; height: 65px; background: rgba(252,248,240,.22); }
+  .timeline-panel li:last-child .timeline-dot { background: #FF9D69; outline-color: #FF9D69; }
+  .timeline-panel li:last-child .timeline-dot::after { display: none; }
+  .relationship-stat { display: flex; align-items: end; gap: 16px; padding-top: 22px; border-top: 1px solid rgba(252,248,240,.2); }
+  .relationship-stat strong { font: 700 64px/.8 Iowan Old Style, Georgia, serif; }
+  .relationship-stat span { color: rgba(252,248,240,.7); font: 600 10px/1.35 Inter, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+
+  .chapter--shift { background: #F1E9DA; }
+  .comparison-board { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 18px; align-items: stretch; padding: 18px; border: 2px solid #3E2002; background: #FCF8F0; border-radius: 4px; }
+  .asset-placeholder { min-height: 300px; display: grid; place-content: center; gap: 12px; padding: 28px; text-align: center; border: 2px dashed #A9541F; background: #F1E9DA; color: #3E2002; }
+  .asset-placeholder span { color: #A9541F; font: 700 10px/1 Inter, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+  .asset-placeholder strong { max-width: 25ch; font: 700 20px/1.2 Iowan Old Style, Georgia, serif; }
+  .asset-placeholder.on-ink { background: rgba(252,248,240,.04); color: #FCF8F0; border-color: #FF9D69; }
+  .comparison-board figure, .dossier-card--after { position: relative; margin: 0; overflow: hidden; min-height: 440px; background: #3E2002; }
+  .comparison-board figure img, .dossier-card--after img { width: 100%; height: 100%; object-fit: cover; }
+  .comparison-board figcaption, .dossier-card--after figcaption, .scrolly-visual figcaption { position: absolute; left: 14px; bottom: 14px; padding: 8px 10px; border-radius: 4px; color: #FCF8F0; background: rgba(62,32,2,.9); font: 600 10px/1 Inter, system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+  .comparison-arrow { display: grid; place-items: center; color: #A9541F; font: 700 38px/1 Iowan Old Style, Georgia, serif; }
+
+  .chapter--prototype { border-top-color: #FCF8F0 !important; }
+  .chapter--prototype .concept-eyebrow, .chapter--prototype .chapter-body p { color: rgba(252,248,240,.72); }
+  .prototype-board { display: grid; grid-template-columns: 1.28fr .72fr; gap: 16px; padding: 16px; border: 1px solid rgba(252,248,240,.22); }
+  .video-placeholder { min-height: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; border: 1px dashed rgba(252,248,240,.4); color: #FCF8F0; background: rgba(252,248,240,.04); text-align: center; }
+  .video-placeholder__play { width: 68px; height: 68px; display: grid; place-items: center; padding-left: 4px; border-radius: 50%; color: #3E2002; background: #FF9D69; }
+  .video-placeholder div { display: grid; gap: 8px; }
+  .video-placeholder div span { color: #FF9D69; font: 700 10px/1 Inter, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+  .video-placeholder div strong { font: 700 24px/1.1 Iowan Old Style, Georgia, serif; }
+  .prototype-media { width: 100%; min-height: 500px; max-height: 680px; display: block; object-fit: contain; background: #120A03; }
+  .reason-panel { padding: 34px; color: #3E2002; background: #F6DCC8; }
+  .reason-panel h3, .scrolly-reasons h3, .dossier-card--reasons h3 { margin: 0 0 28px; font: 700 24px/1.1 Iowan Old Style, Georgia, serif; }
+  .reason-panel ol, .dossier-card--reasons ol { margin: 0; padding: 0; list-style: none; }
+  .reason-panel li, .dossier-card--reasons li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 18px 0; border-top: 1px solid rgba(62,32,2,.3); }
+  .reason-panel li > span, .dossier-card--reasons li > span, .scrolly-reasons article > span { color: #A9541F; font: 700 10px/1.4 Inter, system-ui, sans-serif; }
+  .reason-panel li strong, .dossier-card--reasons li strong, .scrolly-reasons article strong { font: 700 14px/1.3 Inter, system-ui, sans-serif; }
+  .reason-panel li p, .dossier-card--reasons li p, .scrolly-reasons article p { margin: 5px 0 0; color: #6D543C; font: 400 13px/1.5 Inter, system-ui, sans-serif; }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+  .feature-card { position: relative; margin: 0; min-height: 420px; overflow: hidden; border: 2px solid #3E2002; background: #3E2002; }
+  .feature-card--1, .feature-card--4, .feature-card--5 { grid-column: span 7; }
+  .feature-card--2, .feature-card--3, .feature-card--6 { grid-column: span 5; }
+  .feature-card img { width: 100%; height: 100%; min-height: 420px; display: block; object-fit: cover; }
+  .feature-card .asset-placeholder { height: 100%; min-height: 420px; border: 0; }
+  .feature-card__caption, .dossier-card--feature > div:last-child, .scrolly-feature-stack article > div:last-child { position: absolute; inset: auto 0 0; display: flex; align-items: baseline; gap: 16px; padding: 18px; color: #FCF8F0; background: linear-gradient(transparent, rgba(62,32,2,.96)); }
+  .feature-card__caption span, .dossier-card--feature > div:last-child span, .scrolly-feature-stack article > div:last-child span { color: #FF9D69; font: 700 10px/1 Inter, system-ui, sans-serif; }
+  .feature-card__caption h3, .dossier-card--feature > div:last-child h3, .scrolly-feature-stack article > div:last-child h3 { margin: 0; font: 700 21px/1.1 Iowan Old Style, Georgia, serif; }
+
+  .scrolly-story { background: #F1E9DA; }
+  .scrolly-chapter { width: min(calc(100% - 48px), var(--concept-max)); min-height: 118vh; margin-inline: auto; padding: 100px 0; display: grid; grid-template-columns: minmax(300px, .78fr) minmax(0, 1.22fr); gap: 84px; align-items: start; }
+  .scrolly-chapter + .scrolly-chapter { border-top: 2px solid #3E2002; }
+  .scrolly-copy { position: sticky; top: 104px; padding-top: 8px; }
+  .scrolly-copy h2 { margin: 0 0 32px; max-width: 11ch; }
+  .scrolly-visual { min-height: 760px; position: relative; overflow: hidden; border: 2px solid #3E2002; background: #FCF8F0; }
+  .scrolly-visual--relationship { display: grid; grid-template-rows: 1.2fr .8fr auto; }
+  .scrolly-visual--relationship blockquote { padding: 40px; background: #F6DCC8; }
+  .scrolly-visual--relationship blockquote > p { font-size: clamp(25px, 2.6vw, 38px); }
+  .scrolly-timeline { padding: 32px 40px; background: #3E2002; color: #FCF8F0; }
+  .scrolly-timeline li, .dossier-card--timeline li { display: grid; grid-template-columns: 60px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid rgba(252,248,240,.22); }
+  .scrolly-timeline li span, .dossier-card--timeline li span { display: flex; flex-direction: column; gap: 3px; }
+  .scrolly-visual--relationship .relationship-stat { padding: 26px 40px; background: #3E2002; color: #FCF8F0; }
+  .scrolly-chapter--dark { width: 100%; max-width: none; padding-inline: max(24px, calc((100% - var(--concept-max)) / 2)); color: #FCF8F0; background: #3E2002; }
+  .scrolly-chapter--dark .concept-eyebrow, .scrolly-chapter--dark .scrolly-copy > p { color: rgba(252,248,240,.72); }
+  .scrolly-visual--comparison { padding: 20px; display: grid; grid-template-rows: 320px 72px 520px; gap: 16px; border-color: rgba(252,248,240,.4); background: rgba(252,248,240,.04); }
+  .scrolly-visual--comparison .asset-placeholder { min-height: 0; }
+  .scrolly-arrow { display: grid; place-items: center; color: #FF9D69; font-size: 38px; }
+  .scrolly-visual--comparison figure { position: relative; margin: 0; overflow: hidden; }
+  .scrolly-visual--comparison figure img { width: 100%; height: 100%; object-fit: cover; }
+  .scrolly-visual--prototype { padding: 16px; background: #3E2002; }
+  .scrolly-visual--prototype .video-placeholder { min-height: 430px; }
+  .scrolly-reasons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 16px; background: rgba(252,248,240,.25); }
+  .scrolly-reasons h3 { grid-column: 1 / -1; margin: 0; padding: 24px; background: #F6DCC8; }
+  .scrolly-reasons article { padding: 24px; background: #F6DCC8; }
+  .scrolly-feature-stack { overflow: visible; border: 0; background: transparent; }
+  .scrolly-feature-stack article { position: sticky; top: 104px; height: 72vh; min-height: 520px; margin-bottom: 64px; overflow: hidden; border: 2px solid #3E2002; background: #3E2002; }
+  .scrolly-feature-stack article:nth-child(2) { top: 122px; }
+  .scrolly-feature-stack article:nth-child(3) { top: 140px; }
+  .scrolly-feature-stack article:nth-child(4) { top: 158px; }
+  .scrolly-feature-stack img, .scrolly-feature-stack .asset-placeholder { width: 100%; height: 100%; object-fit: cover; }
+
+  .dossier-story { padding: 80px 0 110px; background: #F1E9DA; }
+  .dossier-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+  .dossier-card { position: relative; margin: 0; padding: 30px; overflow: hidden; border: 2px solid #3E2002; background: #FCF8F0; }
+  .dossier-card--intro { grid-column: span 9; }
+  .dossier-card--intro h2 { margin: 0 0 34px; max-width: 13ch; }
+  .dossier-card__columns { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+  .dossier-card--stat { grid-column: span 3; display: flex; flex-direction: column; justify-content: flex-end; color: #FCF8F0; background: #A9541F; }
+  .dossier-card--stat strong { font: 700 clamp(76px, 9vw, 138px)/.75 Iowan Old Style, Georgia, serif; }
+  .dossier-card--stat span { margin-top: 24px; font: 600 11px/1.45 Inter, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+  .dossier-card--quote { grid-column: span 7; background: #F6DCC8; }
+  .dossier-card--quote > p { font-size: clamp(23px, 2.4vw, 34px); }
+  .dossier-card--timeline { grid-column: span 5; color: #FCF8F0; background: #3E2002; }
+  .dossier-card--timeline .concept-eyebrow { color: rgba(252,248,240,.65); }
+  .dossier-card--shift-copy { grid-column: span 6; }
+  .dossier-card--shift-copy h2, .dossier-card--prototype-copy h2 { margin: 0 0 24px; }
+  .dossier-card--before, .dossier-card--after { grid-column: span 3; min-height: 440px; padding: 0; }
+  .dossier-card--before .asset-placeholder { height: 100%; border: 0; }
+  .dossier-card--prototype-copy { grid-column: span 5; color: #FCF8F0; background: #3E2002; }
+  .dossier-card--prototype-copy .concept-eyebrow, .dossier-card--prototype-copy p { color: rgba(252,248,240,.72); }
+  .dossier-card--video { grid-column: span 7; padding: 14px; background: #3E2002; }
+  .dossier-card--video .video-placeholder { min-height: 430px; }
+  .dossier-card--reasons { grid-column: span 12; background: #F6DCC8; }
+  .dossier-card--reasons ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .dossier-card--reasons li { border-block: 1px solid rgba(62,32,2,.3); }
+  .dossier-card--feature-heading { grid-column: span 12; padding-block: 54px; }
+  .dossier-card--feature-heading h2 { margin: 0; }
+  .dossier-card--feature { grid-column: span 6; min-height: 420px; padding: 0; background: #3E2002; }
+  .dossier-card--feature img, .dossier-card--feature .asset-placeholder { width: 100%; height: 100%; min-height: 420px; object-fit: cover; border: 0; }
+
+  .case-pagination { border-top: 2px solid #3E2002; background: #F1E9DA; }
+  .case-pagination__grid { min-height: 132px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; }
+  .case-pagination__grid > div:last-child { text-align: right; }
+  .case-pagination a { display: inline-flex; flex-direction: column; gap: 8px; color: #3E2002; text-decoration: none; }
+  .case-pagination a span { color: #736049; font: 600 10px/1 Inter, system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+  .case-pagination a strong { font: 700 22px/1.1 Iowan Old Style, Georgia, serif; }
+  .case-pagination a:hover strong { color: #A9541F; }
+
+  .concept-closing { padding: 100px 0; border-top: 2px solid #3E2002; }
+  .concept-closing__grid { display: grid; grid-template-columns: 1.12fr .88fr; gap: 80px; align-items: end; }
+  .concept-closing h2 { margin: 0; max-width: 13ch; }
+  .concept-closing__actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+
+  @media (max-width: 920px) {
+    .concept-hero__grid, .chapter-copy, .relationship-board, .prototype-board, .concept-closing__grid { grid-template-columns: 1fr; gap: 38px; }
+    .chapter-body { padding-top: 0; }
+    .relationship-board blockquote { min-height: 400px; }
+    .feature-card--1, .feature-card--2, .feature-card--3, .feature-card--4, .feature-card--5, .feature-card--6 { grid-column: span 6; }
+    .scrolly-chapter { min-height: auto; grid-template-columns: 1fr; gap: 36px; }
+    .scrolly-copy { position: static; }
+    .dossier-card--intro, .dossier-card--quote, .dossier-card--timeline, .dossier-card--shift-copy, .dossier-card--prototype-copy, .dossier-card--video { grid-column: span 12; }
+    .dossier-card--stat, .dossier-card--before, .dossier-card--after { grid-column: span 4; }
+  }
+
+  @media (max-width: 680px) {
+    .concept-shell, .scrolly-chapter { width: min(calc(100% - 28px), var(--concept-max)); }
+    .concept-switcher { position: relative; }
+    .concept-switcher__inner { padding: 10px 0; align-items: flex-start; }
+    .concept-switcher__back { padding-top: 9px; }
+    .concept-switcher__links { flex-direction: column; align-items: stretch; }
+    .concept-hero { padding: 38px 0 52px; }
+    .concept-back { margin-bottom: 34px; }
+    .concept-hero__grid { grid-template-columns: 1fr; }
+    .concept-meta > div { grid-template-columns: 74px 1fr; }
+    .chapter { padding: 72px 0; }
+    .relationship-board blockquote, .timeline-panel { padding: 28px; }
+    .comparison-board { grid-template-columns: 1fr; }
+    .comparison-arrow { min-height: 58px; transform: rotate(90deg); }
+    .prototype-board { padding: 10px; }
+    .video-placeholder { min-height: 360px; }
+    .reason-panel { padding: 26px; }
+    .feature-card--1, .feature-card--2, .feature-card--3, .feature-card--4, .feature-card--5, .feature-card--6 { grid-column: 1 / -1; }
+    .feature-card, .feature-card img, .feature-card .asset-placeholder { min-height: 320px; }
+    .scrolly-chapter { padding: 72px 0; }
+    .scrolly-chapter--dark { width: 100%; padding-inline: 14px; }
+    .scrolly-visual { min-height: auto; }
+    .scrolly-reasons { grid-template-columns: 1fr; }
+    .scrolly-feature-stack article { position: relative; top: auto !important; height: auto; min-height: 340px; margin-bottom: 20px; }
+    .dossier-story { padding: 56px 0 72px; }
+    .dossier-card, .dossier-card--intro, .dossier-card--stat, .dossier-card--quote, .dossier-card--timeline, .dossier-card--shift-copy, .dossier-card--before, .dossier-card--after, .dossier-card--prototype-copy, .dossier-card--video, .dossier-card--reasons, .dossier-card--feature-heading, .dossier-card--feature { grid-column: 1 / -1; }
+    .dossier-card__columns, .dossier-card--reasons ol { grid-template-columns: 1fr; }
+    .dossier-card--stat { min-height: 280px; }
+    .concept-closing { padding: 72px 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scrolly-copy, .scrolly-feature-stack article { position: static; }
+  }
+</style>
