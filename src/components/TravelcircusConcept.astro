@@ -8,6 +8,8 @@ import offerDetail from '../assets/work-images/travelcircus/mockup-1.png'
 import bookingSuccess from '../assets/work-images/travelcircus/mockup-2.png'
 import bookingManagement from '../assets/work-images/travelcircus/mockup-3.png'
 import finalMockup from '../assets/work-images/travelcircus/final-mockup-1.png'
+import finalMockup2 from '../assets/work-images/travelcircus/final-mockup-2.png'
+import finalMockup3 from '../assets/work-images/travelcircus/final-mockup-3.png'
 import prototypeVideo from '../assets/work-images/travelcircus/prototype.mp4?url'
 
 type Variant = 'editorial' | 'scrollytelling' | 'dossier'
@@ -48,9 +50,9 @@ const prototypeReasons = [
 
 const featureCards = [
   { title: 'Travel Discovery & Top Deals', image: cover, asset: 'Home Screen / Exploration Top Deals' },
-  { title: 'Search & Travel Listings', image: null, asset: 'Search Screen + PLP Screen' },
+  { title: 'Search & Travel Listings', image: finalMockup2, asset: 'Search Screen + PLP Screen' },
   { title: 'Package & Offer Details', image: offerDetail, asset: 'PDP Screen / Voucher PDP Screen' },
-  { title: 'Hotel & Ticket Booking', image: null, asset: 'Booking Ticket + Hotel Screen' },
+  { title: 'Hotel & Ticket Booking', image: finalMockup3, asset: 'Booking Ticket + Hotel Screen' },
   { title: 'Checkout & Booking Confirmation', image: bookingSuccess, asset: 'Checkout Screen' },
   { title: 'My Bookings & Trip Management', image: bookingManagement, asset: 'My Booking Screen' },
 ]
@@ -467,13 +469,12 @@ const jsonLd = {
   .relationship-stat span { color: rgba(252,248,240,.7); font: 600 10px/1.35 Inter, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
 
   .chapter--shift { background: #F1E9DA; }
-  .comparison-board { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 18px; align-items: stretch; padding: 18px; border: 2px solid #3E2002; background: #FCF8F0; border-radius: 4px; }
   .asset-placeholder { min-height: 300px; display: grid; place-content: center; gap: 12px; padding: 28px; text-align: center; border: 2px dashed #A9541F; background: #F1E9DA; color: #3E2002; }
   .asset-placeholder span { color: #A9541F; font: 700 10px/1 Inter, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
   .asset-placeholder strong { max-width: 25ch; font: 700 20px/1.2 Iowan Old Style, Georgia, serif; }
   .asset-placeholder.on-ink { background: rgba(252,248,240,.04); color: #FCF8F0; border-color: #FF9D69; }
 
-  .compare-slider { position: relative; overflow: hidden; min-height: 440px; border: 2px solid #3E2002; border-radius: 4px; background: #3E2002; cursor: ew-resize; touch-action: pan-y; }
+  .compare-slider { position: relative; overflow: hidden; aspect-ratio: 16 / 9; border: 2px solid #3E2002; border-radius: 4px; background: #3E2002; cursor: ew-resize; touch-action: pan-y; }
   .compare-slider__layer { position: absolute; inset: 0; }
   .compare-slider__layer img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .compare-slider__layer--before { clip-path: inset(0 50% 0 0); background: #F1E9DA; }
@@ -482,11 +483,10 @@ const jsonLd = {
   .compare-slider__tag--before { left: 14px; }
   .compare-slider__tag--after { right: 14px; }
   .compare-slider__handle { position: absolute; top: 0; bottom: 0; left: 50%; z-index: 3; display: flex; align-items: center; justify-content: center; width: 2px; background: #FCF8F0; transform: translateX(-50%); pointer-events: none; }
-  .compare-slider__grip { display: grid; place-items: center; width: 40px; height: 40px; border: 2px solid #3E2002; border-radius: 50%; background: #FCF8F0; color: #3E2002; box-shadow: 0 4px 10px rgba(0,0,0,.25); pointer-events: auto; }
+  .compare-slider__grip { flex-shrink: 0; display: grid; place-items: center; width: 40px; height: 40px; border: 2px solid #3E2002; border-radius: 50%; background: #FCF8F0; color: #3E2002; box-shadow: 0 4px 10px rgba(0,0,0,.25); pointer-events: auto; }
   .comparison-board figure, .dossier-card--after { position: relative; margin: 0; overflow: hidden; min-height: 440px; background: #3E2002; }
   .comparison-board figure img, .dossier-card--after img { width: 100%; height: 100%; object-fit: cover; }
   .comparison-board figcaption, .dossier-card--after figcaption, .scrolly-visual figcaption { position: absolute; left: 14px; bottom: 14px; padding: 8px 10px; border-radius: 4px; color: #FCF8F0; background: rgba(62,32,2,.9); font: 600 10px/1 Inter, system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
-  .comparison-arrow { display: grid; place-items: center; color: #A9541F; font: 700 38px/1 Iowan Old Style, Georgia, serif; }
 
   .chapter--prototype { border-top-color: #FCF8F0 !important; }
   .chapter--prototype .concept-eyebrow, .chapter--prototype .chapter-body p { color: rgba(252,248,240,.72); }
@@ -612,8 +612,7 @@ const jsonLd = {
     .concept-meta > div { grid-template-columns: 74px 1fr; }
     .chapter { padding: 72px 0; }
     .relationship-board blockquote, .timeline-panel { padding: 28px; }
-    .comparison-board { grid-template-columns: 1fr; }
-    .comparison-arrow { min-height: 58px; transform: rotate(90deg); }
+    .compare-slider { aspect-ratio: auto; min-height: 320px; }
     .prototype-board { padding: 10px; }
     .video-placeholder { min-height: 360px; }
     .reason-panel { padding: 26px; }
