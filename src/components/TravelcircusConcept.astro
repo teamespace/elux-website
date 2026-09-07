@@ -22,11 +22,17 @@ interface PrevNext {
 interface Props {
   variant: Variant
   preview?: boolean
+  data?: any
   prev?: PrevNext | null
   next?: PrevNext | null
 }
 
-const { variant, preview = true, prev = null, next = null } = Astro.props
+const { variant, preview = true, data, prev = null, next = null } = Astro.props
+
+const isFilled = (v: unknown) => typeof v === 'string' && v.length > 0 && !v.startsWith('[')
+const hasYear = isFilled(data?.year)
+const hasTimeline = isFilled(data?.timeline)
+const hasServices = Array.isArray(data?.services) && data.services.length > 0
 
 const concepts = [
   { id: 'editorial', label: '01 Editorial chapters' },
@@ -43,9 +49,10 @@ const timeline = [
 ]
 
 const prototypeReasons = [
-  { number: '01', title: 'Experience, not imagine', detail: 'The team reacts to a working journey, not isolated frames.' },
-  { number: '02', title: 'Clearer feedback', detail: 'Problems show up in context, while the flow is still flexible.' },
-  { number: '03', title: 'Faster decisions', detail: 'Less guesswork between what is designed and how it actually feels.' },
+  { number: '01', title: 'Experience, not imagine', detail: 'The team reacted to a working journey, not isolated frames. Every tap, transition, and screen state could be felt the way a real user would encounter it, instead of being described in a meeting.' },
+  { number: '02', title: 'Clearer feedback', detail: 'Problems surfaced in context, while the flow was still flexible enough to change. That meant fewer notes on static screens and more conversations about how the product actually behaved.' },
+  { number: '03', title: 'Faster decisions', detail: 'Less guesswork between what was designed and how it actually felt, so the team could commit to a direction with confidence instead of waiting for a full build to validate it.' },
+  { number: '04', title: 'One shared reference', detail: 'Design and stakeholders reviewed the exact same working flow, so conversations stayed focused on the product itself instead of everyone interpreting static screens differently.' },
 ]
 
 const featureCards = [
@@ -103,22 +110,41 @@ const jsonLd = {
       <header class="concept-hero">
         <div class="concept-shell">
           <a href="/work" class="concept-back">← All work</a>
-          <div class="concept-hero__grid">
-            <div>
-              <p class="concept-eyebrow">Mobile App Design · Travel Tech · Product Design</p>
-              <h1 class="display-xl">Travelcircus</h1>
-            </div>
-            <dl class="concept-meta">
+          <h1 class="display-xl mb-5">{data?.client ?? 'Travelcircus'}</h1>
+          {data?.tagline && (
+            <span class="inline-block font-body font-semibold text-[11px] uppercase tracking-[0.1em] text-cream bg-primary px-3 py-1.5 rounded-chip mb-8">
+              {data.tagline}
+            </span>
+          )}
+          {data?.summary && <p class="body-lg text-ink-2 max-w-2xl mb-10">{data.summary}</p>}
+          <dl class="grid grid-cols-2 md:grid-cols-4 gap-6 border-t-2 border-ink pt-8">
+            {hasYear && (
               <div>
-                <dt>Project</dt>
-                <dd>Travelcircus - Mobile Travel Booking App Design</dd>
+                <dt class="eyebrow text-ink-3 mb-2">Year</dt>
+                <dd class="font-display font-bold text-lg text-ink">{data.year}</dd>
               </div>
+            )}
+            {hasTimeline && (
               <div>
-                <dt>Scope</dt>
-                <dd>Mobile Product Design · Interactive Prototyping</dd>
+                <dt class="eyebrow text-ink-3 mb-2">Timeline</dt>
+                <dd class="font-display font-bold text-lg text-ink">{data.timeline}</dd>
               </div>
-            </dl>
-          </div>
+            )}
+            {hasServices && (
+              <div>
+                <dt class="eyebrow text-ink-3 mb-2">Services</dt>
+                <dd class="font-body text-sm text-ink-2">{data.services.join(', ')}</dd>
+              </div>
+            )}
+            {data?.liveUrl && (
+              <div>
+                <dt class="eyebrow text-ink-3 mb-2">Live</dt>
+                <dd class="font-body text-sm">
+                  <a href={data.liveUrl} class="text-primary hover:underline break-all">{data.liveUrl} <span aria-hidden="true">↗</span></a>
+                </dd>
+              </div>
+            )}
+          </dl>
           <div class="concept-hero__visual">
             <Image src={cover} alt="Travelcircus mobile app home screen" />
           </div>
@@ -213,19 +239,22 @@ const jsonLd = {
                   <p>That made feedback clearer, reduced guesswork, and helped us iterate and make decisions faster, bringing the core mobile flow together within one month.</p>
                 </div>
               </div>
-              <div class="prototype-board">
-                <video class="prototype-media" controls muted playsinline preload="metadata" poster={cover.src} aria-label="Travelcircus interactive prototype">
-                  <source src={prototypeVideo} type="video/mp4" />
-                  Your browser does not support embedded videos.
-                </video>
-                <aside class="reason-panel">
+              <div class="prototype-sticky">
+                <div class="prototype-sticky__media">
+                  <video class="prototype-media" autoplay loop muted playsinline controls preload="auto" poster={cover.src} aria-label="Travelcircus interactive prototype">
+                    <source src={prototypeVideo} type="video/mp4" />
+                    Your browser does not support embedded videos.
+                  </video>
+                </div>
+                <div class="prototype-sticky__list">
                   <h3>Why prototype early?</h3>
-                  <ol>
-                    {prototypeReasons.map((reason) => (
-                      <li><span>{reason.number}</span><div><strong>{reason.title}</strong><p>{reason.detail}</p></div></li>
-                    ))}
-                  </ol>
-                </aside>
+                  {prototypeReasons.map((reason) => (
+                    <article class="prototype-reason">
+                      <span>{reason.number}</span>
+                      <div><strong>{reason.title}</strong><p>{reason.detail}</p></div>
+                    </article>
+                  ))}
+                </div>
               </div>
             </div>
           </section>
@@ -431,13 +460,6 @@ const jsonLd = {
   .concept-switcher__links a[aria-current='page'] { color: #FCF8F0; background: #3E2002; }
 
   .concept-hero { padding: 58px 0 72px; border-bottom: 2px solid #3E2002; }
-  .concept-hero__grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 72px; align-items: end; }
-  .concept-hero h1 { margin: 0; }
-  .concept-meta { margin: 0; border-block: 2px solid #3E2002; }
-  .concept-meta > div { display: grid; grid-template-columns: 92px 1fr; gap: 18px; padding: 15px 0; }
-  .concept-meta > div + div { border-top: 1px solid #CFC0AD; }
-  .concept-meta dt { color: #736049; font: 600 10px/1.4 Inter, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
-  .concept-meta dd { margin: 0; color: #3E2002; font: 500 13px/1.45 Inter, system-ui, sans-serif; }
   .concept-hero__visual { position: relative; margin-top: 48px; overflow: hidden; border-radius: 4px; background: #3E2002; }
   .concept-hero__visual img { width: 100%; height: auto; display: block; }
 
@@ -488,22 +510,30 @@ const jsonLd = {
   .comparison-board figure img, .dossier-card--after img { width: 100%; height: 100%; object-fit: cover; }
   .comparison-board figcaption, .dossier-card--after figcaption, .scrolly-visual figcaption { position: absolute; left: 14px; bottom: 14px; padding: 8px 10px; border-radius: 4px; color: #FCF8F0; background: rgba(62,32,2,.9); font: 600 10px/1 Inter, system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 
-  .chapter--prototype { border-top-color: #FCF8F0 !important; }
+  .chapter--prototype { border-top-color: #FCF8F0 !important; position: relative; }
   .chapter--prototype .concept-eyebrow, .chapter--prototype .chapter-body p { color: rgba(252,248,240,.72); }
-  .prototype-board { display: grid; grid-template-columns: 1.28fr .72fr; gap: 16px; padding: 16px; border: 1px solid rgba(252,248,240,.22); }
   .video-placeholder { min-height: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; border: 1px dashed rgba(252,248,240,.4); color: #FCF8F0; background: rgba(252,248,240,.04); text-align: center; }
   .video-placeholder__play { width: 68px; height: 68px; display: grid; place-items: center; padding-left: 4px; border-radius: 50%; color: #3E2002; background: #FF9D69; }
   .video-placeholder div { display: grid; gap: 8px; }
   .video-placeholder div span { color: #FF9D69; font: 700 10px/1 Inter, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
   .video-placeholder div strong { font: 700 24px/1.1 Iowan Old Style, Georgia, serif; }
   .prototype-media { width: 100%; min-height: 500px; max-height: 680px; display: block; object-fit: contain; background: #120A03; }
-  .reason-panel { padding: 34px; color: #3E2002; background: #F6DCC8; }
   .reason-panel h3, .scrolly-reasons h3, .dossier-card--reasons h3 { margin: 0 0 28px; font: 700 24px/1.1 Iowan Old Style, Georgia, serif; }
   .reason-panel ol, .dossier-card--reasons ol { margin: 0; padding: 0; list-style: none; }
   .reason-panel li, .dossier-card--reasons li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 18px 0; border-top: 1px solid rgba(62,32,2,.3); }
   .reason-panel li > span, .dossier-card--reasons li > span, .scrolly-reasons article > span { color: #A9541F; font: 700 10px/1.4 Inter, system-ui, sans-serif; }
   .reason-panel li strong, .dossier-card--reasons li strong, .scrolly-reasons article strong { font: 700 14px/1.3 Inter, system-ui, sans-serif; }
   .reason-panel li p, .dossier-card--reasons li p, .scrolly-reasons article p { margin: 5px 0 0; color: #6D543C; font: 400 13px/1.5 Inter, system-ui, sans-serif; }
+
+  .prototype-sticky { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: start; }
+  .prototype-sticky__media { position: sticky; top: 48px; padding: 40px; border-radius: 8px; background: rgba(0,0,0,.15); }
+  .prototype-sticky__media .prototype-media { max-width: 240px; min-height: 0; margin: 0 auto; border-radius: 16px; box-shadow: 0 30px 70px rgba(0,0,0,.45); }
+  .prototype-sticky__list { display: flex; flex-direction: column; gap: 20px; padding-top: 4px; }
+  .prototype-sticky__list h3 { margin: 0 0 4px; font: 700 24px/1.1 Iowan Old Style, Georgia, serif; }
+  .prototype-reason { display: grid; grid-template-columns: 32px 1fr; gap: 14px; padding: 28px; border-radius: 8px; border: 1px solid rgba(252,248,240,.16); background: rgba(252,248,240,.05); }
+  .prototype-reason span { color: #FF9D69; font: 700 11px/1.4 Inter, system-ui, sans-serif; }
+  .prototype-reason strong { display: block; margin-bottom: 6px; font: 700 15px/1.3 Inter, system-ui, sans-serif; }
+  .prototype-reason p { margin: 0; color: rgba(252,248,240,.72); font: 400 14px/1.6 Inter, system-ui, sans-serif; }
 
   .feature-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
   .feature-card { position: relative; margin: 0; min-height: 420px; overflow: hidden; border: 2px solid #3E2002; background: #3E2002; }
@@ -590,7 +620,9 @@ const jsonLd = {
   .concept-closing__actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
 
   @media (max-width: 920px) {
-    .concept-hero__grid, .chapter-copy, .relationship-board, .prototype-board, .concept-closing__grid { grid-template-columns: 1fr; gap: 38px; }
+    .chapter-copy, .relationship-board, .concept-closing__grid { grid-template-columns: 1fr; gap: 38px; }
+    .prototype-sticky { grid-template-columns: 1fr; gap: 28px; }
+    .prototype-sticky__media { position: static; padding: 0; background: none; }
     .chapter-body { padding-top: 0; }
     .relationship-board blockquote { min-height: 400px; }
     .feature-card--1, .feature-card--2, .feature-card--3, .feature-card--4, .feature-card--5, .feature-card--6 { grid-column: span 6; }
@@ -608,14 +640,12 @@ const jsonLd = {
     .concept-switcher__links { flex-direction: column; align-items: stretch; }
     .concept-hero { padding: 38px 0 52px; }
     .concept-back { margin-bottom: 34px; }
-    .concept-hero__grid { grid-template-columns: 1fr; }
-    .concept-meta > div { grid-template-columns: 74px 1fr; }
     .chapter { padding: 72px 0; }
     .relationship-board blockquote, .timeline-panel { padding: 28px; }
     .compare-slider { aspect-ratio: auto; min-height: 320px; }
-    .prototype-board { padding: 10px; }
     .video-placeholder { min-height: 360px; }
-    .reason-panel { padding: 26px; }
+    .prototype-sticky__media .prototype-media { max-width: 220px; }
+    .prototype-reason { padding: 20px; }
     .feature-card--1, .feature-card--2, .feature-card--3, .feature-card--4, .feature-card--5, .feature-card--6 { grid-column: 1 / -1; }
     .feature-card, .feature-card img, .feature-card .asset-placeholder { min-height: 320px; }
     .scrolly-chapter { padding: 72px 0; }

@@ -28,7 +28,7 @@ const { Content } = await render(entry)
 
 {
   entry.id === 'travelcircus' ? (
-    <TravelcircusConcept variant="editorial" preview={false} prev={prev} next={next} />
+    <TravelcircusConcept variant="editorial" preview={false} data={entry.data} prev={prev} next={next} />
   ) : (
     <CaseStudyLayout data={entry.data} prev={prev} next={next}>
       <Content />
