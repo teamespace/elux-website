@@ -114,14 +114,14 @@ const jsonLd = {
       <header class="concept-hero">
         <div class="concept-shell">
           <a href="/work" class="concept-back">← All work</a>
-          <h1 class="display-xl mb-5">{data?.client ?? 'Travelcircus'}</h1>
           {data?.tagline && (
-            <span class="inline-block font-body font-semibold text-[11px] uppercase tracking-[0.1em] text-cream bg-primary px-3 py-1.5 rounded-chip mb-8">
+            <span class="inline-block font-body font-semibold text-[11px] uppercase tracking-[0.1em] text-cream bg-primary px-3 py-1.5 rounded-chip mb-5">
               {data.tagline}
             </span>
           )}
+          <h1 class="display-xl mb-8">{data?.client ?? 'Travelcircus'}</h1>
           {data?.summary && <p class="body-lg text-ink-2 max-w-2xl mb-10">{data.summary}</p>}
-          <dl class="grid grid-cols-2 md:grid-cols-4 gap-6 border-t-2 border-ink pt-8">
+          <dl class="grid grid-cols-2 md:grid-cols-3 gap-6 border-t-2 border-ink pt-8">
             {hasYear && (
               <div>
                 <dt class="eyebrow text-ink-3 mb-2">Year</dt>
@@ -138,14 +138,6 @@ const jsonLd = {
               <div>
                 <dt class="eyebrow text-ink-3 mb-2">Services</dt>
                 <dd class="font-body text-sm text-ink-2">{data.services.join(', ')}</dd>
-              </div>
-            )}
-            {data?.liveUrl && (
-              <div>
-                <dt class="eyebrow text-ink-3 mb-2">Live</dt>
-                <dd class="font-body text-sm">
-                  <a href={data.liveUrl} class="text-primary hover:underline break-all">{data.liveUrl} <span aria-hidden="true">↗</span></a>
-                </dd>
               </div>
             )}
           </dl>
