@@ -8,27 +8,52 @@ import TravelcircusConcept from '../../components/TravelcircusConcept.astro'
 export async function getStaticPaths() {
   const entries = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order)
 
+  // Same card shape the /work index and homepage highlight use, so the "more
+  // work" cards on a case study page look identical to those grids.
+  const toCard = (e: (typeof entries)[number]) => ({
+    slug: e.id,
+    title: e.data.client,
+    category: e.data.tagline,
+    tags: e.data.services,
+    description: e.data.summary,
+    img: e.data.heroImage ?? null,
+  })
+
+  const published = entries.filter((e) => !e.data.draft)
+
   return entries.map((entry, i) => {
     const prev = entries[i - 1]
     const next = entries[i + 1]
+
+    // Always surface 2 other case studies to explore, regardless of where
+    // this entry sits in the sequence — walk forward circularly through the
+    // published list so the last entry doesn't just get a lone "previous".
+    const pubIdx = published.findIndex((e) => e.id === entry.id)
+    const moreWork: (typeof entries)[number][] = []
+    for (let step = 1; moreWork.length < 2 && step <= published.length; step++) {
+      const candidate = published[(pubIdx + step) % published.length]
+      if (candidate.id !== entry.id) moreWork.push(candidate)
+    }
+
     return {
       params: { slug: entry.id },
       props: {
         entry,
-        prev: prev ? { slug: prev.id, title: prev.data.client } : null,
-        next: next ? { slug: next.id, title: next.data.client } : null,
+        prev: prev ? toCard(prev) : null,
+        next: next ? toCard(next) : null,
+        moreWork: moreWork.map(toCard),
       },
     }
   })
 }
 
-const { entry, prev, next } = Astro.props
+const { entry, prev, next, moreWork } = Astro.props
 const { Content } = await render(entry)
 ---
 
 {
   entry.id === 'travelcircus' ? (
-    <TravelcircusConcept variant="editorial" preview={false} data={entry.data} prev={prev} next={next} />
+    <TravelcircusConcept variant="editorial" preview={false} data={entry.data} moreWork={moreWork} />
   ) : (
     <CaseStudyLayout data={entry.data} prev={prev} next={next}>
       <Content />

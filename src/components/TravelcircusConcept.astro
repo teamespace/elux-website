@@ -17,17 +17,20 @@ type Variant = 'editorial' | 'scrollytelling' | 'dossier'
 interface PrevNext {
   slug: string
   title: string
+  category?: string
+  tags?: string[]
+  description?: string
+  img?: any
 }
 
 interface Props {
   variant: Variant
   preview?: boolean
   data?: any
-  prev?: PrevNext | null
-  next?: PrevNext | null
+  moreWork?: PrevNext[]
 }
 
-const { variant, preview = true, data, prev = null, next = null } = Astro.props
+const { variant, preview = true, data, moreWork = [] } = Astro.props
 
 const isFilled = (v: unknown) => typeof v === 'string' && v.length > 0 && !v.startsWith('[')
 const hasYear = isFilled(data?.year)
@@ -431,17 +434,64 @@ const jsonLd = {
         </div>
       )}
 
-      {!preview && (prev || next) && (
-        <nav class="case-pagination" aria-label="More case studies">
-          <div class="concept-shell case-pagination__grid">
-            <div>
-              {prev && <a href={`/work/${prev.slug}`}><span>← Previous</span><strong>{prev.title}</strong></a>}
-            </div>
-            <div>
-              {next && <a href={`/work/${next.slug}`}><span>Next →</span><strong>{next.title}</strong></a>}
+      {!preview && moreWork.length > 0 && (
+        <section class="case-more bg-cream border-t-2 border-ink">
+          <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+            <div class="eyebrow text-ink-3 mb-3">MORE WORK</div>
+            <h2 class="display-lg text-ink mb-10 md:mb-14">Explore other case studies.</h2>
+            <div class="grid md:grid-cols-2 gap-x-6 gap-y-12">
+              {moreWork.map((c, i) => (
+                <a href={`/work/${c.slug}`} class="group block">
+                  <div class="relative w-full aspect-[16/10] rounded-media overflow-hidden">
+                    {c.img ? (
+                      <div
+                        class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
+                        style={`background-image: url(${c.img.src});`}
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <div class="img-placeholder absolute inset-0 rounded-media">
+                        IMAGE: {c.title}
+                      </div>
+                    )}
+                    <div class="absolute inset-0 rounded-media ring-1 ring-inset ring-ink/10" />
+                  </div>
+
+                  <div class="pt-5">
+                    <div class="flex items-center gap-3 mb-3">
+                      <span class="font-body font-semibold text-[11px] tracking-[0.14em] text-ink-3 tabular-nums">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      {c.category && (
+                        <span class="font-body font-semibold text-[10px] uppercase tracking-[0.12em] text-primary">
+                          {c.category}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 class="font-display font-bold text-[19px] md:text-[22px] tracking-[-0.01em] text-ink mb-3 group-hover:text-primary transition-colors">
+                      {c.title}
+                    </h3>
+
+                    {c.tags && c.tags.length > 0 && (
+                      <ul class="flex flex-wrap gap-2 mb-3">
+                        {c.tags.map((t) => (
+                          <li class="font-body font-semibold text-[10px] uppercase tracking-[0.1em] text-ink-2 border border-ink/20 px-2.5 py-1 rounded-chip">
+                            {t}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {c.description && (
+                      <p class="font-body text-[14px] text-ink-2 leading-relaxed max-w-prose">{c.description}</p>
+                    )}
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
-        </nav>
+        </section>
       )}
 
       <section class="concept-closing">
@@ -643,14 +693,6 @@ const jsonLd = {
   .dossier-card--feature-heading h2 { margin: 0; }
   .dossier-card--feature { grid-column: span 6; min-height: 420px; padding: 0; background: #3E2002; }
   .dossier-card--feature img, .dossier-card--feature .asset-placeholder { width: 100%; height: 100%; min-height: 420px; object-fit: cover; border: 0; }
-
-  .case-pagination { border-top: 2px solid #3E2002; background: #F1E9DA; }
-  .case-pagination__grid { min-height: 132px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; }
-  .case-pagination__grid > div:last-child { text-align: right; }
-  .case-pagination a { display: inline-flex; flex-direction: column; gap: 8px; color: #3E2002; text-decoration: none; }
-  .case-pagination a span { color: #736049; font: 600 10px/1 Inter, system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
-  .case-pagination a strong { font: 700 22px/1.1 Iowan Old Style, Georgia, serif; }
-  .case-pagination a:hover strong { color: #A9541F; }
 
   .concept-closing { padding: 100px 0; border-top: 2px solid #3E2002; }
   .concept-closing__grid { display: grid; grid-template-columns: 1.12fr .88fr; gap: 80px; align-items: end; }
