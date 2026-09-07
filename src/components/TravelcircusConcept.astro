@@ -284,7 +284,9 @@ const jsonLd = {
                     ) : (
                       <div class="asset-placeholder"><span>Asset placeholder</span><strong>{feature.asset}</strong></div>
                     )}
-                    <div class="feature-card__caption"><span>0{index + 1}</span><h3>{feature.title}</h3></div>
+                    <div class="feature-card__caption">
+                      <span class="feature-card__badge">0{index + 1} · {feature.title}</span>
+                    </div>
                   </article>
                 ))}
               </div>
@@ -575,9 +577,11 @@ const jsonLd = {
   .feature-card--2, .feature-card--3, .feature-card--6 { grid-column: span 5; }
   .feature-card img { width: 100%; height: 100%; min-height: 420px; display: block; object-fit: cover; }
   .feature-card .asset-placeholder { height: 100%; min-height: 420px; border: 0; }
-  .feature-card__caption, .dossier-card--feature > div:last-child, .scrolly-feature-stack article > div:last-child { position: absolute; inset: auto 0 0; display: flex; align-items: baseline; gap: 16px; padding: 18px; color: #FCF8F0; background: linear-gradient(transparent, rgba(62,32,2,.96)); }
-  .feature-card__caption span, .dossier-card--feature > div:last-child span, .scrolly-feature-stack article > div:last-child span { color: #FF9D69; font: 700 10px/1 Inter, system-ui, sans-serif; }
-  .feature-card__caption h3, .dossier-card--feature > div:last-child h3, .scrolly-feature-stack article > div:last-child h3 { margin: 0; font: 700 21px/1.1 Iowan Old Style, Georgia, serif; }
+  .dossier-card--feature > div:last-child, .scrolly-feature-stack article > div:last-child { position: absolute; inset: auto 0 0; display: flex; align-items: baseline; gap: 16px; padding: 18px; color: #FCF8F0; background: linear-gradient(transparent, rgba(62,32,2,.96)); }
+  .dossier-card--feature > div:last-child span, .scrolly-feature-stack article > div:last-child span { color: #FF9D69; font: 700 10px/1 Inter, system-ui, sans-serif; }
+  .dossier-card--feature > div:last-child h3, .scrolly-feature-stack article > div:last-child h3 { margin: 0; font: 700 21px/1.1 Iowan Old Style, Georgia, serif; }
+  .feature-card__caption { position: absolute; left: 14px; bottom: 14px; z-index: 2; }
+  .feature-card__badge { display: inline-block; padding: 6px 10px; border-radius: 4px; color: #FCF8F0; background: rgba(62,32,2,.9); font: 700 10px/1 Inter, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
 
   .scrolly-story { background: #F1E9DA; }
   .scrolly-chapter { width: min(calc(100% - 48px), var(--concept-max)); min-height: 118vh; margin-inline: auto; padding: 100px 0; display: grid; grid-template-columns: minmax(300px, .78fr) minmax(0, 1.22fr); gap: 84px; align-items: start; }
