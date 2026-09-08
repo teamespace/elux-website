@@ -614,7 +614,7 @@ const jsonLd = {
   .reason-panel li p, .dossier-card--reasons li p, .scrolly-reasons article p { margin: 5px 0 0; color: #6D543C; font: 400 13px/1.5 Inter, system-ui, sans-serif; }
 
   .prototype-sticky { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: start; }
-  .prototype-sticky__media { position: sticky; top: 50%; transform: translateY(-50%); padding: 40px; border-radius: 8px; background: rgba(0,0,0,.15); }
+  .prototype-sticky__media { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; padding: 90px 40px 40px; border-radius: 8px; background: rgba(0,0,0,.15); }
   .prototype-sticky__media .prototype-media { max-width: 240px; min-height: 0; margin: 0 auto; border-radius: 16px; box-shadow: 0 30px 70px rgba(0,0,0,.45); }
   .prototype-media-frame { position: relative; }
   .prototype-media-toggle { position: absolute; top: 50%; left: 50%; z-index: 2; display: grid; place-items: center; width: 52px; height: 52px; border: 0; border-radius: 50%; background: rgba(18,10,3,.6); color: #FCF8F0; opacity: 0; transform: translate(-50%, -50%); transition: opacity .18s ease; cursor: pointer; }
@@ -624,7 +624,7 @@ const jsonLd = {
   .prototype-media-toggle.is-paused .icon-play { display: block; }
   .prototype-sticky__list { display: flex; flex-direction: column; padding-top: 4px; }
   .prototype-sticky__list h3 { margin: 0 0 12vh; font: 700 24px/1.1 Iowan Old Style, Georgia, serif; color: #FCF8F0; }
-  .prototype-reason { padding: 8vh 0; border-top: 1px solid rgba(252,248,240,.14); }
+  .prototype-reason { padding: 40px 0; border-top: 1px solid rgba(252,248,240,.14); }
   .prototype-reason:first-of-type { border-top: 0; padding-top: 0; }
   .prototype-reason__icon { display: block; margin-bottom: 20px; opacity: .3; transition: opacity .3s ease; image-rendering: pixelated; }
   .prototype-reason strong { display: block; margin-bottom: 14px; font: 700 26px/1.2 Iowan Old Style, Georgia, serif; color: rgba(252,248,240,.35); transition: color .3s ease; }
@@ -714,7 +714,7 @@ const jsonLd = {
   @media (max-width: 920px) {
     .chapter-copy, .relationship-board, .concept-closing__grid { grid-template-columns: 1fr; gap: 38px; }
     .prototype-sticky { grid-template-columns: 1fr; gap: 28px; }
-    .prototype-sticky__media { position: static; transform: none; padding: 0; background: none; }
+    .prototype-sticky__media { position: static; height: auto; padding: 0; background: none; }
     .chapter-body { padding-top: 0; }
     .relationship-board blockquote { min-height: 400px; }
     .feature-card--1, .feature-card--2, .feature-card--3, .feature-card--4, .feature-card--5, .feature-card--6 { grid-column: span 6; }
