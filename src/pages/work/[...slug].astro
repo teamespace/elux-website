@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content'
 import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro'
 import TravelcircusConcept from '../../components/TravelcircusConcept.astro'
+import GlobalMinangConcept from '../../components/GlobalMinangConcept.astro'
 import gmvVideo from '../../assets/work-images/gmv/cover.mp4'
 import allenOlmoMockup from '../../assets/work-images/allen ai/mockup-1.png'
 
@@ -32,10 +33,20 @@ export async function getStaticPaths() {
     // this entry sits in the sequence — walk forward circularly through the
     // published list so the last entry doesn't just get a lone "previous".
     const pubIdx = published.findIndex((e) => e.id === entry.id)
-    const moreWork: (typeof entries)[number][] = []
+    let moreWork: (typeof entries)[number][] = []
     for (let step = 1; moreWork.length < 2 && step <= published.length; step++) {
       const candidate = published[(pubIdx + step) % published.length]
       if (candidate.id !== entry.id) moreWork.push(candidate)
+    }
+
+    // GMV is the other bespoke, from-scratch case study alongside Travelcircus —
+    // cross-link them here instead of whatever the circular walk lands on.
+    if (entry.id === 'global-minang-ventura') {
+      const pinned = ['allen-institute-for-ai', 'travelcircus']
+      const pinnedEntries = pinned
+        .map((id) => published.find((e) => e.id === id))
+        .filter((e): e is (typeof entries)[number] => Boolean(e))
+      if (pinnedEntries.length === 2) moreWork = pinnedEntries
     }
 
     return {
@@ -57,6 +68,8 @@ const { Content } = await render(entry)
 {
   entry.id === 'travelcircus' ? (
     <TravelcircusConcept variant="editorial" preview={false} data={entry.data} moreWork={moreWork} />
+  ) : entry.id === 'global-minang-ventura' ? (
+    <GlobalMinangConcept data={entry.data} prev={prev} next={next} moreWork={moreWork} />
   ) : (
     <CaseStudyLayout data={entry.data} prev={prev} next={next}>
       <Content />

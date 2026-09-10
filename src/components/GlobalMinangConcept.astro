@@ -1,0 +1,675 @@
+---
+import { Image } from 'astro:assets'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Nav from './Nav.astro'
+import Footer from './Footer.astro'
+import sederhana from '../assets/work-images/gmv/sederhana.webp'
+import mockup2 from '../assets/work-images/gmv/mockup-2.png'
+import mapScene from '../assets/work-images/gmv/map-scene.jpg'
+import singaporeStore from '../assets/work-images/gmv/IMG-20260616-WA0022-1679782600.webp'
+
+interface PrevNext {
+  slug: string
+  title: string
+  category?: string
+  tags?: string[]
+  description?: string
+  img?: any
+  video?: any
+}
+
+interface Props {
+  data: any
+  prev?: PrevNext | null
+  next?: PrevNext | null
+  moreWork?: PrevNext[]
+}
+
+const { data, moreWork = [] } = Astro.props
+
+const flowSteps = [
+  {
+    no: '001',
+    title: 'The client came to us with one week to launch',
+    body: 'GMV reached out with a clear goal: launch an international-facing website within one week.',
+  },
+  {
+    no: '002',
+    title: 'We put a working POC in front of them within 24 hours',
+    body: 'Within the first 24 hours, we put a working concept in front of them so they could experience the direction and see if it matched what they needed.',
+  },
+  {
+    no: '003',
+    title: 'They could see how we worked, align fast, and move forward',
+    body: 'Because the direction was already tangible, feedback became clearer, expectations aligned faster, and the team could confidently move forward with us.',
+  },
+  {
+    no: '004',
+    title: 'The website went live in just 7 days',
+    body: 'From there, design, build, and iteration stayed in one loop until the website went live within the week.',
+  },
+]
+
+const flowSprites = [
+  { sprite: 'notebook', w: 18, h: 15, idle: '1s' },
+  { sprite: 'computer', w: 16, h: 14, idle: '0.9s' },
+  { sprite: 'loop', w: 16, h: 14, idle: '1.1s' },
+  { sprite: 'rocket', w: 14, h: 22, idle: '0.85s' },
+]
+
+const loopSteps = [
+  { label: 'Direction', text: 'Brief becomes a clear plan.', sprite: 'cursor', w: 14, h: 20, idle: '1.2s' },
+  { label: 'Exploration', text: 'Ideas get tested before they get decided.', sprite: 'flask', w: 14, h: 20, idle: '0.9s' },
+  { label: 'Build', text: 'Design and code move as one.', sprite: 'computer', w: 16, h: 14, idle: '0.9s' },
+  { label: 'Refinement', text: 'Feedback tightens the final cut.', sprite: 'pencil', w: 19, h: 9, idle: '1.1s' },
+  { label: 'Live', text: 'Shipped and live in the wild.', sprite: 'liftoff', w: 14, h: 24, idle: '0.85s' },
+]
+
+const pageTitle = `${data?.client ?? 'Global Minang Ventura'} — ${data?.tagline ?? 'AI-Native Website Design & Development'} | Elux Space`
+const pageDescription =
+  data?.summary ??
+  'Global Minang Ventura website design and development case study by Elux Space. An AI-native workflow took the project from direction to live in one week.'
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: 'Global Minang Ventura - AI-Native Website Design & Development',
+  about: pageDescription,
+  creator: { '@type': 'Organization', name: 'Elux Space', url: 'https://elux.space/' },
+}
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} noindex={data?.draft}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
+  <div class="bg-cream text-ink min-h-screen">
+    <Nav />
+
+    <main id="main">
+      <!-- Hero -->
+      <section class="bg-cream border-b-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          <a href="/work" class="block font-body font-semibold text-[11px] uppercase tracking-[0.14em] text-ink-3 hover:text-primary transition-colors"><span aria-hidden="true">←</span> All work</a>
+
+          <span class="inline-block font-body font-semibold text-[11px] uppercase tracking-[0.1em] text-cream bg-primary px-3 py-1.5 rounded-chip mt-6 mb-5">
+            AI-Native Website Design · Website Development
+          </span>
+
+          <h1 class="display-xl text-ink mb-8">{data?.client ?? 'Global Minang Ventura'}</h1>
+          <p class="body-lg text-ink-2 max-w-2xl mb-10">Website design and development for a business taking Minang heritage into new international markets, shipped through one AI-native workflow.</p>
+
+          <dl class="grid grid-cols-2 md:grid-cols-4 gap-6 border-t-2 border-ink pt-8">
+            <div>
+              <dt class="eyebrow text-ink-3 mb-2">Year</dt>
+              <dd class="font-display font-bold text-lg text-ink">{data?.year ?? '2026'}</dd>
+            </div>
+            <div>
+              <dt class="eyebrow text-ink-3 mb-2">Timeline</dt>
+              <dd class="font-display font-bold text-lg text-ink">{data?.timeline ?? '1 week'}</dd>
+            </div>
+            <div>
+              <dt class="eyebrow text-ink-3 mb-2">Services</dt>
+              <dd class="font-body text-sm text-ink-2">Website Design, Website Development, AI-Native Workflow</dd>
+            </div>
+            {data?.liveUrl && (
+              <div>
+                <dt class="eyebrow text-ink-3 mb-2">Live</dt>
+                <dd class="font-body text-sm">
+                  <a href={data.liveUrl} target="_blank" rel="noreferrer" class="text-primary hover:underline break-all">{data.liveUrl} <span aria-hidden="true">↗</span></a>
+                </dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      </section>
+
+      <!-- 01. A business in motion -->
+      <section class="gmv-section bg-clay border-b-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          <div class="gmv-chapter-head">
+            <div>
+              <div class="eyebrow text-ink-3 mb-4">A business in motion</div>
+              <h2 class="display-lg text-ink">The business was going global.<br />The website had one week to catch up.</h2>
+            </div>
+            <div class="gmv-chapter-body">
+              <p>Global Minang Ventura was preparing to take Sederhana beyond Indonesia, with international expansion moving into markets like Singapore and Australia.</p>
+              <p>They needed a website that could introduce the company, its expansion model, and the Sederhana story to a broader audience, and they wanted it live within one week!</p>
+            </div>
+          </div>
+
+          <!-- corkboard moodboard — map lives inside the board as a pinned card -->
+          <div id="gmv-board" class="gmv-board">
+            <div class="gmv-board__tag">Moodboard — GMV × Sederhana</div>
+            <div class="gmv-board__hint">Drag the pins around</div>
+
+            <figure class="gmv-mood gmv-mood--a gmv-photo" data-drag>
+              <div class="gmv-photo__frame">
+                <Image src={sederhana} alt="Sederhana dining atmosphere" draggable={false} />
+              </div>
+              <figcaption>Sederhana · dining culture</figcaption>
+            </figure>
+
+            <figure class="gmv-mood gmv-mood--b gmv-photo gmv-photo--square" data-drag>
+              <div class="gmv-photo__frame">
+                <Image src={singaporeStore} alt="Sederhana storefront in Singapore" draggable={false} />
+              </div>
+              <figcaption>Sederhana · Singapore storefront</figcaption>
+            </figure>
+
+            <figure class="gmv-mood gmv-mood--c gmv-photo gmv-photo--landscape" data-drag>
+              <div class="gmv-photo__frame">
+                <Image src={mapScene} alt="Global Minang Ventura animated global-expansion map" draggable={false} />
+              </div>
+              <figcaption>Expansion story</figcaption>
+            </figure>
+
+            <div class="gmv-mood gmv-mood--d gmv-sticky gmv-sticky--butter" data-drag>
+              <small>Texture / tone</small>
+              <strong>Heritage, structure, confidence.</strong>
+              <span class="gmv-sticky__fold" aria-hidden="true"></span>
+            </div>
+
+            <div class="gmv-mood gmv-mood--e gmv-sticky gmv-sticky--clay" data-drag>
+              <small>Est. 1972</small>
+              <strong>54 years of heritage. 200+ locations across Indonesia.</strong>
+              <span class="gmv-sticky__fold" aria-hidden="true"></span>
+            </div>
+
+            <!-- world footprint — sticky note of points, not a full map graphic -->
+            <div class="gmv-mood gmv-mood--map gmv-sticky gmv-sticky--paper" data-drag>
+              <small>Global footprint</small>
+              <strong>From Indonesia, outward.</strong>
+              <ul class="gmv-sticky__points">
+                <li>28.4M guests served yearly</li>
+                <li>Active in Singapore &amp; Australia</li>
+                <li>Official Sederhana license partner</li>
+              </ul>
+              <span class="gmv-sticky__fold" aria-hidden="true"></span>
+            </div>
+
+            <div class="gmv-mood gmv-mood--f gmv-sticky gmv-sticky--butter" data-drag>
+              <small>Vision</small>
+              <strong>Minang cuisine, recognized as a global culinary force.</strong>
+              <span class="gmv-sticky__fold" aria-hidden="true"></span>
+            </div>
+
+            <!-- newspaper clipping — expansion story, back on the board -->
+            <figure class="gmv-mood gmv-mood--g gmv-clipping" data-drag>
+              <div class="gmv-clipping__masthead"><span>Sederhana Gazette</span></div>
+              <h5 class="gmv-clipping__headline">Minang flavors set their sights on the world</h5>
+              <div class="gmv-clipping__photo">
+                <Image src={mockup2} alt="Global Minang Ventura live website preview" draggable={false} />
+              </div>
+              <p class="gmv-clipping__body">From Padang to Singapore and Sydney — 54 years of Sederhana heritage, now serving 28.4 million guests a year across more than 200 locations worldwide.</p>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02. Start with something real -->
+      <section class="gmv-section bg-cream border-b-2 border-ink">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          <div class="gmv-chapter-head">
+            <div>
+              <div class="eyebrow text-ink-3 mb-4">Start with something real</div>
+              <h2 class="display-lg text-ink">We didn't start with a design file.<br />We started with something they could experience.</h2>
+            </div>
+            <div class="gmv-chapter-body">
+              <p>The timeline was tight, so the way we worked had to adapt with it. Instead of spending the first days aligning through references and static screens, we moved straight into a working concept and brought it into the conversation within the first 24 hours.</p>
+              <p>That gave the team something real to react to. They could experience the content, flow, and interaction early, making feedback clearer and helping us move the direction forward faster.</p>
+              <div class="gmv-poc-proof" data-reveal>Client Need → Working POC → Align &amp; Move Forward → Live in 7 Days</div>
+            </div>
+          </div>
+
+          <div class="gmv-flow">
+            <div id="gmv-flow-steps" class="grid md:grid-cols-2 lg:grid-cols-4">
+              {flowSteps.map((step, i) => (
+                <div
+                  data-reveal
+                  style={`transition-delay: ${(i % 4) * 0.06}s`}
+                  class="pt-7 pb-2 border-t border-ink/15 lg:border-t-0 lg:border-l lg:first:border-l-0 lg:px-8 lg:first:pl-0"
+                >
+                  <div class="font-body font-semibold text-[11px] tracking-[0.14em] text-ink-3 tabular-nums mb-6">
+                    {step.no}
+                  </div>
+
+                  <div class="gmv-flow__glyph flex items-end mb-7">
+                    <div
+                      class="pixel-sprite pixel-sprite--poke"
+                      style={`--w:${flowSprites[i].w}; --h:${flowSprites[i].h}; --idle:${flowSprites[i].idle}; background-image:url('/sprites/${flowSprites[i].sprite}.png')`}
+                      role="img"
+                      aria-label={step.title}
+                    />
+                  </div>
+
+                  <h4 class="font-display font-bold text-[19px] md:text-[22px] tracking-[-0.01em] text-ink mb-2">{step.title}</h4>
+                  <p class="font-body text-[14px] leading-relaxed text-ink-2">{step.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="gmv-browser">
+            <div class="gmv-browser__frame">
+              <Image src={mockup2} alt="Global Minang Ventura live website preview" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03. Keep the loop moving -->
+      <section class="gmv-section bg-cream border-b-2 border-ink" id="workflow">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+          <div class="gmv-chapter-head">
+            <div>
+              <div class="eyebrow text-ink-3 mb-4">Keep the loop moving</div>
+              <h2 class="display-lg text-ink">One AI-native workflow took it from direction to live in just one week.</h2>
+            </div>
+            <div class="gmv-chapter-body">
+              <p>Once the direction was clear, design and development kept moving together instead of waiting through a long handoff.</p>
+              <p>We used an AI-native workflow across development, content, visual exploration, and motion production to keep ideas moving quickly from direction to something we could test, refine, and ship, supported by tools including Claude Code, GPT Image, OpenArt, and Veo.</p>
+              <p>One week after the brief, the website was live, giving Global Minang Ventura an international-facing presence for its expansion and the story behind Sederhana.</p>
+            </div>
+          </div>
+
+          <div class="gmv-loop">
+            <div class="gmv-loop__eyebrow" data-reveal><span class="gmv-loop__eyebrow-chip">7 days. One moving loop.</span></div>
+
+            <ol id="gmv-loop-timeline" class="gmv-loop__timeline">
+              {loopSteps.map((step, i) => (
+                <li
+                  class="gmv-loop__beat"
+                  data-reveal
+                  style={`transition-delay: ${i * 0.08}s`}
+                >
+                  {i < loopSteps.length - 1 && <span class="gmv-loop__line-v" aria-hidden="true" />}
+
+                  <div class="gmv-loop__glyph-slot">
+                    <div
+                      class="pixel-sprite pixel-sprite--poke"
+                      style={`--w:${step.w}; --h:${step.h}; --idle:${step.idle}; background-image:url('/sprites/${step.sprite}.png')`}
+                      role="img"
+                      aria-label={step.label}
+                    />
+                  </div>
+
+                  <div class="gmv-loop__dot-row">
+                    <span class="gmv-loop__dot" />
+                    {i < loopSteps.length - 1 && <span class="gmv-loop__line-h" aria-hidden="true" />}
+                  </div>
+
+                  <span class="gmv-loop__label">{step.label}</span>
+                  <p class="gmv-loop__text">{step.text}</p>
+                </li>
+              ))}
+            </ol>
+
+            <div class="img-placeholder gmv-video-placeholder">
+              Final website video — replace with the real scroll-through recording
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- More work -->
+      {moreWork.length > 0 && (
+        <section class="bg-cream border-b-2 border-ink">
+          <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-24">
+            <div class="eyebrow text-ink-3 mb-3">MORE WORK</div>
+            <h2 class="display-lg text-ink mb-10 md:mb-14">Explore other case studies.</h2>
+            <div class="grid md:grid-cols-2 gap-x-6 gap-y-12">
+              {moreWork.map((c, i) => (
+                <a href={`/work/${c.slug}`} class="group block">
+                  <div class="relative w-full aspect-[16/10] rounded-media overflow-hidden">
+                    {c.video ? (
+                      <video src={c.video} class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" autoplay muted loop playsinline preload="metadata" aria-hidden="true" />
+                    ) : c.img ? (
+                      <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]" style={`background-image: url('${c.img.src}');`} aria-hidden="true" />
+                    ) : (
+                      <div class="img-placeholder absolute inset-0 rounded-media">IMAGE: {c.title}</div>
+                    )}
+                    <div class="absolute inset-0 rounded-media ring-1 ring-inset ring-ink/10" />
+                  </div>
+                  <div class="pt-5">
+                    <div class="flex items-center gap-3 mb-3">
+                      <span class="font-body font-semibold text-[11px] tracking-[0.14em] text-ink-3 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                      {c.category && <span class="font-body font-semibold text-[10px] uppercase tracking-[0.12em] text-primary">{c.category}</span>}
+                    </div>
+                    <h3 class="font-display font-bold text-[19px] md:text-[22px] tracking-[-0.01em] text-ink mb-3 group-hover:text-primary transition-colors">{c.title}</h3>
+                    {c.tags && c.tags.length > 0 && (
+                      <ul class="flex flex-wrap gap-2 mb-3">
+                        {c.tags.map((t) => <li class="font-body font-semibold text-[10px] uppercase tracking-[0.1em] text-ink-2 border border-ink/20 px-2.5 py-1 rounded-chip">{t}</li>)}
+                      </ul>
+                    )}
+                    {c.description && <p class="font-body text-[14px] text-ink-2 leading-relaxed max-w-prose">{c.description}</p>}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <!-- CTA -->
+      <section class="bg-cream" id="cta">
+        <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-28 gmv-cta">
+          <p class="eyebrow text-ink-3 mb-4">Move while it matters</p>
+          <h2 class="display-lg text-ink gmv-cta__heading">Need to move from idea to<br />something real, faster?</h2>
+          <p class="body-lg text-ink-2 gmv-cta__copy">
+            We help teams bring design, development, and iteration closer together<br />so ideas can become working products sooner. <strong class="text-ink">Let's work together!</strong>
+          </p>
+          <div class="flex flex-wrap justify-center gap-2.5 mt-7">
+            <a href="mailto:hello@elux.space" class="btn-primary">Start a Project <span aria-hidden="true">↗</span></a>
+            <a href="/work" class="btn-cream">See More Work</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .gmv-chapter-head { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr); gap: 64px; align-items: end; margin-bottom: 44px; }
+  .gmv-chapter-head h2 { margin: 0; }
+  .gmv-chapter-body { padding-top: 6px; }
+  .gmv-chapter-body p { margin: 0 0 16px; color: #6D543C; font: 400 16px/1.6 Inter, system-ui, sans-serif; }
+  .gmv-chapter-body p:last-child { margin-bottom: 0; }
+  @media (max-width: 920px) {
+    .gmv-chapter-head { grid-template-columns: 1fr; gap: 24px; }
+    .gmv-chapter-body { padding-top: 0; }
+  }
+
+  /* ── moodboard, one full board, 100vh — a flex-wrap "shelf" rather than a
+     hand-placed grid: every item sizes itself (fixed width + aspect-ratio)
+     and just flows into place, so nothing can overlap or overflow a track
+     the way spanning grid cells could. overflow-y is a safety net: if a
+     visitor's viewport is short, the board scrolls internally instead of
+     spilling pins into the section below it. ── */
+  .gmv-board {
+    --cork: #B9884F; --cork-2: #A3703C;
+    height: 100vh; min-height: 680px; max-height: 980px; position: relative;
+    display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start;
+    gap: 30px; padding: 40px 30px 30px;
+    border: 10px solid #3E2002; overflow-y: auto; overflow-x: hidden;
+    background:
+      radial-gradient(circle, rgba(62,32,2,.22) 1px, transparent 1.5px) 0 0/13px 13px,
+      linear-gradient(155deg, var(--cork), var(--cork-2));
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), inset 0 2px 30px rgba(0,0,0,.28), 0 16px 30px rgba(62,32,2,.2);
+  }
+  .gmv-board__tag {
+    position: absolute; top: -9px; left: 24px;
+    background: #A9541F; color: #FCF8F0;
+    font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .12em;
+    padding: 6px 10px; transform: rotate(-2deg);
+    box-shadow: 0 6px 12px rgba(0,0,0,.25); z-index: 6;
+  }
+  .gmv-board__hint {
+    position: absolute; top: -9px; right: 24px;
+    background: #FCF8F0; color: #3E2002;
+    font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .12em;
+    padding: 6px 10px; transform: rotate(1.5deg);
+    box-shadow: 0 6px 12px rgba(0,0,0,.25); z-index: 6;
+  }
+
+  /* pins drag freely via a translate offset (--dx/--dy) layered on top of the
+     card's own resting rotation — drag only moves the painted layer via
+     transform, it never touches flex layout or flow position. */
+  .gmv-mood {
+    position: relative; margin: 0; background: #FCF8F0; flex: none;
+    box-shadow: 0 14px 24px rgba(30,15,2,.32), 0 2px 5px rgba(30,15,2,.18);
+    --dx: 0px; --dy: 0px; --scale: .82;
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot, 0deg)) scale(var(--scale));
+    touch-action: none; cursor: grab;
+    user-select: none; -webkit-user-select: none;
+  }
+  .gmv-mood img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+  .gmv-mood.is-dragging { cursor: grabbing; z-index: 20; transition: none !important; box-shadow: 0 26px 40px rgba(30,15,2,.45); }
+  .gmv-mood--a { --rot: -2deg; }
+  .gmv-mood--b { --rot: 1.6deg; }
+  .gmv-mood--c { --rot: -1deg; }
+  .gmv-mood--d { --rot: 2.4deg; transition: transform .25s ease, box-shadow .25s ease; }
+  .gmv-mood--e { --rot: -1.4deg; transition: transform .25s ease, box-shadow .25s ease; }
+  .gmv-mood--f { --rot: -2.6deg; transition: transform .25s ease, box-shadow .25s ease; }
+  .gmv-mood--map { --rot: .6deg; }
+  .gmv-mood--g { --rot: 1.2deg; }
+
+  .gmv-photo { padding: 9px 9px 32px; width: 300px; }
+  .gmv-photo__frame { width: 100%; height: auto; aspect-ratio: 4 / 3; overflow: hidden; background: #6D543C; }
+  .gmv-photo__frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gmv-photo figcaption { position: absolute; left: 9px; right: 9px; bottom: 9px; color: #6D543C; font: 900 8px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .1em; }
+  .gmv-mood--a::after, .gmv-mood--b::after, .gmv-mood--c::after, .gmv-mood--map::after, .gmv-mood--g::after {
+    content: ''; position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    width: 15px; height: 15px; border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, #ff9270, #A9541F 72%);
+    box-shadow: 0 3px 5px rgba(0,0,0,.4); z-index: 5;
+  }
+
+  /* the hero photo and the map photo share the same width so they read as
+     the same "size" of print, even though one stretches 4:3 and the other
+     is a full, uncropped 16:9 frame. */
+  .gmv-mood--a, .gmv-mood--c { width: 420px; }
+  .gmv-mood--a .gmv-photo__frame { aspect-ratio: 4 / 3; }
+
+  /* sticky notes — fold-corner grows on hover, note lifts and settles back */
+  .gmv-sticky {
+    padding: 20px; display: flex; flex-direction: column; justify-content: flex-end;
+    box-shadow: 0 12px 20px rgba(30,15,2,.3);
+    width: 240px; aspect-ratio: 1 / 1;
+  }
+  .gmv-sticky:hover { transform: translate(var(--dx), var(--dy)) rotate(var(--rot, 0deg)) scale(calc(var(--scale, 1) * 1.045)) translateY(-6px); box-shadow: 0 22px 30px rgba(30,15,2,.4); }
+  .gmv-sticky--butter { background: #DFE3BE; }
+  .gmv-sticky--butter::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle, rgba(62,32,2,.1) 1.1px, transparent 1.8px) 0 0/9px 9px; }
+  .gmv-sticky--butter::after {
+    content: ''; position: absolute; top: -10px; left: 20px; width: 52px; height: 18px;
+    background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.65);
+    transform: rotate(-8deg); box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  }
+  .gmv-sticky--butter small { position: relative; display: block; font: 800 8px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .14em; margin-bottom: 8px; color: #333A1B; }
+  .gmv-sticky--butter strong { position: relative; display: block; font: 700 22px/1.08 'Iowan Old Style', Georgia, serif; color: #333A1B; }
+  .gmv-sticky--clay { background: #F6DCC8; }
+  .gmv-sticky--clay::after {
+    content: ''; position: absolute; top: -10px; right: 24px; width: 52px; height: 18px;
+    background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.65);
+    transform: rotate(7deg); box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  }
+  .gmv-sticky--clay small { position: relative; display: block; font: 800 8px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .14em; margin-bottom: 8px; color: #A9541F; }
+  .gmv-sticky--clay strong { position: relative; display: block; font: 700 22px/1.1 'Iowan Old Style', Georgia, serif; color: #3E2002; }
+  .gmv-sticky__fold {
+    position: absolute; right: 0; bottom: 0; width: 22px; height: 22px; z-index: 4;
+    background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,.22) 50%);
+    clip-path: polygon(100% 0, 0 100%, 100% 100%);
+    transition: width .28s ease, height .28s ease;
+  }
+  .gmv-sticky:hover .gmv-sticky__fold { width: 40px; height: 40px; }
+
+  /* square polaroid — Sederhana's Singapore storefront */
+  .gmv-photo--square { width: 240px; }
+  .gmv-photo--square .gmv-photo__frame { aspect-ratio: 1 / 1; }
+  /* landscape polaroid — the full map frame, uncropped */
+  .gmv-photo--landscape .gmv-photo__frame { aspect-ratio: 16 / 9; }
+
+  /* "From Indonesia, outward" — a sticky note of points instead of a map graphic */
+  .gmv-sticky--paper { background: #FCF8F0; border-top: 4px solid #A9541F; justify-content: flex-start; }
+  .gmv-sticky--paper small { display: block; font: 800 8px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .14em; color: #736049; margin-bottom: 8px; }
+  .gmv-sticky--paper strong { display: block; font: 700 20px/1.1 'Iowan Old Style', Georgia, serif; color: #3E2002; margin-bottom: 14px; }
+  .gmv-sticky__points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .gmv-sticky__points li { position: relative; padding-left: 14px; font-size: 11.5px; line-height: 1.4; color: #6D543C; }
+  .gmv-sticky__points li::before { content: ''; position: absolute; left: 0; top: 6px; width: 6px; height: 6px; border-radius: 50%; background: #A9541F; }
+
+  /* newspaper clipping — back on the board, real facts this time */
+  .gmv-clipping {
+    width: 260px; padding: 16px 16px 18px; display: flex; flex-direction: column;
+    background: #F1E9DA;
+    clip-path: polygon(0 0, 100% 0, 100% 96%, 95% 100%, 89% 96%, 83% 100%, 77% 96%, 71% 100%, 65% 96%, 59% 100%, 53% 96%, 47% 100%, 41% 96%, 35% 100%, 29% 96%, 23% 100%, 17% 96%, 11% 100%, 5% 96%, 0 100%);
+  }
+  .gmv-clipping__masthead {
+    text-align: center; padding-bottom: 6px; margin-bottom: 8px;
+    border-bottom: 2px solid #3E2002; border-top: 1px solid #3E2002; padding-top: 4px;
+  }
+  .gmv-clipping__masthead span {
+    font: 700 11px/1 'Iowan Old Style', Georgia, serif; letter-spacing: .14em; text-transform: uppercase; color: #3E2002;
+  }
+  .gmv-clipping__headline {
+    margin: 0 0 10px; font: 700 17px/1.15 'Iowan Old Style', Georgia, serif; color: #3E2002; text-wrap: balance;
+  }
+  .gmv-clipping__photo { width: 100%; aspect-ratio: 4 / 3; overflow: hidden; filter: grayscale(.4) sepia(.15) contrast(1.05); margin-bottom: 10px; }
+  .gmv-clipping__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gmv-clipping__body {
+    margin: 0; color: #6D543C; font: 400 11px/1.5 'Iowan Old Style', Georgia, serif;
+    column-count: 2; column-gap: 12px;
+  }
+
+  /* ── flow (POC) ── */
+  .gmv-flow { margin-top: 30px; }
+  .gmv-poc-proof {
+    margin: 18px 0 0; width: max-content; max-width: 100%;
+    border: 1px solid #A9541F; color: #A9541F; padding: 8px 10px;
+    font: 900 8px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .12em;
+  }
+  /* glyph slot — sprites run 32px-68px tall at 4x; a fixed slot with the art
+     bottom-aligned keeps every title on the same line, same as #process. */
+  .gmv-flow__glyph { height: 68px; }
+  @media (max-width: 767px) {
+    .gmv-flow__glyph { height: 54px; }
+    .gmv-flow__glyph .pixel-sprite { --px: 3; }
+  }
+  @media (min-width: 768px) {
+    .gmv-flow__glyph .pixel-sprite { --px: 4; }
+  }
+
+  .gmv-browser { margin-top: 40px; border: 1px solid #3E2002; background: #fff; }
+  .gmv-browser__frame { aspect-ratio: 16 / 9; overflow: hidden; }
+  .gmv-browser__frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ── loop workflow — same timeline pattern as the homepage's
+     TransformationStrip (Then → Shift → Now): dots on a connecting line,
+     bottom-aligned glyph slot above. The eyebrow itself carries the
+     highlighted chip this time, same treatment "THE SHIFT" gets there. ── */
+  .gmv-loop { margin-top: 8px; position: relative; }
+  .gmv-loop__eyebrow { text-align: center; margin-bottom: 40px; }
+  .gmv-loop__eyebrow-chip {
+    display: inline-block; color: #3E2002; background: #DFE3BE;
+    border: 1px solid #3E2002; padding: 6px 10px; border-radius: 4px;
+    font: 600 12px/1 Inter, system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase;
+  }
+  .gmv-loop__timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 34px; }
+  .gmv-loop__beat { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .gmv-loop__glyph-slot { height: 68px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 16px; image-rendering: pixelated; }
+  @media (max-width: 767px) {
+    .gmv-loop__glyph-slot { height: 54px; }
+    .gmv-loop__glyph-slot .pixel-sprite { --px: 3; }
+  }
+  .gmv-loop__dot-row { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 14px; margin-bottom: 14px; }
+  .gmv-loop__dot { width: 14px; height: 14px; border-radius: 50%; background: #6D543C; flex-shrink: 0; position: relative; z-index: 1; }
+  .gmv-loop__line-h { position: absolute; top: 50%; left: 50%; right: calc(-100% - 20px); height: 1px; background: rgba(62,32,2,.25); }
+  .gmv-loop__line-v { display: none; }
+  .gmv-loop__label { font: 600 11px/1 Inter, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #6D543C; margin-bottom: 10px; }
+  .gmv-loop__text { margin: 0; max-width: 20ch; font: 400 13px/1.5 Inter, system-ui, sans-serif; color: #6D543C; }
+
+  .gmv-video-placeholder { position: relative; z-index: 1; aspect-ratio: 16 / 9; min-height: 0; }
+
+  /* ── CTA, centered ── */
+  .gmv-cta { max-width: 960px; margin-inline: auto; text-align: center; }
+  .gmv-cta__heading { margin: 0 auto; }
+  .gmv-cta__copy { max-width: 680px; margin: 20px auto 0; color: #6D543C; font: 400 17px/1.65 Inter, system-ui, sans-serif; }
+
+  @media (max-width: 960px) {
+    .gmv-mood--a, .gmv-mood--c { width: 340px; }
+    .gmv-sticky, .gmv-photo--square { width: 200px; }
+    .gmv-clipping { width: 220px; }
+    .gmv-loop__timeline { grid-template-columns: 1fr 1fr; row-gap: 34px; }
+    .gmv-loop__line-h { display: none; }
+  }
+  @media (max-width: 720px) {
+    .gmv-board { height: auto; min-height: auto; max-height: none; overflow-y: visible; }
+    .gmv-mood--a, .gmv-mood--c { width: 100%; }
+    .gmv-sticky, .gmv-photo--square { width: calc(50% - 15px); }
+    .gmv-clipping { width: 100%; }
+  }
+  @media (max-width: 560px) {
+    .gmv-loop__timeline { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  // Hover is pure CSS; this only covers taps, where :hover never fires — same
+  // pattern as the homepage #process section.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document
+      .querySelectorAll<HTMLElement>('#gmv-flow-steps .pixel-sprite--poke, #gmv-loop-timeline .pixel-sprite--poke')
+      .forEach((el) => {
+        el.addEventListener('click', () => {
+          if (el.classList.contains('is-reacting')) return
+          el.classList.add('is-reacting')
+          setTimeout(() => el.classList.remove('is-reacting'), 600)
+        })
+      })
+  }
+
+  // Pinboard drag — each pin carries a --dx/--dy translate offset layered on
+  // top of its resting rotation (see .gmv-mood in the styles above), so a
+  // drag never touches the grid layout, just the painted position.
+  function initBoardDrag() {
+    const board = document.querySelector<HTMLElement>('#gmv-board')
+    if (!board) return
+
+    const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
+    const readOffset = (el: HTMLElement, name: string) =>
+      parseFloat(getComputedStyle(el).getPropertyValue(name)) || 0
+
+    board.querySelectorAll<HTMLElement>('[data-drag]').forEach((el) => {
+      let startX = 0
+      let startY = 0
+      let baseDx = 0
+      let baseDy = 0
+      let dragging = false
+      // pointer-delta bounds computed at drag start so the card's own
+      // (already rotated/scaled) box never crosses the board's edge
+      let deltaMinX = 0
+      let deltaMaxX = 0
+      let deltaMinY = 0
+      let deltaMaxY = 0
+
+      el.addEventListener('pointerdown', (e) => {
+        dragging = true
+        el.classList.add('is-dragging')
+        // setPointerCapture can throw (e.g. no active pointer with this id)
+        // in some browsers/conditions — never let that skip the bounds setup
+        // below, or the drag falls back to stale/zeroed values.
+        try {
+          el.setPointerCapture(e.pointerId)
+        } catch {}
+        startX = e.clientX
+        startY = e.clientY
+        baseDx = readOffset(el, '--dx')
+        baseDy = readOffset(el, '--dy')
+
+        const boardRect = board.getBoundingClientRect()
+        const elRect = el.getBoundingClientRect()
+        deltaMinX = boardRect.left - elRect.left
+        deltaMaxX = boardRect.right - elRect.right
+        deltaMinY = boardRect.top - elRect.top
+        deltaMaxY = boardRect.bottom - elRect.bottom
+      })
+
+      el.addEventListener('pointermove', (e) => {
+        if (!dragging) return
+        const deltaX = clamp(e.clientX - startX, deltaMinX, deltaMaxX)
+        const deltaY = clamp(e.clientY - startY, deltaMinY, deltaMaxY)
+        el.style.setProperty('--dx', `${baseDx + deltaX}px`)
+        el.style.setProperty('--dy', `${baseDy + deltaY}px`)
+      })
+
+      const stopDragging = () => {
+        dragging = false
+        el.classList.remove('is-dragging')
+      }
+      el.addEventListener('pointerup', stopDragging)
+      el.addEventListener('pointercancel', stopDragging)
+    })
+  }
+
+  initBoardDrag()
+</script>

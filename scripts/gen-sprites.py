@@ -640,20 +640,23 @@ FUNNEL = {
 
 # 02 Expert-led decisions — a pointer, and the click that settles it.
 CURSOR = [
-    "KK............",
-    "KWK...........",
-    "KWWK..........",
-    "KWWWK.........",
-    "KWWWWK........",
-    "KWWWWWK.......",
-    "KWWWWWWK......",
-    "KWWWWWWWK.....",
-    "KWWWWKKKKK....",
-    "KWWKWWK.......",
-    "KKK.KWWK......",
-    ".....KWWK.....",
-    "......KWK.....",
-    ".......K......",
+    "K.K...........",
+    "KSWK..........",
+    "KSWWK.........",
+    "KSWWWK........",
+    "KSWWWWK.......",
+    "KSWWWWWK......",
+    "KSWWWWWWK.....",
+    "KSWWWWWWWK....",
+    "KSWWWWWWWWK...",
+    "KSWWWWKKKKKK..",
+    "KSWWWWKSSSSK..",
+    "KSWWWWKKKKKK..",
+    "KSK...........",
+    ".SSK..........",
+    ".SSSK.........",
+    ".SSSSK........",
+    ".KSSSSK.......",
 ]
 RING_OFF = ["..............", ".............."]
 RING_SM = ["....O....O....", ".....OOOO....."]
@@ -661,7 +664,7 @@ RING_LG = ["..O........O..", "...OO....OO..."]
 
 CURSOR_GLYPH = {
     "w": 14,
-    "h": 17,
+    "h": 20,
     "frames": [
         (CURSOR + RING_OFF, 0),
         (CURSOR + RING_OFF, 0),
@@ -1007,6 +1010,112 @@ CARGO = {
 }
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# FLASK — 14x18. Exploration: a lab beaker with bubbling liquid, standing in
+# for turning ideas over and testing them before anything is decided.
+# ═══════════════════════════════════════════════════════════════════════════
+def flask(rows_filled, bubble_char):
+    liquid_rows = []
+    for i in range(4):
+        fill = i >= 4 - rows_filled
+        if not fill:
+            liquid_rows.append(".KW" + "S" * 8 + "WK.")
+        elif i == 4 - rows_filled and bubble_char:
+            liquid_rows.append(".KW" + "O" * 3 + bubble_char + "O" * 4 + "WK.")
+        else:
+            liquid_rows.append(".KW" + "O" * 8 + "WK.")
+    return [
+        "......KK......",
+        ".....KWWK.....",
+        ".....KWWK.....",
+        "....KWWWWK....",
+        "...KWWWWWWK...",
+        "..KWWWWWWWWK..",
+        *liquid_rows,
+        ".KOOOOOOOOOOK.",
+        "..KKKKKKKKKK..",
+    ]
+
+
+FLASK = {
+    "w": 14,
+    "h": 20,
+    "frames": [
+        (flask(1, "O"), 0),
+        (flask(1, "G"), 0),
+        (flask(2, "O"), 0),
+        (flask(1, "G"), 0),
+        (flask(2, "G"), 1),
+        (flask(4, "O"), 2),
+        (flask(4, "G"), 1),
+        (flask(2, "O"), 0),
+    ],
+}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RULER — 20x16. Refinement: a ruler with tick marks and a pencil laid beside
+# it, for the pass that tightens and squares up the final cut.
+# ═══════════════════════════════════════════════════════════════════════════
+PENCIL_ERASER_W, PENCIL_FERRULE_W, PENCIL_BODY_W, PENCIL_TIP_W = 3, 1, 9, 6
+PENCIL_W = PENCIL_ERASER_W + PENCIL_FERRULE_W + PENCIL_BODY_W + PENCIL_TIP_W  # 19
+PENCIL_H = 7
+PENCIL_HALF = PENCIL_H // 2
+
+
+def pencil(tip_glow, mark_dot):
+    # a horizontal pencil built cell-by-cell so the geometry (eraser, ferrule,
+    # body, and a triangular tip that actually meets the body) always lines
+    # up, rather than hand-placed diagonal strokes that read as noise at 1x.
+    grid = [["." for _ in range(PENCIL_W)] for _ in range(PENCIL_H)]
+
+    for y in range(PENCIL_H):
+        edge = y in (0, PENCIL_H - 1)
+        for x in range(PENCIL_ERASER_W):
+            grid[y][x] = "K" if edge or x in (0, PENCIL_ERASER_W - 1) else "O"
+        grid[y][PENCIL_ERASER_W] = "K"
+        bx0 = PENCIL_ERASER_W + PENCIL_FERRULE_W
+        for x in range(bx0, bx0 + PENCIL_BODY_W):
+            edge_x = x in (bx0, bx0 + PENCIL_BODY_W - 1)
+            grid[y][x] = "K" if edge or edge_x else "W"
+
+    tx0 = PENCIL_ERASER_W + PENCIL_FERRULE_W + PENCIL_BODY_W
+    for c in range(PENCIL_TIP_W):
+        remaining = round(PENCIL_HALF * (1 - c / (PENCIL_TIP_W - 1)))
+        for y in range(PENCIL_H):
+            d = abs(y - PENCIL_HALF)
+            x = tx0 + c
+            if d < remaining:
+                grid[y][x] = "W"
+            elif d == remaining:
+                grid[y][x] = "K"
+    grid[PENCIL_HALF][tx0 + PENCIL_TIP_W - 1] = tip_glow
+
+    rows = ["".join(r) for r in grid]
+    rows.append("." * PENCIL_W)
+    mark_row = list("." * PENCIL_W)
+    if mark_dot:
+        mark_row[PENCIL_W - 1] = "G"
+    rows.append("".join(mark_row))
+    return rows
+
+
+PENCIL = {
+    "w": PENCIL_W,
+    "h": PENCIL_H + 2,
+    "frames": [
+        (pencil("K", False), 0),
+        (pencil("K", False), 0),
+        (pencil("G", False), 0),
+        (pencil("K", False), 0),
+        (pencil("G", True), 0),
+        (pencil("K", True), 0),
+        (pencil("G", True), 0),
+        (pencil("K", False), 0),
+    ],
+}
+
+
 CHARACTERS = {
     "astronaut": ASTRONAUT,
     "walker": WALKER,
@@ -1028,6 +1137,8 @@ CHARACTERS = {
     "floppy": FLOPPY,
     "bolt": BOLT_GLYPH,
     "liftoff": LIFTOFF,
+    "flask": FLASK,
+    "pencil": PENCIL,
 }
 
 
