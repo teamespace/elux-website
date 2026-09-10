@@ -200,14 +200,21 @@ const jsonLd = {
               <span class="gmv-sticky__fold" aria-hidden="true"></span>
             </div>
 
-            <!-- newspaper clipping — expansion story, back on the board -->
+            <!-- newspaper clipping — expansion story, back on the board.
+                 the torn-edge clip-path lives on an inner wrapper, not this
+                 figure: clip-path clips a box's *entire* painted output,
+                 pseudo-elements included, so putting it on the same element
+                 as the pin (::after, positioned above the box) was cutting
+                 the pin in half. -->
             <figure class="gmv-mood gmv-mood--g gmv-clipping" data-drag>
-              <div class="gmv-clipping__masthead"><span>Sederhana Gazette</span></div>
-              <h5 class="gmv-clipping__headline">Minang flavors set their sights on the world</h5>
-              <div class="gmv-clipping__photo">
-                <Image src={singaporeStore} alt="Sederhana storefront in Singapore" draggable={false} />
+              <div class="gmv-clipping__paper">
+                <div class="gmv-clipping__masthead"><span>Sederhana Gazette</span></div>
+                <h5 class="gmv-clipping__headline">Minang flavors set their sights on the world</h5>
+                <div class="gmv-clipping__photo">
+                  <Image src={singaporeStore} alt="Sederhana storefront in Singapore" draggable={false} />
+                </div>
+                <p class="gmv-clipping__body">From Padang to Singapore and Sydney — 54 years of Sederhana heritage, now serving 28.4 million guests a year across more than 200 locations worldwide.</p>
               </div>
-              <p class="gmv-clipping__body">From Padang to Singapore and Sydney — 54 years of Sederhana heritage, now serving 28.4 million guests a year across more than 200 locations worldwide.</p>
             </figure>
             </div>
           </div>
@@ -266,10 +273,11 @@ const jsonLd = {
                 muted
                 playsinline
                 preload="metadata"
-                aria-label="Global Minang Ventura final website walkthrough"
+                aria-label="Global Minang Ventura working POC walkthrough"
               >
-                <source src={finalWebsiteVideo} type="video/mp4" />
+                <source src={pocVideo} type="video/mp4" />
               </video>
+              <span class="gmv-media-badge">Working POC</span>
             </div>
           </div>
         </div>
@@ -330,10 +338,11 @@ const jsonLd = {
                 muted
                 playsinline
                 preload="metadata"
-                aria-label="Global Minang Ventura working POC walkthrough"
+                aria-label="Global Minang Ventura final website walkthrough"
               >
-                <source src={pocVideo} type="video/mp4" />
+                <source src={finalWebsiteVideo} type="video/mp4" />
               </video>
+              <span class="gmv-media-badge">Final Website</span>
             </div>
           </div>
         </div>
@@ -536,8 +545,9 @@ const jsonLd = {
   .gmv-sticky__points li::before { content: ''; position: absolute; left: 0; top: 6px; width: 6px; height: 6px; border-radius: 50%; background: #A9541F; }
 
   /* newspaper clipping — back on the board, real facts this time */
-  .gmv-clipping {
-    width: 230px; padding: 16px 16px 18px; display: flex; flex-direction: column;
+  .gmv-clipping { width: 230px; }
+  .gmv-clipping__paper {
+    padding: 16px 16px 18px; display: flex; flex-direction: column;
     background: #F1E9DA;
     clip-path: polygon(0 0, 100% 0, 100% 96%, 95% 100%, 89% 96%, 83% 100%, 77% 96%, 71% 100%, 65% 96%, 59% 100%, 53% 96%, 47% 100%, 41% 96%, 35% 100%, 29% 96%, 23% 100%, 17% 96%, 11% 100%, 5% 96%, 0 100%);
   }
@@ -577,9 +587,19 @@ const jsonLd = {
   }
 
   .gmv-browser { margin-top: 40px; background: #fff; }
-  .gmv-browser__frame { aspect-ratio: 16 / 9; overflow: hidden; }
+  .gmv-browser__frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
   .gmv-browser__el { width: 100%; height: 100%; object-fit: cover; display: block; }
   .gmv-browser__frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* label overlay shared by both video frames, so it's obvious at a glance
+     which one is the rough working prototype and which is the shipped site */
+  .gmv-media-badge {
+    position: absolute; left: 16px; bottom: 16px; z-index: 2;
+    display: inline-block; padding: 8px 14px; border-radius: 6px;
+    color: #FCF8F0; background: rgba(62,32,2,.88);
+    font: 700 11px/1 Inter, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase;
+    box-shadow: 0 6px 16px rgba(0,0,0,.25);
+  }
 
   /* ── loop workflow — same timeline pattern as the homepage's
      TransformationStrip (Then → Shift → Now): dots on a connecting line,

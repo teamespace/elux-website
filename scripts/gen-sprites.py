@@ -658,9 +658,15 @@ CURSOR = [
     ".SSSSK........",
     ".KSSSSK.......",
 ]
+# click ripple, centred under the cursor's own tip (~x3-4, where the tail
+# in the last two CURSOR rows lands) rather than off to the right — and
+# a single filled pulse that grows then recedes reads more clearly at this
+# size than a hollow "ring" ever could.
 RING_OFF = ["..............", ".............."]
-RING_SM = ["....O....O....", ".....OOOO....."]
-RING_LG = ["..O........O..", "...OO....OO..."]
+RING_DOT = ["..............", "...OO........."]
+RING_SM  = ["....OO........", "...OOOO......."]
+RING_MD  = ["...OOOO.......", "..OOOOOO......"]
+RING_LG  = ["..OOOOOO......", ".OOOOOOOO....."]
 
 CURSOR_GLYPH = {
     "w": 14,
@@ -668,9 +674,9 @@ CURSOR_GLYPH = {
     "frames": [
         (CURSOR + RING_OFF, 0),
         (CURSOR + RING_OFF, 0),
+        (CURSOR + RING_DOT, 0),
         (CURSOR + RING_SM, 0),
-        (CURSOR + RING_OFF, 0),
-        (CURSOR + RING_SM, 0),
+        (CURSOR + RING_MD, 0),
         (CURSOR + RING_LG, 0),
         (CURSOR + RING_SM, 1),
         (CURSOR + RING_OFF, 0),
