@@ -4,7 +4,6 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Nav from './Nav.astro'
 import Footer from './Footer.astro'
 import sederhana from '../assets/work-images/gmv/sederhana.webp'
-import mockup2 from '../assets/work-images/gmv/mockup-2.png'
 import mapScene from '../assets/work-images/gmv/map-scene.jpg'
 import singaporeStore from '../assets/work-images/gmv/IMG-20260616-WA0022-1679782600.webp'
 import pocVideo from '../assets/work-images/gmv/poc.mp4?url'
@@ -139,10 +138,16 @@ const jsonLd = {
             </div>
           </div>
 
-          <!-- corkboard moodboard — map lives inside the board as a pinned card -->
-          <div id="gmv-board" class="gmv-board">
+          <!-- corkboard moodboard — map lives inside the board as a pinned card.
+               the tag/hint chips live outside #gmv-board itself: they poke
+               above the board's own top edge by design, and the board needs
+               overflow-y as a safety net, so nesting them inside it would let
+               that safety-net clipping eat the chips too. -->
+          <div class="gmv-board-wrap">
             <div class="gmv-board__tag">Moodboard — GMV × Sederhana</div>
             <div class="gmv-board__hint">Drag the pins around</div>
+
+            <div id="gmv-board" class="gmv-board">
 
             <figure class="gmv-mood gmv-mood--a gmv-photo" data-drag>
               <div class="gmv-photo__frame">
@@ -200,10 +205,11 @@ const jsonLd = {
               <div class="gmv-clipping__masthead"><span>Sederhana Gazette</span></div>
               <h5 class="gmv-clipping__headline">Minang flavors set their sights on the world</h5>
               <div class="gmv-clipping__photo">
-                <Image src={mockup2} alt="Global Minang Ventura live website preview" draggable={false} />
+                <Image src={singaporeStore} alt="Sederhana storefront in Singapore" draggable={false} />
               </div>
               <p class="gmv-clipping__body">From Padang to Singapore and Sydney — 54 years of Sederhana heritage, now serving 28.4 million guests a year across more than 200 locations worldwide.</p>
             </figure>
+            </div>
           </div>
         </div>
       </section>
@@ -408,12 +414,21 @@ const jsonLd = {
      and just flows into place, so nothing can overlap or overflow a track
      the way spanning grid cells could. overflow-y is a safety net: if a
      visitor's viewport is short, the board scrolls internally instead of
-     spilling pins into the section below it. ── */
+     spilling pins into the section below it.
+
+     item sizes are tied to --board-h (the board's own clamped height)
+     rather than fixed px, so pins grow to fill a tall viewport instead of
+     leaving the cork empty, while still shrinking back down on a short one
+     — the same clamp range the board's own height already resolves to, so
+     a short viewport keeps the exact sizes that were hand-tuned to fit
+     with zero overflow. ── */
+  .gmv-board-wrap { position: relative; }
   .gmv-board {
     --cork: #B9884F; --cork-2: #A3703C;
-    height: 100vh; min-height: 640px; max-height: 980px; position: relative;
+    --board-h: clamp(640px, 100vh, 980px);
+    height: var(--board-h); position: relative;
     display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start;
-    gap: 22px 28px; padding: 26px 28px 18px;
+    gap: 22px 24px; padding: 26px 28px 18px;
     border: 10px solid #3E2002; overflow-y: auto; overflow-x: hidden;
     background:
       radial-gradient(circle, rgba(62,32,2,.22) 1px, transparent 1.5px) 0 0/13px 13px,
@@ -471,7 +486,7 @@ const jsonLd = {
   /* the hero photo and the map photo share the same width so they read as
      the same "size" of print, even though one stretches 4:3 and the other
      is a full, uncropped 16:9 frame. */
-  .gmv-mood--a, .gmv-mood--c { width: 360px; }
+  .gmv-mood--a, .gmv-mood--c { width: clamp(360px, calc(var(--board-h) * 0.42), 420px); }
   .gmv-mood--a .gmv-photo__frame { aspect-ratio: 4 / 3; }
 
   /* sticky notes — fold-corner grows on hover, note lifts and settles back */
@@ -599,14 +614,20 @@ const jsonLd = {
   .gmv-cta__heading { margin: 0 auto; }
   .gmv-cta__copy { max-width: 680px; margin: 20px auto 0; color: #6D543C; font: 400 17px/1.65 Inter, system-ui, sans-serif; }
 
-  @media (max-width: 960px) {
-    /* below this, the fixed-viewport-height board can no longer guarantee
-       every pin fits without an internal scrollbar — switch to a natural,
-       content-sized board instead so the page scrolls, not the board. */
+  /* below this, the board's own row of 3 photos + row of 5 notes no longer
+     has enough container width to lay out in two rows at their tuned sizes
+     — a third row would appear and push past the fixed 100vh height, so
+     switch to a natural, content-sized board instead: the page scrolls,
+     not the board. (960px covers phones/tablets; 1279px covers narrower
+     desktop windows that are still wide enough for the fixed layout's own
+     960px tier to look cramped rather than broken.) */
+  @media (max-width: 1279px) {
     .gmv-board { height: auto; min-height: auto; max-height: none; overflow-y: visible; }
     .gmv-mood--a, .gmv-mood--c { width: 300px; }
     .gmv-sticky, .gmv-photo--square { width: 170px; }
     .gmv-clipping { width: 200px; }
+  }
+  @media (max-width: 960px) {
     .gmv-loop__timeline { grid-template-columns: 1fr 1fr; row-gap: 34px; }
     .gmv-loop__line-h { display: none; }
   }
