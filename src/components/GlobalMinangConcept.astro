@@ -411,9 +411,9 @@ const jsonLd = {
      spilling pins into the section below it. ── */
   .gmv-board {
     --cork: #B9884F; --cork-2: #A3703C;
-    height: 100vh; min-height: 680px; max-height: 980px; position: relative;
+    height: 100vh; min-height: 640px; max-height: 980px; position: relative;
     display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start;
-    gap: 30px; padding: 40px 30px 30px;
+    gap: 22px 28px; padding: 26px 28px 18px;
     border: 10px solid #3E2002; overflow-y: auto; overflow-x: hidden;
     background:
       radial-gradient(circle, rgba(62,32,2,.22) 1px, transparent 1.5px) 0 0/13px 13px,
@@ -471,14 +471,14 @@ const jsonLd = {
   /* the hero photo and the map photo share the same width so they read as
      the same "size" of print, even though one stretches 4:3 and the other
      is a full, uncropped 16:9 frame. */
-  .gmv-mood--a, .gmv-mood--c { width: 420px; }
+  .gmv-mood--a, .gmv-mood--c { width: 360px; }
   .gmv-mood--a .gmv-photo__frame { aspect-ratio: 4 / 3; }
 
   /* sticky notes — fold-corner grows on hover, note lifts and settles back */
   .gmv-sticky {
     padding: 20px; display: flex; flex-direction: column; justify-content: flex-end;
     box-shadow: 0 12px 20px rgba(30,15,2,.3);
-    width: 240px; aspect-ratio: 1 / 1;
+    width: 190px; aspect-ratio: 1 / 1;
   }
   .gmv-sticky:hover { transform: translate(var(--dx), var(--dy)) rotate(var(--rot, 0deg)) scale(calc(var(--scale, 1) * 1.045)) translateY(-6px); box-shadow: 0 22px 30px rgba(30,15,2,.4); }
   .gmv-sticky--butter { background: #DFE3BE; }
@@ -507,7 +507,7 @@ const jsonLd = {
   .gmv-sticky:hover .gmv-sticky__fold { width: 40px; height: 40px; }
 
   /* square polaroid — Sederhana's Singapore storefront */
-  .gmv-photo--square { width: 240px; }
+  .gmv-photo--square { width: 190px; }
   .gmv-photo--square .gmv-photo__frame { aspect-ratio: 1 / 1; }
   /* landscape polaroid — the full map frame, uncropped */
   .gmv-photo--landscape .gmv-photo__frame { aspect-ratio: 16 / 9; }
@@ -522,7 +522,7 @@ const jsonLd = {
 
   /* newspaper clipping — back on the board, real facts this time */
   .gmv-clipping {
-    width: 260px; padding: 16px 16px 18px; display: flex; flex-direction: column;
+    width: 230px; padding: 16px 16px 18px; display: flex; flex-direction: column;
     background: #F1E9DA;
     clip-path: polygon(0 0, 100% 0, 100% 96%, 95% 100%, 89% 96%, 83% 100%, 77% 96%, 71% 100%, 65% 96%, 59% 100%, 53% 96%, 47% 100%, 41% 96%, 35% 100%, 29% 96%, 23% 100%, 17% 96%, 11% 100%, 5% 96%, 0 100%);
   }
@@ -536,7 +536,7 @@ const jsonLd = {
   .gmv-clipping__headline {
     margin: 0 0 10px; font: 700 17px/1.15 'Iowan Old Style', Georgia, serif; color: #3E2002; text-wrap: balance;
   }
-  .gmv-clipping__photo { width: 100%; aspect-ratio: 4 / 3; overflow: hidden; filter: grayscale(.4) sepia(.15) contrast(1.05); margin-bottom: 10px; }
+  .gmv-clipping__photo { width: 100%; aspect-ratio: 16 / 9; overflow: hidden; filter: grayscale(.4) sepia(.15) contrast(1.05); margin-bottom: 10px; }
   .gmv-clipping__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .gmv-clipping__body {
     margin: 0; color: #6D543C; font: 400 11px/1.5 'Iowan Old Style', Georgia, serif;
@@ -600,14 +600,17 @@ const jsonLd = {
   .gmv-cta__copy { max-width: 680px; margin: 20px auto 0; color: #6D543C; font: 400 17px/1.65 Inter, system-ui, sans-serif; }
 
   @media (max-width: 960px) {
-    .gmv-mood--a, .gmv-mood--c { width: 340px; }
-    .gmv-sticky, .gmv-photo--square { width: 200px; }
-    .gmv-clipping { width: 220px; }
+    /* below this, the fixed-viewport-height board can no longer guarantee
+       every pin fits without an internal scrollbar — switch to a natural,
+       content-sized board instead so the page scrolls, not the board. */
+    .gmv-board { height: auto; min-height: auto; max-height: none; overflow-y: visible; }
+    .gmv-mood--a, .gmv-mood--c { width: 300px; }
+    .gmv-sticky, .gmv-photo--square { width: 170px; }
+    .gmv-clipping { width: 200px; }
     .gmv-loop__timeline { grid-template-columns: 1fr 1fr; row-gap: 34px; }
     .gmv-loop__line-h { display: none; }
   }
   @media (max-width: 720px) {
-    .gmv-board { height: auto; min-height: auto; max-height: none; overflow-y: visible; }
     .gmv-mood--a, .gmv-mood--c { width: 100%; }
     .gmv-sticky, .gmv-photo--square { width: calc(50% - 15px); }
     .gmv-clipping { width: 100%; }
