@@ -142,18 +142,9 @@ const jsonLd = {
             </div>
           </div>
 
-          <!-- moodboard header — tag + v1/v2 switch sit in normal flow above
-               both boards, so neither ever overlaps board content the way
-               an absolutely-positioned chip could at odd viewport widths. -->
+          <!-- moodboard header — tag sits in normal flow above the board. -->
           <div class="gmv-board-header">
             <div class="gmv-board__tag">Moodboard — GMV × Sederhana</div>
-            <div class="gmv-board__controls">
-              <div class="gmv-board__switch" role="group" aria-label="Moodboard layout">
-                <button type="button" class="gmv-board__switch-btn is-active" data-board-switch="v1">V1 · Corkboard</button>
-                <button type="button" class="gmv-board__switch-btn" data-board-switch="v2">V2 · Bento</button>
-              </div>
-              <div class="gmv-board__hint" data-board-panel="v1">Drag the pins around</div>
-            </div>
           </div>
 
           <!-- corkboard moodboard — the expansion-story video lives inside
@@ -164,37 +155,37 @@ const jsonLd = {
                hand-tuned packing that fits with zero leftover cork at
                full size keeps fitting with zero leftover at every size. -->
           <div class="gmv-board-wrap">
-            <div class="gmv-board-scale" data-board-panel="v1">
+            <div class="gmv-board-scale">
             <div id="gmv-board" class="gmv-board">
 
-            <figure class="gmv-mood gmv-mood--a gmv-photo" data-drag>
+            <figure class="gmv-mood gmv-mood--a gmv-photo">
               <div class="gmv-photo__frame">
                 <Image src={sederhana} alt="Sederhana dining atmosphere" draggable={false} />
               </div>
               <figcaption>Sederhana · dining culture</figcaption>
             </figure>
 
-            <figure class="gmv-mood gmv-mood--b gmv-photo gmv-photo--square" data-drag>
+            <figure class="gmv-mood gmv-mood--b gmv-photo gmv-photo--square">
               <div class="gmv-photo__frame">
                 <Image src={singaporeStore} alt="Sederhana storefront in Singapore" draggable={false} />
               </div>
               <figcaption>Sederhana · Singapore storefront</figcaption>
             </figure>
 
-            <div class="gmv-mood gmv-mood--d gmv-sticky gmv-sticky--butter" data-drag>
+            <div class="gmv-mood gmv-mood--d gmv-sticky gmv-sticky--butter">
               <small>Texture / tone</small>
               <strong>Heritage, structure, confidence.</strong>
               <span class="gmv-sticky__fold" aria-hidden="true"></span>
             </div>
 
-            <div class="gmv-mood gmv-mood--e gmv-sticky gmv-sticky--clay" data-drag>
+            <div class="gmv-mood gmv-mood--e gmv-sticky gmv-sticky--clay">
               <small>Est. 1972</small>
               <strong>54 years of heritage. 200+ locations across Indonesia.</strong>
               <span class="gmv-sticky__fold" aria-hidden="true"></span>
             </div>
 
             <!-- world footprint — sticky note of points, not a full map graphic -->
-            <div class="gmv-mood gmv-mood--map gmv-sticky gmv-sticky--paper" data-drag>
+            <div class="gmv-mood gmv-mood--map gmv-sticky gmv-sticky--paper">
               <small>Global footprint</small>
               <strong>From Indonesia, outward.</strong>
               <ul class="gmv-sticky__points">
@@ -205,7 +196,7 @@ const jsonLd = {
               <span class="gmv-sticky__fold" aria-hidden="true"></span>
             </div>
 
-            <div class="gmv-mood gmv-mood--f gmv-sticky gmv-sticky--butter" data-drag>
+            <div class="gmv-mood gmv-mood--f gmv-sticky gmv-sticky--butter">
               <small>Vision</small>
               <strong>Minang cuisine, recognized as a global culinary force.</strong>
               <span class="gmv-sticky__fold" aria-hidden="true"></span>
@@ -217,7 +208,7 @@ const jsonLd = {
                  pseudo-elements included, so putting it on the same element
                  as the pin (::after, positioned above the box) was cutting
                  the pin in half. -->
-            <figure class="gmv-mood gmv-mood--g gmv-clipping" data-drag>
+            <figure class="gmv-mood gmv-mood--g gmv-clipping">
               <div class="gmv-clipping__paper">
                 <div class="gmv-clipping__masthead"><span>Sederhana Gazette</span></div>
                 <h5 class="gmv-clipping__headline">Minang flavors set their sights on the world</h5>
@@ -228,55 +219,34 @@ const jsonLd = {
               </div>
             </figure>
 
-            <figure class="gmv-mood gmv-mood--h gmv-photo" data-drag>
+            <figure class="gmv-mood gmv-mood--h gmv-photo">
               <div class="gmv-photo__frame">
                 <Image src={ekrafGreeting} alt="Menteri Ekraf greeting the Sederhana founder at the Singapore launch" draggable={false} />
               </div>
               <figcaption>Launch day greeting</figcaption>
             </figure>
 
-            <figure class="gmv-mood gmv-mood--i gmv-photo gmv-photo--square" data-drag>
+            <figure class="gmv-mood gmv-mood--i gmv-photo gmv-photo--square">
               <div class="gmv-photo__frame">
                 <Image src={ekrafStorefront} alt="Sederhana Singapore storefront on Kandahar Street" draggable={false} />
               </div>
               <figcaption>Sederhana · Kandahar St</figcaption>
             </figure>
 
-            <figure class="gmv-mood gmv-mood--j gmv-photo gmv-photo--landscape" data-drag>
+            <figure class="gmv-mood gmv-mood--j gmv-photo gmv-photo--landscape">
               <div class="gmv-photo__frame">
                 <Image src={ekrafGroup} alt="Menteri Ekraf and the Sederhana team at the Singapore restaurant opening" draggable={false} />
               </div>
               <figcaption>Singapore opening</figcaption>
             </figure>
 
-            <figure class="gmv-mood gmv-mood--k gmv-photo gmv-photo--landscape" data-drag>
+            <figure class="gmv-mood gmv-mood--k gmv-photo gmv-photo--landscape">
               <div class="gmv-photo__frame">
                 <video src={coverVideo} autoplay loop muted playsinline draggable={false}></video>
               </div>
               <figcaption>Expansion story</figcaption>
             </figure>
             </div>
-            </div>
-          </div>
-
-          <div class="gmv-board-wrap">
-            <div id="gmv-board-v2" class="gmv-bento" data-board-panel="v2" hidden>
-              <figure class="gmv-bento__item gmv-bento__item--video">
-                <video src={coverVideo} autoplay loop muted playsinline></video>
-                <figcaption>Expansion story</figcaption>
-              </figure>
-              <figure class="gmv-bento__item">
-                <Image src={ekrafGreeting} alt="Menteri Ekraf greeting the Sederhana founder at the Singapore launch" />
-                <figcaption>Launch day greeting</figcaption>
-              </figure>
-              <figure class="gmv-bento__item">
-                <Image src={ekrafStorefront} alt="Sederhana Singapore storefront on Kandahar Street" />
-                <figcaption>Sederhana · Kandahar St</figcaption>
-              </figure>
-              <figure class="gmv-bento__item">
-                <Image src={ekrafGroup} alt="Menteri Ekraf and the Sederhana team at the Singapore restaurant opening" />
-                <figcaption>Singapore opening</figcaption>
-              </figure>
             </div>
           </div>
         </div>
@@ -488,39 +458,14 @@ const jsonLd = {
      scale and initBoardScale()). ── */
   .gmv-board-wrap { position: relative; }
 
-  /* header sits above both boards in normal flow — tag left, switch +
-     hint right — so it never overlaps whichever board is visible, at any
-     viewport width. */
-  .gmv-board-header {
-    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-    gap: 10px 16px; margin-bottom: 16px;
-  }
+  /* header sits above the board in normal flow — just the tag. */
+  .gmv-board-header { margin-bottom: 16px; }
   .gmv-board__tag {
+    display: inline-block;
     background: #A9541F; color: #FCF8F0;
     font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .12em;
     padding: 8px 10px; border-radius: 6px;
   }
-  .gmv-board__controls { display: flex; align-items: center; gap: 12px; }
-  .gmv-board__hint {
-    background: rgba(62,32,2,.08); color: #6D543C;
-    font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .12em;
-    padding: 8px 10px; border-radius: 6px;
-  }
-  .gmv-board__hint[hidden] { display: none; }
-
-  /* v1/v2 layout switch — a plain segmented control next to the hint. */
-  .gmv-board__switch {
-    display: inline-flex; gap: 2px;
-    background: rgba(62,32,2,.08); padding: 3px; border-radius: 8px;
-  }
-  .gmv-board__switch-btn {
-    border: none; background: transparent; cursor: pointer;
-    color: #6D543C; font: 700 10px/1 Inter, system-ui, sans-serif;
-    letter-spacing: .08em; text-transform: uppercase;
-    padding: 8px 12px; border-radius: 6px; transition: background .2s ease, color .2s ease;
-  }
-  .gmv-board__switch-btn:hover { color: #3E2002; }
-  .gmv-board__switch-btn.is-active { background: #3E2002; color: #FCF8F0; }
 
   /* the board is a fixed-width composition, hand-packed so its rows land
      on the design width with ~zero leftover cork (see the per-mood width
@@ -528,7 +473,6 @@ const jsonLd = {
      down as a whole on narrower viewports — see initBoardScale() — so the
      packing never has to be re-solved at another width. */
   .gmv-board-scale { position: relative; width: 100%; overflow: hidden; }
-  .gmv-board-scale[hidden], .gmv-bento[hidden] { display: none; }
   .gmv-board {
     --cork: #B9884F; --cork-2: #A3703C;
     width: 1240px; box-sizing: border-box; position: relative;
@@ -542,19 +486,14 @@ const jsonLd = {
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), inset 0 2px 30px rgba(0,0,0,.28), 0 16px 30px rgba(62,32,2,.2);
   }
 
-  /* pins drag freely via a translate offset (--dx/--dy) layered on top of the
-     card's own resting rotation — drag only moves the painted layer via
-     transform, it never touches flex layout or flow position. */
   .gmv-mood {
     position: relative; margin: 0; background: #FCF8F0; flex: none;
     box-shadow: 0 14px 24px rgba(30,15,2,.32), 0 2px 5px rgba(30,15,2,.18);
-    --dx: 0px; --dy: 0px; --scale: .94;
-    transform: translate(var(--dx), var(--dy)) rotate(var(--rot, 0deg)) scale(var(--scale));
-    touch-action: none; cursor: grab;
+    --scale: .94;
+    transform: rotate(var(--rot, 0deg)) scale(var(--scale));
     user-select: none; -webkit-user-select: none;
   }
   .gmv-mood img, .gmv-mood video { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
-  .gmv-mood.is-dragging { cursor: grabbing; z-index: 20; transition: none !important; box-shadow: 0 26px 40px rgba(30,15,2,.45); }
   /* order packs each row as full as its widths allow (see the note above
      .gmv-board) rather than following document order, which is kept
      source-side for a sane a11y/DOM reading order instead. */
@@ -600,7 +539,7 @@ const jsonLd = {
     box-shadow: 0 12px 20px rgba(30,15,2,.3);
     width: 204px; aspect-ratio: 1 / 1;
   }
-  .gmv-sticky:hover { transform: translate(var(--dx), var(--dy)) rotate(var(--rot, 0deg)) scale(calc(var(--scale, 1) * 1.045)) translateY(-6px); box-shadow: 0 22px 30px rgba(30,15,2,.4); }
+  .gmv-sticky:hover { transform: rotate(var(--rot, 0deg)) scale(calc(var(--scale, 1) * 1.045)) translateY(-6px); box-shadow: 0 22px 30px rgba(30,15,2,.4); }
   .gmv-sticky--butter { background: #DFE3BE; }
   .gmv-sticky--butter::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle, rgba(62,32,2,.1) 1.1px, transparent 1.8px) 0 0/9px 9px; }
   .gmv-sticky--butter::after {
@@ -662,41 +601,6 @@ const jsonLd = {
   .gmv-clipping__body {
     margin: 0; color: #6D543C; font: 400 11px/1.5 'Iowan Old Style', Georgia, serif;
     column-count: 2; column-gap: 12px;
-  }
-
-  /* ── v2 moodboard — a bento grid instead of a pinned corkboard: the
-     expansion-story video runs as a landscape banner across the top,
-     the three Ekraf launch photos sit in an equal row underneath. every
-     cell sizes itself by aspect-ratio (no fixed container height needed)
-     and shares the 12px corner radius plus the same bottom-left caption
-     treatment as the video badges elsewhere on this page. ── */
-  .gmv-bento {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-  .gmv-bento__item {
-    position: relative; margin: 0; border-radius: 12px; overflow: hidden;
-    background: #111;
-    box-shadow: 0 10px 24px rgba(30,15,2,.16);
-  }
-  .gmv-bento__item img, .gmv-bento__item video {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-  }
-  .gmv-bento__item figcaption {
-    position: absolute; left: 12px; bottom: 12px; z-index: 2;
-    padding: 7px 11px; border-radius: 6px;
-    color: #FCF8F0; background: rgba(62,32,2,.82);
-    font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .1em;
-  }
-  .gmv-bento__item--video { grid-column: 1 / 4; aspect-ratio: 21 / 8; }
-  .gmv-bento__item:not(.gmv-bento__item--video) { aspect-ratio: 1 / 1; }
-  /* below this, three equal columns of photos get too cramped (captions
-     wrap to 2+ lines, tiles shrink past comfortable tap size) — stack
-     everything into one column instead, video banner on top. */
-  @media (max-width: 720px) {
-    .gmv-bento { grid-template-columns: 1fr; }
-    .gmv-bento__item--video { grid-column: 1; aspect-ratio: 16 / 9; }
   }
 
   /* ── flow (POC) ── */
@@ -784,94 +688,7 @@ const jsonLd = {
       })
   }
 
-  // Pinboard drag — each pin carries a --dx/--dy translate offset layered on
-  // top of its resting rotation (see .gmv-mood in the styles above), so a
-  // drag never touches the grid layout, just the painted position.
-  function initBoardDrag() {
-    const board = document.querySelector<HTMLElement>('#gmv-board')
-    if (!board) return
-
-    const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
-    const readOffset = (el: HTMLElement, name: string) =>
-      parseFloat(getComputedStyle(el).getPropertyValue(name)) || 0
-
-    board.querySelectorAll<HTMLElement>('[data-drag]').forEach((el) => {
-      let startX = 0
-      let startY = 0
-      let baseDx = 0
-      let baseDy = 0
-      let dragging = false
-      // pointer-delta bounds computed at drag start so the card's own
-      // (already rotated/scaled) box never crosses the board's edge
-      let deltaMinX = 0
-      let deltaMaxX = 0
-      let deltaMinY = 0
-      let deltaMaxY = 0
-
-      el.addEventListener('pointerdown', (e) => {
-        dragging = true
-        el.classList.add('is-dragging')
-        // setPointerCapture can throw (e.g. no active pointer with this id)
-        // in some browsers/conditions — never let that skip the bounds setup
-        // below, or the drag falls back to stale/zeroed values.
-        try {
-          el.setPointerCapture(e.pointerId)
-        } catch {}
-        startX = e.clientX
-        startY = e.clientY
-        baseDx = readOffset(el, '--dx')
-        baseDy = readOffset(el, '--dy')
-
-        const boardRect = board.getBoundingClientRect()
-        const elRect = el.getBoundingClientRect()
-        deltaMinX = boardRect.left - elRect.left
-        deltaMaxX = boardRect.right - elRect.right
-        deltaMinY = boardRect.top - elRect.top
-        deltaMaxY = boardRect.bottom - elRect.bottom
-      })
-
-      el.addEventListener('pointermove', (e) => {
-        if (!dragging) return
-        const deltaX = clamp(e.clientX - startX, deltaMinX, deltaMaxX)
-        const deltaY = clamp(e.clientY - startY, deltaMinY, deltaMaxY)
-        el.style.setProperty('--dx', `${baseDx + deltaX}px`)
-        el.style.setProperty('--dy', `${baseDy + deltaY}px`)
-      })
-
-      const stopDragging = () => {
-        dragging = false
-        el.classList.remove('is-dragging')
-      }
-      el.addEventListener('pointerup', stopDragging)
-      el.addEventListener('pointercancel', stopDragging)
-    })
-  }
-
-  // v1/v2 moodboard switch — swaps which panel is visible via the
-  // `hidden` attribute rather than a CSS class, so the very first paint
-  // (before this script runs) already matches the markup's own `hidden`
-  // on #gmv-board-v2.
-  function initBoardSwitch(onShowV1?: () => void) {
-    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-board-switch]')
-    const panels = document.querySelectorAll<HTMLElement>('[data-board-panel]')
-    if (!buttons.length || !panels.length) return
-
-    buttons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const view = btn.dataset.boardSwitch
-        buttons.forEach((b) => b.classList.toggle('is-active', b === btn))
-        panels.forEach((panel) => {
-          panel.hidden = panel.dataset.boardPanel !== view
-        })
-        // the scale wrapper was measured while hidden (or stale) if this
-        // is the first time v1 becomes visible again — re-measure now
-        // that it actually has layout.
-        if (view === 'v1') onShowV1?.()
-      })
-    })
-  }
-
-  // v1 corkboard scale — the board is a fixed-width (1240px) composition
+  // Corkboard scale — the board is a fixed-width (1240px) composition
   // (see .gmv-board / .gmv-board-scale above); rather than reflowing pins
   // into new rows on a narrower viewport, scale the whole thing down as
   // one piece so the hand-packed, zero-leftover layout never has to be
@@ -879,7 +696,7 @@ const jsonLd = {
   function initBoardScale() {
     const wrap = document.querySelector<HTMLElement>('.gmv-board-scale')
     const board = document.querySelector<HTMLElement>('#gmv-board')
-    if (!wrap || !board) return () => {}
+    if (!wrap || !board) return
 
     const DESIGN_WIDTH = 1240
     const apply = () => {
@@ -890,10 +707,7 @@ const jsonLd = {
 
     apply()
     new ResizeObserver(apply).observe(wrap)
-    return apply
   }
 
-  initBoardDrag()
-  const rescaleBoard = initBoardScale()
-  initBoardSwitch(rescaleBoard)
+  initBoardScale()
 </script>
