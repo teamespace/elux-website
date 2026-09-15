@@ -3,6 +3,7 @@ import { Image } from 'astro:assets'
 import BaseLayout from './BaseLayout.astro'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
+import ClosingCTA from '../components/sections/ClosingCTA.astro'
 
 interface PrevNext {
   slug: string
@@ -229,15 +230,13 @@ const hasServices = Array.isArray(data.services) && data.services.length > 0
       </section>
 
       <!-- 10. CTA -->
-      <section class="bg-cream border-t-2 border-ink">
-        <div class="mx-auto max-w-page px-6 lg:px-10 py-16 md:py-20 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-          <h2 class="display-lg text-ink">HAVE SOMETHING<br />LIKE THIS?</h2>
-          <a href="/#contact" class="btn-primary">
-            START A PROJECT
-            <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
-          </a>
-        </div>
-      </section>
+      <ClosingCTA
+        headline={'Have something\nlike this?'}
+        primaryLabel="Start a Project"
+        primaryHref="/#contact"
+        secondaryLabel="See More Work"
+        secondaryHref="/work"
+      />
     </main>
 
     <Footer />
