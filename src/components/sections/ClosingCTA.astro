@@ -1,0 +1,63 @@
+---
+import DitherField from '../DitherField.astro'
+import PixelScene from '../PixelScene.astro'
+
+// Same visual CTA as the homepage's closing section (StillReading.astro) —
+// full-height, dithered, pixel-scene footer — but content comes from props so
+// every case study can reuse it with its own copy instead of home.yaml.
+interface Props {
+  eyebrow?: string
+  /** '\n' separates lines, same convention as home.yaml's headline strings */
+  headline: string
+  body?: string
+  primaryLabel: string
+  primaryHref: string
+  secondaryLabel?: string
+  secondaryHref?: string
+}
+
+const { eyebrow, headline, body, primaryLabel, primaryHref, secondaryLabel, secondaryHref } = Astro.props
+const headlineLines = headline.split('\n')
+---
+
+<section class="relative bg-cream-3 text-ink overflow-hidden min-h-screen flex items-center">
+  <DitherField
+    bg="#F1E9DA"
+    color="#3E2002"
+    pixel={3}
+    scale={2.0}
+    cut={0.545}
+    fade="even"
+    full
+    opacity={0.12}
+    mouse
+  />
+
+  <PixelScene />
+
+  <div class="relative z-[1] w-full mx-auto max-w-page px-6 lg:px-10 py-24">
+    <div data-reveal class="flex flex-col items-center text-center gap-8">
+      {eyebrow && <div class="eyebrow text-ink-2">{eyebrow}</div>}
+
+      <h3 class="display-lg max-w-4xl">
+        {headlineLines.map((line) => <span class="block">{line}</span>)}
+      </h3>
+
+      {body && <p class="body-lg text-ink-2 max-w-2xl">{body}</p>}
+
+      <div class="flex flex-wrap items-center justify-center gap-3 mt-2">
+        <a href={primaryHref} class="btn-primary">
+          {primaryLabel}
+          <span aria-hidden="true" class="inline-block w-4 h-4 leading-none">↗</span>
+        </a>
+        {
+          secondaryLabel && secondaryHref && (
+            <a href={secondaryHref} class="btn-cream">
+              {secondaryLabel}
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
