@@ -3,11 +3,15 @@ import { Image } from 'astro:assets'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Nav from './Nav.astro'
 import Footer from './Footer.astro'
+import ClosingCTA from './sections/ClosingCTA.astro'
 import sederhana from '../assets/work-images/gmv/sederhana.webp'
-import mapScene from '../assets/work-images/gmv/map-scene.jpg'
 import singaporeStore from '../assets/work-images/gmv/IMG-20260616-WA0022-1679782600.webp'
+import ekrafGreeting from '../assets/work-images/gmv/ekraf-launch-greeting.jpeg'
+import ekrafStorefront from '../assets/work-images/gmv/ekraf-singapore-storefront.jpeg'
+import ekrafGroup from '../assets/work-images/gmv/ekraf-launch-group.jpeg'
 import pocVideo from '../assets/work-images/gmv/poc.mp4?url'
 import finalWebsiteVideo from '../assets/work-images/gmv/FINAL-WEBSITE.mp4?url'
+import coverVideo from '../assets/work-images/gmv/cover.mp4?url'
 
 interface PrevNext {
   slug: string
@@ -59,7 +63,7 @@ const flowSprites = [
 ]
 
 const loopSteps = [
-  { label: 'Direction', text: 'Brief becomes a clear plan.', sprite: 'cursor', w: 14, h: 20, idle: '1.2s' },
+  { label: 'Direction', text: 'Brief becomes a clear plan.', sprite: 'smallbot', w: 14, h: 20, idle: '1.2s' },
   { label: 'Exploration', text: 'Ideas get tested before they get decided.', sprite: 'flask', w: 14, h: 20, idle: '0.9s' },
   { label: 'Build', text: 'Design and code move as one.', sprite: 'computer', w: 16, h: 14, idle: '0.9s' },
   { label: 'Refinement', text: 'Feedback tightens the final cut.', sprite: 'pencil', w: 19, h: 9, idle: '1.1s' },
@@ -138,15 +142,29 @@ const jsonLd = {
             </div>
           </div>
 
-          <!-- corkboard moodboard — map lives inside the board as a pinned card.
-               the tag/hint chips live outside #gmv-board itself: they poke
-               above the board's own top edge by design, and the board needs
-               overflow-y as a safety net, so nesting them inside it would let
-               that safety-net clipping eat the chips too. -->
-          <div class="gmv-board-wrap">
+          <!-- moodboard header — tag + v1/v2 switch sit in normal flow above
+               both boards, so neither ever overlaps board content the way
+               an absolutely-positioned chip could at odd viewport widths. -->
+          <div class="gmv-board-header">
             <div class="gmv-board__tag">Moodboard — GMV × Sederhana</div>
-            <div class="gmv-board__hint">Drag the pins around</div>
+            <div class="gmv-board__controls">
+              <div class="gmv-board__switch" role="group" aria-label="Moodboard layout">
+                <button type="button" class="gmv-board__switch-btn is-active" data-board-switch="v1">V1 · Corkboard</button>
+                <button type="button" class="gmv-board__switch-btn" data-board-switch="v2">V2 · Bento</button>
+              </div>
+              <div class="gmv-board__hint" data-board-panel="v1">Drag the pins around</div>
+            </div>
+          </div>
 
+          <!-- corkboard moodboard — the expansion-story video lives inside
+               the board as a pinned card, same as any other photo. the
+               board itself is a fixed-width composition (see .gmv-board-
+               scale below): on a narrower viewport it scales down as one
+               piece instead of reflowing pins into new rows, so the
+               hand-tuned packing that fits with zero leftover cork at
+               full size keeps fitting with zero leftover at every size. -->
+          <div class="gmv-board-wrap">
+            <div class="gmv-board-scale" data-board-panel="v1">
             <div id="gmv-board" class="gmv-board">
 
             <figure class="gmv-mood gmv-mood--a gmv-photo" data-drag>
@@ -161,13 +179,6 @@ const jsonLd = {
                 <Image src={singaporeStore} alt="Sederhana storefront in Singapore" draggable={false} />
               </div>
               <figcaption>Sederhana · Singapore storefront</figcaption>
-            </figure>
-
-            <figure class="gmv-mood gmv-mood--c gmv-photo gmv-photo--landscape" data-drag>
-              <div class="gmv-photo__frame">
-                <Image src={mapScene} alt="Global Minang Ventura animated global-expansion map" draggable={false} />
-              </div>
-              <figcaption>Expansion story</figcaption>
             </figure>
 
             <div class="gmv-mood gmv-mood--d gmv-sticky gmv-sticky--butter" data-drag>
@@ -216,6 +227,56 @@ const jsonLd = {
                 <p class="gmv-clipping__body">From Padang to Singapore and Sydney — 54 years of Sederhana heritage, now serving 28.4 million guests a year across more than 200 locations worldwide.</p>
               </div>
             </figure>
+
+            <figure class="gmv-mood gmv-mood--h gmv-photo" data-drag>
+              <div class="gmv-photo__frame">
+                <Image src={ekrafGreeting} alt="Menteri Ekraf greeting the Sederhana founder at the Singapore launch" draggable={false} />
+              </div>
+              <figcaption>Launch day greeting</figcaption>
+            </figure>
+
+            <figure class="gmv-mood gmv-mood--i gmv-photo gmv-photo--square" data-drag>
+              <div class="gmv-photo__frame">
+                <Image src={ekrafStorefront} alt="Sederhana Singapore storefront on Kandahar Street" draggable={false} />
+              </div>
+              <figcaption>Sederhana · Kandahar St</figcaption>
+            </figure>
+
+            <figure class="gmv-mood gmv-mood--j gmv-photo gmv-photo--landscape" data-drag>
+              <div class="gmv-photo__frame">
+                <Image src={ekrafGroup} alt="Menteri Ekraf and the Sederhana team at the Singapore restaurant opening" draggable={false} />
+              </div>
+              <figcaption>Singapore opening</figcaption>
+            </figure>
+
+            <figure class="gmv-mood gmv-mood--k gmv-photo gmv-photo--landscape" data-drag>
+              <div class="gmv-photo__frame">
+                <video src={coverVideo} autoplay loop muted playsinline draggable={false}></video>
+              </div>
+              <figcaption>Expansion story</figcaption>
+            </figure>
+            </div>
+            </div>
+          </div>
+
+          <div class="gmv-board-wrap">
+            <div id="gmv-board-v2" class="gmv-bento" data-board-panel="v2" hidden>
+              <figure class="gmv-bento__item gmv-bento__item--video">
+                <video src={coverVideo} autoplay loop muted playsinline></video>
+                <figcaption>Expansion story</figcaption>
+              </figure>
+              <figure class="gmv-bento__item">
+                <Image src={ekrafGreeting} alt="Menteri Ekraf greeting the Sederhana founder at the Singapore launch" />
+                <figcaption>Launch day greeting</figcaption>
+              </figure>
+              <figure class="gmv-bento__item">
+                <Image src={ekrafStorefront} alt="Sederhana Singapore storefront on Kandahar Street" />
+                <figcaption>Sederhana · Kandahar St</figcaption>
+              </figure>
+              <figure class="gmv-bento__item">
+                <Image src={ekrafGroup} alt="Menteri Ekraf and the Sederhana team at the Singapore restaurant opening" />
+                <figcaption>Singapore opening</figcaption>
+              </figure>
             </div>
           </div>
         </div>
@@ -387,20 +448,15 @@ const jsonLd = {
         </section>
       )}
 
-      <!-- CTA -->
-      <section class="bg-cream" id="cta">
-        <div class="mx-auto max-w-page px-6 lg:px-10 py-24 md:py-28 gmv-cta">
-          <p class="eyebrow text-ink-3 mb-4">Move while it matters</p>
-          <h2 class="display-lg text-ink gmv-cta__heading">Need to move from idea to<br />something real, faster?</h2>
-          <p class="body-lg text-ink-2 gmv-cta__copy">
-            We help teams bring design, development, and iteration closer together<br />so ideas can become working products sooner. <strong class="text-ink">Let's work together!</strong>
-          </p>
-          <div class="flex flex-wrap justify-center gap-2.5 mt-7">
-            <a href="mailto:hello@elux.space" class="btn-primary">Start a Project <span aria-hidden="true">↗</span></a>
-            <a href="/work" class="btn-cream">See More Work</a>
-          </div>
-        </div>
-      </section>
+      <ClosingCTA
+        eyebrow="Move while it matters"
+        headline={'Need to move from idea to\nsomething real, faster?'}
+        body="We help teams bring design, development, and iteration closer together so ideas can become working products sooner. Let's work together!"
+        primaryLabel="Start a Project"
+        primaryHref="mailto:hello@elux.space"
+        secondaryLabel="See More Work"
+        secondaryHref="/work"
+      />
     </main>
 
     <Footer />
@@ -410,7 +466,11 @@ const jsonLd = {
 <style is:global>
   .gmv-chapter-head { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr); gap: 64px; align-items: end; margin-bottom: 44px; }
   .gmv-chapter-head h2 { margin: 0; }
-  .gmv-chapter-body { padding-top: 6px; }
+  /* min-width: 0 overrides the grid item's default auto min-width — without
+     it, .gmv-poc-proof's width: max-content (below) inflates this column's
+     own min-content contribution and blows the whole row out past the
+     viewport instead of wrapping inside it. */
+  .gmv-chapter-body { padding-top: 6px; min-width: 0; }
   .gmv-chapter-body p { margin: 0 0 16px; color: #6D543C; font: 400 16px/1.6 Inter, system-ui, sans-serif; }
   .gmv-chapter-body p:last-child { margin-bottom: 0; }
   @media (max-width: 920px) {
@@ -418,45 +478,68 @@ const jsonLd = {
     .gmv-chapter-body { padding-top: 0; }
   }
 
-  /* ── moodboard, one full board, 100vh — a flex-wrap "shelf" rather than a
-     hand-placed grid: every item sizes itself (fixed width + aspect-ratio)
-     and just flows into place, so nothing can overlap or overflow a track
-     the way spanning grid cells could. overflow-y is a safety net: if a
-     visitor's viewport is short, the board scrolls internally instead of
-     spilling pins into the section below it.
-
-     item sizes are tied to --board-h (the board's own clamped height)
-     rather than fixed px, so pins grow to fill a tall viewport instead of
-     leaving the cork empty, while still shrinking back down on a short one
-     — the same clamp range the board's own height already resolves to, so
-     a short viewport keeps the exact sizes that were hand-tuned to fit
-     with zero overflow. ── */
+  /* ── moodboard — a flex-wrap "shelf" rather than a hand-placed grid: every
+     item has a fixed width + aspect-ratio, hand-tuned (see the per-mood
+     width rules and each `order` below) so every row lands on the design
+     width with ~zero leftover cork. the board's own height is content-
+     driven (no internal scrollbar) — every pin stays visible without
+     scrolling, and the whole fixed-width composition scales down as one
+     piece on narrower viewports instead of re-flowing (see .gmv-board-
+     scale and initBoardScale()). ── */
   .gmv-board-wrap { position: relative; }
+
+  /* header sits above both boards in normal flow — tag left, switch +
+     hint right — so it never overlaps whichever board is visible, at any
+     viewport width. */
+  .gmv-board-header {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: 10px 16px; margin-bottom: 16px;
+  }
+  .gmv-board__tag {
+    background: #A9541F; color: #FCF8F0;
+    font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .12em;
+    padding: 8px 10px; border-radius: 6px;
+  }
+  .gmv-board__controls { display: flex; align-items: center; gap: 12px; }
+  .gmv-board__hint {
+    background: rgba(62,32,2,.08); color: #6D543C;
+    font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .12em;
+    padding: 8px 10px; border-radius: 6px;
+  }
+  .gmv-board__hint[hidden] { display: none; }
+
+  /* v1/v2 layout switch — a plain segmented control next to the hint. */
+  .gmv-board__switch {
+    display: inline-flex; gap: 2px;
+    background: rgba(62,32,2,.08); padding: 3px; border-radius: 8px;
+  }
+  .gmv-board__switch-btn {
+    border: none; background: transparent; cursor: pointer;
+    color: #6D543C; font: 700 10px/1 Inter, system-ui, sans-serif;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 8px 12px; border-radius: 6px; transition: background .2s ease, color .2s ease;
+  }
+  .gmv-board__switch-btn:hover { color: #3E2002; }
+  .gmv-board__switch-btn.is-active { background: #3E2002; color: #FCF8F0; }
+
+  /* the board is a fixed-width composition, hand-packed so its rows land
+     on the design width with ~zero leftover cork (see the per-mood width
+     rules below). .gmv-board-scale holds that fixed box and scales it
+     down as a whole on narrower viewports — see initBoardScale() — so the
+     packing never has to be re-solved at another width. */
+  .gmv-board-scale { position: relative; width: 100%; overflow: hidden; }
+  .gmv-board-scale[hidden], .gmv-bento[hidden] { display: none; }
   .gmv-board {
     --cork: #B9884F; --cork-2: #A3703C;
-    --board-h: clamp(640px, 100vh, 980px);
-    height: var(--board-h); position: relative;
+    width: 1240px; box-sizing: border-box; position: relative;
+    transform-origin: top left;
     display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start;
-    gap: 22px 24px; padding: 26px 28px 18px;
-    border: 10px solid #3E2002; overflow-y: auto; overflow-x: hidden;
+    gap: 18px 20px; padding: 26px 28px 24px;
+    border: 10px solid #3E2002; overflow: hidden;
     background:
       radial-gradient(circle, rgba(62,32,2,.22) 1px, transparent 1.5px) 0 0/13px 13px,
       linear-gradient(155deg, var(--cork), var(--cork-2));
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), inset 0 2px 30px rgba(0,0,0,.28), 0 16px 30px rgba(62,32,2,.2);
-  }
-  .gmv-board__tag {
-    position: absolute; top: -9px; left: 24px;
-    background: #A9541F; color: #FCF8F0;
-    font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .12em;
-    padding: 6px 10px; transform: rotate(-2deg);
-    box-shadow: 0 6px 12px rgba(0,0,0,.25); z-index: 6;
-  }
-  .gmv-board__hint {
-    position: absolute; top: -9px; right: 24px;
-    background: #FCF8F0; color: #3E2002;
-    font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .12em;
-    padding: 6px 10px; transform: rotate(1.5deg);
-    box-shadow: 0 6px 12px rgba(0,0,0,.25); z-index: 6;
   }
 
   /* pins drag freely via a translate offset (--dx/--dy) layered on top of the
@@ -465,44 +548,57 @@ const jsonLd = {
   .gmv-mood {
     position: relative; margin: 0; background: #FCF8F0; flex: none;
     box-shadow: 0 14px 24px rgba(30,15,2,.32), 0 2px 5px rgba(30,15,2,.18);
-    --dx: 0px; --dy: 0px; --scale: .82;
+    --dx: 0px; --dy: 0px; --scale: .94;
     transform: translate(var(--dx), var(--dy)) rotate(var(--rot, 0deg)) scale(var(--scale));
     touch-action: none; cursor: grab;
     user-select: none; -webkit-user-select: none;
   }
-  .gmv-mood img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+  .gmv-mood img, .gmv-mood video { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
   .gmv-mood.is-dragging { cursor: grabbing; z-index: 20; transition: none !important; box-shadow: 0 26px 40px rgba(30,15,2,.45); }
-  .gmv-mood--a { --rot: -2deg; }
-  .gmv-mood--b { --rot: 1.6deg; }
-  .gmv-mood--c { --rot: -1deg; }
-  .gmv-mood--d { --rot: 2.4deg; transition: transform .25s ease, box-shadow .25s ease; }
-  .gmv-mood--e { --rot: -1.4deg; transition: transform .25s ease, box-shadow .25s ease; }
-  .gmv-mood--f { --rot: -2.6deg; transition: transform .25s ease, box-shadow .25s ease; }
-  .gmv-mood--map { --rot: .6deg; }
-  .gmv-mood--g { --rot: 1.2deg; }
+  /* order packs each row as full as its widths allow (see the note above
+     .gmv-board) rather than following document order, which is kept
+     source-side for a sane a11y/DOM reading order instead. */
+  .gmv-mood--a { --rot: -2deg; order: 2; }
+  .gmv-mood--b { --rot: 1.6deg; order: 3; }
+  .gmv-mood--d { --rot: 2.4deg; transition: transform .25s ease, box-shadow .25s ease; order: 9; }
+  .gmv-mood--e { --rot: -1.4deg; transition: transform .25s ease, box-shadow .25s ease; order: 10; }
+  .gmv-mood--f { --rot: -2.6deg; transition: transform .25s ease, box-shadow .25s ease; order: 7; }
+  .gmv-mood--map { --rot: .6deg; order: 6; }
+  .gmv-mood--g { --rot: 1.2deg; order: 5; }
+  .gmv-mood--h { --rot: -1.8deg; order: 4; }
+  .gmv-mood--i { --rot: 2.2deg; order: 11; }
+  .gmv-mood--j { --rot: -0.8deg; order: 8; }
+  .gmv-mood--k { --rot: 1.4deg; order: 1; }
 
   .gmv-photo { padding: 9px 9px 32px; width: 300px; }
   .gmv-photo__frame { width: 100%; height: auto; aspect-ratio: 4 / 3; overflow: hidden; background: #6D543C; }
-  .gmv-photo__frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gmv-photo__frame img, .gmv-photo__frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .gmv-photo figcaption { position: absolute; left: 9px; right: 9px; bottom: 9px; color: #6D543C; font: 900 8px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .1em; }
-  .gmv-mood--a::after, .gmv-mood--b::after, .gmv-mood--c::after, .gmv-mood--map::after, .gmv-mood--g::after {
+  .gmv-mood--a::after, .gmv-mood--b::after, .gmv-mood--map::after, .gmv-mood--g::after,
+  .gmv-mood--h::after, .gmv-mood--i::after, .gmv-mood--j::after, .gmv-mood--k::after {
     content: ''; position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
     width: 15px; height: 15px; border-radius: 50%;
     background: radial-gradient(circle at 34% 30%, #ff9270, #A9541F 72%);
     box-shadow: 0 3px 5px rgba(0,0,0,.4); z-index: 5;
   }
 
-  /* the hero photo and the map photo share the same width so they read as
-     the same "size" of print, even though one stretches 4:3 and the other
-     is a full, uncropped 16:9 frame. */
-  .gmv-mood--a, .gmv-mood--c { width: clamp(360px, calc(var(--board-h) * 0.42), 420px); }
+  .gmv-mood--a { width: 412px; }
   .gmv-mood--a .gmv-photo__frame { aspect-ratio: 4 / 3; }
+
+  /* the expansion-story video is the board's main point — sized well past
+     every other pin so it reads as the hero, not just another photo. */
+  .gmv-mood--k { width: 480px; }
+  /* h/j sized up from the base .gmv-photo 300px so the rows they anchor
+     (paired with the clipping and the small square pins) come out to the
+     board's full design width with ~zero leftover cork on the right. */
+  .gmv-mood--h { width: 350px; }
+  .gmv-mood--j { width: 380px; }
 
   /* sticky notes — fold-corner grows on hover, note lifts and settles back */
   .gmv-sticky {
     padding: 20px; display: flex; flex-direction: column; justify-content: flex-end;
     box-shadow: 0 12px 20px rgba(30,15,2,.3);
-    width: 190px; aspect-ratio: 1 / 1;
+    width: 204px; aspect-ratio: 1 / 1;
   }
   .gmv-sticky:hover { transform: translate(var(--dx), var(--dy)) rotate(var(--rot, 0deg)) scale(calc(var(--scale, 1) * 1.045)) translateY(-6px); box-shadow: 0 22px 30px rgba(30,15,2,.4); }
   .gmv-sticky--butter { background: #DFE3BE; }
@@ -531,7 +627,7 @@ const jsonLd = {
   .gmv-sticky:hover .gmv-sticky__fold { width: 40px; height: 40px; }
 
   /* square polaroid — Sederhana's Singapore storefront */
-  .gmv-photo--square { width: 190px; }
+  .gmv-photo--square { width: 204px; }
   .gmv-photo--square .gmv-photo__frame { aspect-ratio: 1 / 1; }
   /* landscape polaroid — the full map frame, uncropped */
   .gmv-photo--landscape .gmv-photo__frame { aspect-ratio: 16 / 9; }
@@ -568,6 +664,41 @@ const jsonLd = {
     column-count: 2; column-gap: 12px;
   }
 
+  /* ── v2 moodboard — a bento grid instead of a pinned corkboard: the
+     expansion-story video runs as a landscape banner across the top,
+     the three Ekraf launch photos sit in an equal row underneath. every
+     cell sizes itself by aspect-ratio (no fixed container height needed)
+     and shares the 12px corner radius plus the same bottom-left caption
+     treatment as the video badges elsewhere on this page. ── */
+  .gmv-bento {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .gmv-bento__item {
+    position: relative; margin: 0; border-radius: 12px; overflow: hidden;
+    background: #111;
+    box-shadow: 0 10px 24px rgba(30,15,2,.16);
+  }
+  .gmv-bento__item img, .gmv-bento__item video {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .gmv-bento__item figcaption {
+    position: absolute; left: 12px; bottom: 12px; z-index: 2;
+    padding: 7px 11px; border-radius: 6px;
+    color: #FCF8F0; background: rgba(62,32,2,.82);
+    font: 700 9px/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .1em;
+  }
+  .gmv-bento__item--video { grid-column: 1 / 4; aspect-ratio: 21 / 8; }
+  .gmv-bento__item:not(.gmv-bento__item--video) { aspect-ratio: 1 / 1; }
+  /* below this, three equal columns of photos get too cramped (captions
+     wrap to 2+ lines, tiles shrink past comfortable tap size) — stack
+     everything into one column instead, video banner on top. */
+  @media (max-width: 720px) {
+    .gmv-bento { grid-template-columns: 1fr; }
+    .gmv-bento__item--video { grid-column: 1; aspect-ratio: 16 / 9; }
+  }
+
   /* ── flow (POC) ── */
   .gmv-flow { margin-top: 30px; }
   .gmv-poc-proof {
@@ -587,8 +718,8 @@ const jsonLd = {
   }
 
   .gmv-browser { margin-top: 40px; background: #fff; }
-  .gmv-browser__frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
-  .gmv-browser__el { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gmv-browser__frame { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+  .gmv-browser__el { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.08); transform-origin: center; }
   .gmv-browser__frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   /* label overlay shared by both video frames, so it's obvious at a glance
@@ -626,35 +757,12 @@ const jsonLd = {
   .gmv-loop__label { font: 600 11px/1 Inter, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #6D543C; margin-bottom: 10px; }
   .gmv-loop__text { margin: 0; max-width: 20ch; font: 400 13px/1.5 Inter, system-ui, sans-serif; color: #6D543C; }
 
-  .gmv-video-frame { position: relative; z-index: 1; aspect-ratio: 16 / 9; overflow: hidden; background: #111; }
-  .gmv-video-frame__el { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gmv-video-frame { position: relative; z-index: 1; aspect-ratio: 16 / 10; overflow: hidden; background: #111; }
+  .gmv-video-frame__el { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.08); transform-origin: center; }
 
-  /* ── CTA, centered ── */
-  .gmv-cta { max-width: 960px; margin-inline: auto; text-align: center; }
-  .gmv-cta__heading { margin: 0 auto; }
-  .gmv-cta__copy { max-width: 680px; margin: 20px auto 0; color: #6D543C; font: 400 17px/1.65 Inter, system-ui, sans-serif; }
-
-  /* below this, the board's own row of 3 photos + row of 5 notes no longer
-     has enough container width to lay out in two rows at their tuned sizes
-     — a third row would appear and push past the fixed 100vh height, so
-     switch to a natural, content-sized board instead: the page scrolls,
-     not the board. (960px covers phones/tablets; 1279px covers narrower
-     desktop windows that are still wide enough for the fixed layout's own
-     960px tier to look cramped rather than broken.) */
-  @media (max-width: 1279px) {
-    .gmv-board { height: auto; min-height: auto; max-height: none; overflow-y: visible; }
-    .gmv-mood--a, .gmv-mood--c { width: 300px; }
-    .gmv-sticky, .gmv-photo--square { width: 170px; }
-    .gmv-clipping { width: 200px; }
-  }
   @media (max-width: 960px) {
     .gmv-loop__timeline { grid-template-columns: 1fr 1fr; row-gap: 34px; }
     .gmv-loop__line-h { display: none; }
-  }
-  @media (max-width: 720px) {
-    .gmv-mood--a, .gmv-mood--c { width: 100%; }
-    .gmv-sticky, .gmv-photo--square { width: calc(50% - 15px); }
-    .gmv-clipping { width: 100%; }
   }
   @media (max-width: 560px) {
     .gmv-loop__timeline { grid-template-columns: 1fr; }
@@ -739,5 +847,53 @@ const jsonLd = {
     })
   }
 
+  // v1/v2 moodboard switch — swaps which panel is visible via the
+  // `hidden` attribute rather than a CSS class, so the very first paint
+  // (before this script runs) already matches the markup's own `hidden`
+  // on #gmv-board-v2.
+  function initBoardSwitch(onShowV1?: () => void) {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-board-switch]')
+    const panels = document.querySelectorAll<HTMLElement>('[data-board-panel]')
+    if (!buttons.length || !panels.length) return
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const view = btn.dataset.boardSwitch
+        buttons.forEach((b) => b.classList.toggle('is-active', b === btn))
+        panels.forEach((panel) => {
+          panel.hidden = panel.dataset.boardPanel !== view
+        })
+        // the scale wrapper was measured while hidden (or stale) if this
+        // is the first time v1 becomes visible again — re-measure now
+        // that it actually has layout.
+        if (view === 'v1') onShowV1?.()
+      })
+    })
+  }
+
+  // v1 corkboard scale — the board is a fixed-width (1240px) composition
+  // (see .gmv-board / .gmv-board-scale above); rather than reflowing pins
+  // into new rows on a narrower viewport, scale the whole thing down as
+  // one piece so the hand-packed, zero-leftover layout never has to be
+  // re-solved at another width. Never scales up past 1:1 on a wide screen.
+  function initBoardScale() {
+    const wrap = document.querySelector<HTMLElement>('.gmv-board-scale')
+    const board = document.querySelector<HTMLElement>('#gmv-board')
+    if (!wrap || !board) return () => {}
+
+    const DESIGN_WIDTH = 1240
+    const apply = () => {
+      const ratio = Math.min(1, wrap.clientWidth / DESIGN_WIDTH)
+      board.style.transform = `scale(${ratio})`
+      wrap.style.height = `${board.offsetHeight * ratio}px`
+    }
+
+    apply()
+    new ResizeObserver(apply).observe(wrap)
+    return apply
+  }
+
   initBoardDrag()
+  const rescaleBoard = initBoardScale()
+  initBoardSwitch(rescaleBoard)
 </script>
