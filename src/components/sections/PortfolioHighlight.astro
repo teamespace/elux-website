@@ -3,7 +3,7 @@ import { getEntry } from 'astro:content'
 import globalMinangImg from '../../assets/work-images/gmv/mockup-1.png'
 import gmvVideo from '../../assets/work-images/gmv/cover.mp4'
 import upnovaImg from '../../assets/work-images/upnova/upnova-cover.png'
-import allenImg from '../../assets/work-images/allen ai/mockup-2.png'
+import allenImg from '../../assets/work-images/allen ai/mockup-1.png'
 import saifaImg from '../../assets/work-images/saifa/cover.png'
 import aliaImg from '../../assets/work-images/alia/cover.webp'
 import travelcircusImg from '../../assets/work-images/travelcircus/cover.png'
@@ -16,8 +16,8 @@ const portfolio = data.portfolio
 // is cropped from the centre; Global Minang is the only one that is.
 const imageByIndex: (typeof globalMinangImg | null)[] = [
   globalMinangImg, // 0 Global Minang Ventura — 1536x1024 (3:2), ~6% of the width cropped
-  upnovaImg, // 1 Upnova
-  travelcircusImg, // 2 Travelcircus
+  travelcircusImg, // 1 Travelcircus
+  upnovaImg, // 2 Upnova
   allenImg, // 3 Allen Institute for AI
   saifaImg, // 4 Saifa AI
   aliaImg, // 5 Aliapopups
@@ -87,7 +87,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
               ) : c.img ? (
                 <div
                   class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
-                  style={`background-image: url(${c.img.src});`}
+                  style={`background-image: url('${c.img.src}');`}
                   aria-hidden="true"
                 />
               ) : (

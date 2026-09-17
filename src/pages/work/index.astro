@@ -70,7 +70,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
                     ) : c.img ? (
                       <div
                         class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
-                        style={`background-image: url(${c.img.src});`}
+                        style={`background-image: url('${c.img.src}');`}
                         aria-hidden="true"
                       />
                     ) : (
