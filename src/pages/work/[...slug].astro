@@ -1,8 +1,8 @@
 ---
-import { getCollection, render } from 'astro:content'
-import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro'
+import { getCollection } from 'astro:content'
 import TravelcircusConcept from '../../components/TravelcircusConcept.astro'
 import GlobalMinangConcept from '../../components/GlobalMinangConcept.astro'
+import ComingSoon from '../../components/ComingSoon.astro'
 import gmvVideo from '../../assets/work-images/gmv/cover.mp4'
 import allenOlmoMockup from '../../assets/work-images/allen ai/mockup-1.png'
 
@@ -62,7 +62,6 @@ export async function getStaticPaths() {
 }
 
 const { entry, prev, next, moreWork } = Astro.props
-const { Content } = await render(entry)
 ---
 
 {
@@ -71,8 +70,6 @@ const { Content } = await render(entry)
   ) : entry.id === 'global-minang-ventura' ? (
     <GlobalMinangConcept data={entry.data} prev={prev} next={next} moreWork={moreWork} />
   ) : (
-    <CaseStudyLayout data={entry.data} prev={prev} next={next}>
-      <Content />
-    </CaseStudyLayout>
+    <ComingSoon data={entry.data} />
   )
 }

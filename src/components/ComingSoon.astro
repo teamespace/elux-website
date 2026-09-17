@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Nav from './Nav.astro'
+import Footer from './Footer.astro'
+import ClosingCTA from './sections/ClosingCTA.astro'
+
+// Placeholder detail page for work entries that don't have a full case study
+// yet (only Travelcircus and Global Minang Ventura do, see [...slug].astro).
+// Reuses the homepage's animated closing section so this doesn't read as a
+// dead end — noindex'd since there's no real content here yet.
+interface Props {
+  data: any
+}
+
+const { data } = Astro.props
+const pageTitle = `${data.client} — Case Study Coming Soon | Elux Space`
+const pageDescription = `The ${data.client} case study is still being written up. Take a look at our other work in the meantime.`
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} noindex={true}>
+  <div class="bg-cream text-ink min-h-screen">
+    <Nav />
+
+    <main id="main">
+      <ClosingCTA
+        eyebrow="Coming soon"
+        headline={`The ${data.client} case study\nis still in the works.`}
+        body="We're putting the write-up together. Check back soon."
+        primaryLabel="Back to Homepage"
+        primaryHref="/"
+      />
+    </main>
+
+    <Footer />
+  </div>
+</BaseLayout>
